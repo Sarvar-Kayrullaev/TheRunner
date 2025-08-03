@@ -1,0 +1,19 @@
+    Graphic Settings
+
+        Frames Per Second (FPS)
+        Anti-Aliasing
+        Vertical Sync Count
+        Texture Resolution
+        Anisotropic Texture
+        Shadow
+        Shadow Resolution
+        Shadow Distance
+        LOD Bias
+        Cloud
+        Ambience Occlusion
+        Motion Blur
+        Bloom
+
+    
+
+        

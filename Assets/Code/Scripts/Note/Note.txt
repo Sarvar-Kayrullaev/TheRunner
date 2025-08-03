@@ -1,0 +1,18 @@
+🟩  Mark Signal Manager
+🟨  Hiding sensor problem
+🟦  No Path Action
+🟦  Collapse Damage
+🟦  Fix bullet hole
+
+🟦  Distance Outpost Loader
+🟦  Outpost Liberte Effect
+🟦  Car Controller
+🟦  Weapon Magazine
+🟦  Menu and Settings
+🟦  Data Manager System
+
+🟦  Publish BETA = 1$ or free
+🟦  Release Full = 6.99$ // Release Date: Undefined
+
+
+🟩 Done     🟦 Doing     🟨 Planed

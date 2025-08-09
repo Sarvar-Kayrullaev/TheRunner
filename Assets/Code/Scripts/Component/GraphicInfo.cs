@@ -8,15 +8,12 @@ public class GraphicInfo : MonoBehaviour
     [SerializeField] TextMeshProUGUI textFPS;
 
     public int Granularity = 5; // how many frames to wait until you re-calculate the FPS
-    List<double> times;
-    int counter = 5;
 
     public void Start()
     {
-        times = new List<double>();
         Application.targetFrameRate = 240;
         QualitySettings.vSyncCount = 0;
-        Invoke("TargetFrame",3f);
+        Invoke(nameof(TargetFrame), 3f);
     }
 
     void TargetFrame()
@@ -25,30 +22,47 @@ public class GraphicInfo : MonoBehaviour
         QualitySettings.vSyncCount = 0;
     }
 
-    public void Update()
-    {
-        if (counter <= 0)
-        {
-            CalcFPS();
-            counter = Granularity;
-        }
+    // The number of frames to average.
+    private const int frameRange = 60;
 
-        times.Add(Time.deltaTime);
-        counter--;
+    // Use a Queue to store the last 'frameRange' deltaTimes.
+    private Queue<float> frameTimes = new(frameRange);
+
+    // A variable to hold the calculated average FPS.
+    private float averageFps;
+
+    // You can expose this property to other scripts if needed.
+    private float AverageFps => averageFps;
+
+    private void Awake()
+    {
+        // Initialize the queue.
+        frameTimes = new Queue<float>(frameRange);
     }
 
-    public void CalcFPS()
+    private void Update()
     {
-        double sum = 0;
-        foreach (double F in times)
+        // Enqueue the current frame's deltaTime.
+        frameTimes.Enqueue(Time.deltaTime);
+
+        // If the queue size exceeds the frameRange, dequeue the oldest value.
+        if (frameTimes.Count > frameRange)
         {
-            sum += F;
+            frameTimes.Dequeue();
         }
 
-        double average = sum / times.Count;
-        double fps = 1 / average;
-        int FPS = (int)fps;
-        textFPS.text = "FPS: " + FPS;
-        // update a GUIText or something
+        // Calculate the total time for all frames in the queue.
+        float totalTime = 0f;
+        foreach (float deltaTime in frameTimes)
+        {
+            totalTime += deltaTime;
+        }
+
+        // Calculate the average FPS.
+        // FPS = number of frames / total time for those frames.
+        averageFps = frameTimes.Count / totalTime;
+        int FPS = (int)averageFps;
+
+        textFPS.text = "FPS: "+ FPS;
     }
 }

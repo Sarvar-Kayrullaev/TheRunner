@@ -84,8 +84,8 @@ namespace Environment
             int Cursor = CalculateUnits(angle, unit, (int)Tiling.x);
 
             offset.x = oneItemSizeX * (Cursor + SpriteOffset);
-            material.SetTextureOffset("_MainTex", offset);
-            material.SetTextureScale("_MainTex", tiling);
+            material.SetTextureOffset("_BaseMap", offset);
+            material.SetTextureScale("_BaseMap", tiling);
             material.SetTextureOffset("_BumpMap", offset);
             material.SetTextureScale("_BumpMap", tiling);
         }

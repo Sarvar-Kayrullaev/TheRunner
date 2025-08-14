@@ -35,3 +35,10 @@ public enum ScopeType
     NormalSight,
     Scope
 }
+
+public enum FontType
+{
+    Regular,
+    Medium,
+    Bold
+}

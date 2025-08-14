@@ -9,5 +9,6 @@ namespace Data
         public float FireRate;
         public float Accuracy;
         public int MagazineSize;
+        public float Mobility;
     }
 }

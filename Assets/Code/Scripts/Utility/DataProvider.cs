@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using Code.Scripts.Data.Language;
 using Data;
 
 public static class DataProvider
@@ -31,6 +32,7 @@ public static class DataProvider
         else
         {
             SettingsModel settings = new SettingsModel();
+            settings.Options.Language = Language.LanguageCode.English;
             settings.Options.ShowFPS = true;
             settings.Options.ShowRewardedAdvertising = true;
             settings.AudioOptions.MusicVolume = 10;

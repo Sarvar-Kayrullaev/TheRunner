@@ -1,8 +1,13 @@
 using UnityEngine;
 using System;
+using Code.Scripts.Data.Language;
 
 public class GameSettingsModifier
 {
+    public static void SetLanguage(Language.LanguageCode value)
+    {
+        
+    }
     public static void SetFramesPerSecond(int value)
     {
         QualitySettings.vSyncCount = 0; // Set vSyncCount to 0 so that using .targetFrameRate is enabled.

@@ -1,3 +1,4 @@
+using Code.Scripts.Data.Language;
 using Data;
 using UnityEngine;
 
@@ -5,6 +6,13 @@ public class SettingsDataModifier : MonoBehaviour
 {
 
     #region Options
+
+    public void Set_Language(Language.LanguageCode value)
+    {
+        SettingsModel model = DataProvider.LoadSettingsData();
+        model.Options.Language = value;
+        DataProvider.SaveSettingsData(model);
+    }
     public void Set_ShowFPS(bool value)
     {
         SettingsModel model = DataProvider.LoadSettingsData();

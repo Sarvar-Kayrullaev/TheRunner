@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Code.Scripts.Data.Language;
 using UnityEngine;
 
 namespace Data
@@ -16,6 +17,7 @@ namespace Data
     [Serializable]
     public class OptionsModel
     {
+        public Language.LanguageCode Language;
         public bool ShowFPS;
         public bool ShowRewardedAdvertising;
     }

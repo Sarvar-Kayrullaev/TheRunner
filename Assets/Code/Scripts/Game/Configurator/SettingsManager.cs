@@ -1,3 +1,4 @@
+using Code.Scripts.Data.Language;
 using Data;
 using UnityEngine;
 
@@ -17,6 +18,7 @@ public class SettingsManager : MonoBehaviour
     private void ApplySettings()
     {
         SettingsModel settings = DataProvider.LoadSettingsData();
+        
         SetShowFPS(settings.Options.ShowFPS);
         SetShowADS(settings.Options.ShowRewardedAdvertising);
         SetFramesPerSecondLimit(settings.GraphicOptions.FramesPerSecond);
@@ -35,7 +37,6 @@ public class SettingsManager : MonoBehaviour
         //SetMotionBlur(settings.GraphicOptions.MotionBlur);
         //SetBloom(settings.GraphicOptions.Bloom);
     }
-
     private void SetShowFPS(bool value) => FPSDisplayer?.SetActive(value);
     private void SetShowADS(bool value) { }
 

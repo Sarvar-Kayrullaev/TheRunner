@@ -2,6 +2,8 @@ using Data;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Widget;
+using Button = UnityEngine.UI.Button;
 
 /// <summary>
 /// ShopAdapter is responsible for managing the shop interface, displaying items based on their type.
@@ -29,26 +31,32 @@ public class ShopAdapter : MonoBehaviour
     [SerializeField] private RectTransform weaponEquipButton;
     [SerializeField] private RectTransform weaponCustomizeButton;
 
-
-
-    private TMP_Text weaponTitleText;
-    private TMP_Text weaponPriceText;
-
-    private TMP_Text weaponStatsTitleText1;
-    private TMP_Text weaponStatsValueText1;
-    private TMP_Text weaponStatsTitleText2;
-    private TMP_Text weaponStatsValueText2;
-    private TMP_Text weaponStatsTitleText3;
-    private TMP_Text weaponStatsValueText3;
-    private TMP_Text weaponStatsTitleText4;
-    private TMP_Text weaponStatsValueText4;
-    private TMP_Text weaponStatsTitleText5;
-    private TMP_Text weaponStatsValueText5;
-
-    private Button weaponBuyButtonComponent;
-    private Button weaponEquipButtonComponent;
-    private Button weaponCustomizeButtonComponent;
-
+    
+    [Space(1)]
+    [SerializeField] private TMP_Text weaponTitleText;
+    [SerializeField]private TMP_Text weaponPriceText;
+    [Space(1)]
+    [SerializeField] private TMP_Text weaponStatsTitleText1;
+    [SerializeField] private TMP_Text weaponStatsValueText1;
+    [SerializeField] private TMP_Text weaponStatsTitleText2;
+    [SerializeField] private TMP_Text weaponStatsValueText2;
+    [SerializeField] private TMP_Text weaponStatsTitleText3;
+    [SerializeField] private TMP_Text weaponStatsValueText3;
+    [SerializeField] private TMP_Text weaponStatsTitleText4;
+    [SerializeField] private TMP_Text weaponStatsValueText4;
+    [SerializeField] private TMP_Text weaponStatsTitleText5;
+    [SerializeField] private TMP_Text weaponStatsValueText5;
+    [Space(1)]
+    [SerializeField] private Slider weaponStatsSlider1;
+    [SerializeField] private Slider weaponStatsSlider2;
+    [SerializeField] private Slider weaponStatsSlider3;
+    [SerializeField] private Slider weaponStatsSlider4;
+    [SerializeField] private Slider weaponStatsSlider5;
+    [Space(1)]
+    [SerializeField] private Button weaponBuyButtonComponent;
+    [SerializeField] private Button weaponEquipButtonComponent;
+    [SerializeField] private Button weaponCustomizeButtonComponent;
+    
     private void Initialize()
     {
         if (sealedData == null)
@@ -60,20 +68,6 @@ public class ShopAdapter : MonoBehaviour
                 return;
             }
         }
-        if (weaponContentParent == null || contentPrefab == null)
-        {
-            Debug.LogError("Weapon content parent or content prefab is not assigned in the ShopAdapter.");
-            return;
-        }
-        if (weaponTitleTextParent == null || weaponStatsBar1 == null || weaponStatsBar2 == null ||
-            weaponStatsBar3 == null || weaponStatsBar4 == null || weaponStatsBar5 == null ||
-            weaponPriceTextParent == null || weaponBuyButton == null || weaponEquipButton == null || weaponCustomizeButton == null)
-        {
-            Debug.LogError("One or more UI elements are not assigned in the ShopAdapter.");
-            return;
-        }
-        // Initialize the shop adapter with default values or settings if needed
-
     }
     void Awake()
     {
@@ -98,6 +92,11 @@ public class ShopAdapter : MonoBehaviour
                 {
                     image.sprite = model.SpriteReference;
                 }
+
+                if (itemView.TryGetComponent(out Widget.Button button))
+                {
+                    button.OnClick.AddListener((() => BuildWeaponStatsAdapter((int) model.WeaponEnum)));
+                }
             }
         }
     }
@@ -109,18 +108,29 @@ public class ShopAdapter : MonoBehaviour
     /// <param name="weaponType">The type of weapon to display stats for.</param>
     public void BuildWeaponStatsAdapter(int weaponType)
     {
-        // This method can be used to display weapon stats based on the weapon type.
-        // Implementation can be added as needed.
+        foreach (var weapon in sealedData.WeaponBasics)
+        {
+            var type = (int) weapon.WeaponEnum;
+            if (type == weaponType)
+            {
+                weaponTitleText.text = weapon.Name;
+                weaponPriceText.text = weapon.WeaponPrice.ToString();
 
-
+                weaponStatsValueText1.text = weapon.WeaponAttribute.Damage.ToString();
+                weaponStatsValueText2.text = weapon.WeaponAttribute.Accuracy.ToString();
+                weaponStatsValueText3.text = weapon.WeaponAttribute.FireRate.ToString();
+                weaponStatsValueText4.text = weapon.WeaponAttribute.ReloadTime.ToString();
+                weaponStatsValueText5.text = weapon.WeaponAttribute.Mobility.ToString();
+                
+            }
+        }
     }
     /// <summary>
     /// Clears all child items from the specified parent transform.
     /// This is useful for resetting the UI before adding new items.
     /// The method used by While
     /// </summary>
-
-    void Clear(Transform parent)
+    private void Clear(Transform parent)
     {
 
         // Make the while loop not forever
@@ -136,8 +146,8 @@ public class ShopAdapter : MonoBehaviour
         }
         // Make sure to avoid infinite loops
         // Limit the number of iterations to prevent potential infinite loops
-        int counter = 0;
-        bool isComplete = false;
+        var counter = 0;
+        var isComplete = false;
         // Use a while loop to clear all children
         // This will ensure that all children are removed, even if there are many
         while (isComplete == false)

@@ -62,7 +62,16 @@ public class GraphicInfo : MonoBehaviour
         // FPS = number of frames / total time for those frames.
         averageFps = frameTimes.Count / totalTime;
         int FPS = (int)averageFps;
+        string graphicAPI = SystemInfo.graphicsDeviceType.ToString();
+        string graphicDevice = SystemInfo.graphicsDeviceName;
 
-        textFPS.text = "FPS: "+ FPS;
+        // Update the UI text with the calculated FPS and graphics information.
+        textFPS.text = $"FPS: {FPS} \n" +
+                       $"Graphics API: {graphicAPI} \n" +
+                       $"Graphics Device: {graphicDevice} \n" +
+                       $"Screen Resolution: {Screen.width}x{Screen.height} \n" +
+                       $"Quality Level: {QualitySettings.GetQualityLevel()} \n" +
+                       $"VSync Count: {QualitySettings.vSyncCount} \n" +
+                       $"Target Frame Rate: {Application.targetFrameRate}";
     }
 }

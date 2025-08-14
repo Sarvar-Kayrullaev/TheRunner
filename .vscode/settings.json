@@ -56,5 +56,6 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "TheRunner.sln"
+    "dotnet.defaultSolution": "TheRunner.sln",
+    "CodeGPT.apiKey": "Gemini CLI"
 }

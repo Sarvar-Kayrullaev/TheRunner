@@ -432,7 +432,7 @@ namespace Code.Scripts.Data.Language
                     "ปืนลูกซอง", // Thai  
                     "Senapan", // Indonesian
                     "Senapang", // Malay
-                    "Shotgun" // Uzbek
+                    "Miltiq" // Uzbek
                 }
             };
             data[11] = new()
@@ -458,7 +458,7 @@ namespace Code.Scripts.Data.Language
                     "ปืนกลเบา", // Thai
                     "Senapan mesin ringan", // Indonesian
                     "Senapang mesin ringan", // Malay
-                    "SMG" // Uzbek
+                    "Yengil pulemyot" // Uzbek
                 }
             };
             data[12] = new()
@@ -484,7 +484,7 @@ namespace Code.Scripts.Data.Language
                     "ไรเฟิล", // Thai
                     "Senapan", // Indonesian
                     "Rifle", // Malay (There is no correct translation for this language. It is used as is in English)
-                    "Rifle" // Uzbek (There is no correct translation for this language. It is used as is in English)
+                    "Avtomat" // Uzbek (There is no correct translation for this language. It is used as is in English)
                 }
             };
             data[13] = new()
@@ -536,7 +536,7 @@ namespace Code.Scripts.Data.Language
                     "ปืนกลเบา", // Thai
                     "LMG", // Indonesian
                     "LMG", // Malay
-                    "LMG" // Uzbek
+                    "Pulemyot" // Uzbek
                 }
             };
 
@@ -563,7 +563,7 @@ namespace Code.Scripts.Data.Language
                     "เครื่องยิง", // Thai
                     "Peluncur", // Indonesian
                     "Pelancar", // Malay
-                    "Launcher" // Uzbek
+                    "Granatomyot" // Uzbek
                 }
             };
             data[16] = new()

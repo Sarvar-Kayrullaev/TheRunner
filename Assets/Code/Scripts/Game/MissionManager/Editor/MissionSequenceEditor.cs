@@ -63,7 +63,7 @@ namespace MissionManager
 
                 EditorGUILayout.BeginHorizontal();
                 GUIStyle foldoutStyle = new(EditorStyles.label);
-                foldoutStyle.fontStyle = FontStyle.Bold;
+                foldoutStyle.fontStyle = UnityEngine.FontStyle.Bold;
                 foldoutStyle.padding = new(10,0,0,0);
 
                 EditorGUILayout.LabelField("Mission: " + i, foldoutStyle);
@@ -219,7 +219,7 @@ namespace MissionManager
 
             model.targets ??= new ();
             GUIStyle boldLabelStyle = new(EditorStyles.label);
-            boldLabelStyle.fontStyle = FontStyle.Bold;
+            boldLabelStyle.fontStyle = UnityEngine.FontStyle.Bold;
             EditorGUILayout.LabelField("Targets");
             for (int j = 0; j < model.targets.Count; j++)
             {
@@ -258,7 +258,7 @@ namespace MissionManager
 
             model.targets ??= new ();
             GUIStyle boldLabelStyle = new(EditorStyles.label);
-            boldLabelStyle.fontStyle = FontStyle.Bold;
+            boldLabelStyle.fontStyle = UnityEngine.FontStyle.Bold;
             EditorGUILayout.LabelField("Targets");
             for (int j = 0; j < model.targets.Count; j++)
             {

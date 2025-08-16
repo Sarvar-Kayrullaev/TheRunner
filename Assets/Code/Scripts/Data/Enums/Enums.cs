@@ -38,7 +38,18 @@ public enum ScopeType
 
 public enum FontType
 {
+    Default,
+    Light,
     Regular,
     Medium,
-    Bold
+    Bold,
+    Black
+}
+
+public enum FontStyle
+{
+    Title,
+    Description,
+    Head,
+    Readable
 }

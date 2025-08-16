@@ -73,41 +73,78 @@ public class ShopAdapter : MonoBehaviour
     {
         Initialize();
     }
-    /// <summary>
-    /// Initializes the shop adapter with the specified weapon type.
-    /// This method clears the existing items in the weapon item parent and populates it with new items based on the weapon type.
-    /// </summary>
+    
     public void BuildWeaponAdapter(int weaponType)
     {
         Clear(weaponContentParent);
 
+        var defaultSelectedFirst = false;
+        var index = 0;
         foreach (WeaponBasicModel model in sealedData.WeaponBasics)
         {
             // Check if the model's type matches the specified weapon type
             if ((int)model.WeaponType == weaponType)
             {
                 //show 
+                var x = index;
                 GameObject itemView = Instantiate(contentPrefab, weaponContentParent);
                 if (itemView.transform.GetChild(0).TryGetComponent(out Image image))
                 {
                     image.sprite = model.SpriteReference;
                 }
-
+                
                 if (itemView.TryGetComponent(out Widget.Button button))
                 {
                     button.OnClick.AddListener((() => BuildWeaponStatsAdapter((int) model.WeaponEnum)));
+                    button.OnClick.AddListener((() => SetSelectionVisualize(x)));
+                    if (!defaultSelectedFirst)
+                    {
+                        button.OnClick.Invoke();
+                        defaultSelectedFirst = true;
+                    }
                 }
+
+                index++;
             }
         }
     }
 
-    /// <summary>
-    /// Displays weapon stats based on the specified weapon type.
-    /// This method can be used to show detailed information about a specific weapon.
-    /// </summary>
-    /// <param name="weaponType">The type of weapon to display stats for.</param>
+    public void SetSelectionVisualize(int index)
+    {
+        int currentIndex = 0;
+        foreach (RectTransform content in weaponContentParent)
+        {
+            if (currentIndex == index)
+            {
+                content.GetChild(1).gameObject.SetActive(true);
+            }
+            else
+            {
+                content.GetChild(1).gameObject.SetActive(false);
+            }
+
+            currentIndex++;
+        }
+    }
+    
     public void BuildWeaponStatsAdapter(int weaponType)
     {
+        var maxDamage = 0;
+        var maxAccuracy = 0.0f;
+        var maxFireRate = 0.0f;
+        var maxReloadTime = 0.0f;
+        var maxMobility = 0.0f;
+        var maxReloadSpeed = Mathf.Infinity;
+
+        foreach (var weapon in sealedData.WeaponBasics)
+        {
+            if (weapon.WeaponAttribute.Damage > maxDamage) maxDamage = weapon.WeaponAttribute.Damage;
+            if(weapon.WeaponAttribute.Accuracy > maxAccuracy) maxAccuracy = weapon.WeaponAttribute.Accuracy;
+            if (weapon.WeaponAttribute.FireRate > maxFireRate) maxFireRate = weapon.WeaponAttribute.FireRate;
+            if (weapon.WeaponAttribute.ReloadTime > maxReloadTime) maxReloadTime = weapon.WeaponAttribute.ReloadTime;
+            if (weapon.WeaponAttribute.Mobility > maxMobility) maxMobility = weapon.WeaponAttribute.Mobility;
+            if(maxReloadSpeed > maxReloadTime) maxReloadSpeed = maxReloadTime;
+        }
         foreach (var weapon in sealedData.WeaponBasics)
         {
             var type = (int) weapon.WeaponEnum;
@@ -116,47 +153,56 @@ public class ShopAdapter : MonoBehaviour
                 weaponTitleText.text = weapon.Name;
                 weaponPriceText.text = weapon.WeaponPrice.ToString();
 
-                weaponStatsValueText1.text = weapon.WeaponAttribute.Damage.ToString();
-                weaponStatsValueText2.text = weapon.WeaponAttribute.Accuracy.ToString();
-                weaponStatsValueText3.text = weapon.WeaponAttribute.FireRate.ToString();
-                weaponStatsValueText4.text = weapon.WeaponAttribute.ReloadTime.ToString();
-                weaponStatsValueText5.text = weapon.WeaponAttribute.Mobility.ToString();
+                var damage = weapon.WeaponAttribute.Damage;
+                var accuracy = weapon.WeaponAttribute.Accuracy;
+                var fireRate = weapon.WeaponAttribute.FireRate;
+                var reloadTime = weapon.WeaponAttribute.ReloadTime;
+                var mobility = weapon.WeaponAttribute.Mobility;
+
+                weaponStatsValueText1.text = $"{damage}";
+                weaponStatsValueText2.text = $"%{accuracy}";
+                weaponStatsValueText3.text = $"{fireRate}/s";
+                weaponStatsValueText4.text = $"{reloadTime}s";
+                weaponStatsValueText5.text = $"{mobility}m/s";
+                
+                var damageValue = (float)damage / (float)maxDamage;
+                var accuracyValue = accuracy / maxAccuracy;
+                var fireRateValue = fireRate / maxFireRate;
+                var reloadSpeedValue = maxReloadSpeed / reloadTime;
+                var mobilityValue = mobility / maxMobility;
+                
+                weaponStatsSlider1.value = damageValue;
+                weaponStatsSlider2.value = accuracyValue;
+                weaponStatsSlider3.value = fireRateValue;
+                weaponStatsSlider4.value = reloadSpeedValue;
+                weaponStatsSlider5.value = mobilityValue;
                 
             }
         }
     }
-    /// <summary>
-    /// Clears all child items from the specified parent transform.
-    /// This is useful for resetting the UI before adding new items.
-    /// The method used by While
-    /// </summary>
-    private void Clear(Transform parent)
+    
+    private static void Clear(Transform parent)
     {
-
-        // Make the while loop not forever
         if (parent == null)
         {
             Debug.LogWarning("Parent RectTransform is null. Cannot clear items.");
             return;
         }
-        bool isEmpty = parent.childCount == 0;
+        var isEmpty = parent.childCount == 0;
         if (isEmpty)
         {
-            return; // No need to clear if there are no children
+            return;
         }
-        // Make sure to avoid infinite loops
-        // Limit the number of iterations to prevent potential infinite loops
         var counter = 0;
         var isComplete = false;
-        // Use a while loop to clear all children
-        // This will ensure that all children are removed, even if there are many
+        
         while (isComplete == false)
         {
             DestroyImmediate(parent.GetChild(0).gameObject);
             counter++;
             if (counter > 100 || parent.childCount == 0)
             {
-                isComplete = true; // Stop if we have cleared all children or reached the limit
+                isComplete = true;
             }
         }
         if (parent.childCount > 0)

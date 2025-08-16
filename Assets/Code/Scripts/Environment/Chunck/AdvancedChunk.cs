@@ -79,7 +79,6 @@ public class AdvancedChunk : MonoBehaviour
 
             if (distance > CullingDistance + distanceToCorner)
             {
-                Debug.Log(layerDepth + " >= " + LayerSize + "     :" + chunk.name + "  = Disabled");
                 chunk.gameObject.SetActive(false);
             }
             else
@@ -88,7 +87,6 @@ public class AdvancedChunk : MonoBehaviour
 
                 if (layerDepth >= LayerSize)
                 {
-                    Debug.Log(layerDepth + " >= " + LayerSize + "     :" + chunk.name);
                     return; //Leaf
                 }
                 else

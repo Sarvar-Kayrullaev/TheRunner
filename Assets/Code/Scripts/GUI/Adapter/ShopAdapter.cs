@@ -1,9 +1,14 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using Data;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Widget;
 using Button = UnityEngine.UI.Button;
+using Random = System.Random;
 
 /// <summary>
 /// ShopAdapter is responsible for managing the shop interface, displaying items based on their type.
@@ -13,6 +18,11 @@ using Button = UnityEngine.UI.Button;
 public class ShopAdapter : MonoBehaviour
 {
     public SealedData sealedData;
+    public DataManager dataManager;
+    
+    [Header("Fund Setup")]
+    [SerializeField] private TMP_Text moneyText;
+    [SerializeField] private TMP_Text goldText;
 
     [Header("Weapon Content Setup")]
     [SerializeField] private RectTransform weaponContentParent;
@@ -25,69 +35,93 @@ public class ShopAdapter : MonoBehaviour
     [SerializeField] private RectTransform weaponStatsBar3;
     [SerializeField] private RectTransform weaponStatsBar4;
     [SerializeField] private RectTransform weaponStatsBar5;
-    [Space(1)]
+    [Space(10)]
     [SerializeField] private RectTransform weaponPriceTextParent;
-    [SerializeField] private RectTransform weaponBuyButton;
-    [SerializeField] private RectTransform weaponEquipButton;
-    [SerializeField] private RectTransform weaponCustomizeButton;
-
-    
-    [Space(1)]
+    [Space(10)]
     [SerializeField] private TMP_Text weaponTitleText;
     [SerializeField]private TMP_Text weaponPriceText;
-    [Space(1)]
-    [SerializeField] private TMP_Text weaponStatsTitleText1;
+    [Space(10)]
     [SerializeField] private TMP_Text weaponStatsValueText1;
-    [SerializeField] private TMP_Text weaponStatsTitleText2;
     [SerializeField] private TMP_Text weaponStatsValueText2;
-    [SerializeField] private TMP_Text weaponStatsTitleText3;
     [SerializeField] private TMP_Text weaponStatsValueText3;
-    [SerializeField] private TMP_Text weaponStatsTitleText4;
     [SerializeField] private TMP_Text weaponStatsValueText4;
-    [SerializeField] private TMP_Text weaponStatsTitleText5;
     [SerializeField] private TMP_Text weaponStatsValueText5;
-    [Space(1)]
+    [Space(10)]
     [SerializeField] private Slider weaponStatsSlider1;
     [SerializeField] private Slider weaponStatsSlider2;
     [SerializeField] private Slider weaponStatsSlider3;
     [SerializeField] private Slider weaponStatsSlider4;
     [SerializeField] private Slider weaponStatsSlider5;
-    [Space(1)]
-    [SerializeField] private Button weaponBuyButtonComponent;
-    [SerializeField] private Button weaponEquipButtonComponent;
-    [SerializeField] private Button weaponCustomizeButtonComponent;
+    [Space(10)]
+    [SerializeField] private ItemButton weaponBuyButtonComponent;
+    [SerializeField] private ItemButton weaponEquipButtonComponent;
+    [SerializeField] private ItemButton weaponCustomizeButtonComponent;
+    [Space(10)]
+    [Header("Equipment Setup")]
+    [SerializeField] private RectTransform equipmentScreen;
+    [SerializeField] private List<GUI.Button> slotsButton;
+    [SerializeField] private List<Image> slotsImage;
     
-    private void Initialize()
+    
+     [Space(10)]
+    [Header("Customization Setup")]
+    [SerializeField] private RectTransform customizationScreen;
+    [Space(10)]
+    [Header("Buy Setup")]
+    [SerializeField] private RectTransform buyScreen;
+    [SerializeField] private RectTransform notEnoughMoneyScreen;
+    [SerializeField] private Button buyButton;
+
+    private void Awake()
     {
-        if (sealedData == null)
+        StartCoroutine(Initialize());
+    }
+    
+    private IEnumerator Initialize()
+    {
+        if (!sealedData)
         {
             sealedData = FindFirstObjectByType<SealedData>();
-            if (sealedData == null)
-            {
-                Debug.LogError("SealedData instance not found in the scene. Please ensure it is present.");
-                return;
-            }
         }
+
+        if (!dataManager)
+        {
+            dataManager = FindFirstObjectByType<DataManager>();
+        }
+
+        while (!sealedData || !dataManager || !dataManager.LoadingCompleted)
+        {
+            yield return null;
+        }
+
+        // how to wait until dataManager not null or loadData?
+        
+        BuildFundAdapter();
     }
-    void Awake()
-    {
-        Initialize();
-    }
-    
+
     public void BuildWeaponAdapter(int weaponType)
     {
         Clear(weaponContentParent);
-
+        var playerModel = dataManager.playerModel;
+        
         var defaultSelectedFirst = false;
         var index = 0;
-        foreach (WeaponBasicModel model in sealedData.WeaponBasics)
+
+        var sortedWeapon = sealedData.WeaponBasics.OrderBy<WeaponBasicModel, object>(w => w.WeaponPrice).ToList();
+        
+        foreach (WeaponBasicModel model in sortedWeapon)
         {
             // Check if the model's type matches the specified weapon type
+            
             if ((int)model.WeaponType == weaponType)
             {
                 //show 
                 var x = index;
-                GameObject itemView = Instantiate(contentPrefab, weaponContentParent);
+                var itemView = Instantiate(contentPrefab, weaponContentParent);
+                
+                var shopWeapon = playerModel.ShopWeapons[(int) model.weaponName-1];
+                itemView.transform.GetChild(2).gameObject.SetActive(shopWeapon is { IsUnlocked: true, IsPurchased: true });
+
                 if (itemView.transform.GetChild(0).TryGetComponent(out Image image))
                 {
                     image.sprite = model.SpriteReference;
@@ -95,7 +129,8 @@ public class ShopAdapter : MonoBehaviour
                 
                 if (itemView.TryGetComponent(out Widget.Button button))
                 {
-                    button.OnClick.AddListener((() => BuildWeaponStatsAdapter((int) model.WeaponEnum)));
+                    button.OnClick.RemoveAllListeners();
+                    button.OnClick.AddListener((() => BuildWeaponStatsAdapter((int) model.weaponName, itemView.transform)));
                     button.OnClick.AddListener((() => SetSelectionVisualize(x)));
                     if (!defaultSelectedFirst)
                     {
@@ -126,8 +161,14 @@ public class ShopAdapter : MonoBehaviour
             currentIndex++;
         }
     }
+
+    private void BuildFundAdapter()
+    {
+        moneyText.text = dataManager.playerModel.Funds.Money.ToString();
+        goldText.text = dataManager.playerModel.Funds.Gold.ToString();
+    }
     
-    public void BuildWeaponStatsAdapter(int weaponType)
+    public void BuildWeaponStatsAdapter(int weaponName, Transform content)
     {
         var maxDamage = 0;
         var maxAccuracy = 0.0f;
@@ -145,10 +186,15 @@ public class ShopAdapter : MonoBehaviour
             if (weapon.WeaponAttribute.Mobility > maxMobility) maxMobility = weapon.WeaponAttribute.Mobility;
             if(maxReloadSpeed > maxReloadTime) maxReloadSpeed = maxReloadTime;
         }
+        
+        weaponBuyButtonComponent.OnClick.RemoveAllListeners();
+        weaponCustomizeButtonComponent.OnClick.RemoveAllListeners();
+        weaponEquipButtonComponent.OnClick.RemoveAllListeners();
+        
         foreach (var weapon in sealedData.WeaponBasics)
         {
-            var type = (int) weapon.WeaponEnum;
-            if (type == weaponType)
+            var currentWeaponName = (int) weapon.weaponName;
+            if (currentWeaponName == weaponName)
             {
                 weaponTitleText.text = weapon.Name;
                 weaponPriceText.text = weapon.WeaponPrice.ToString();
@@ -177,9 +223,192 @@ public class ShopAdapter : MonoBehaviour
                 weaponStatsSlider4.value = reloadSpeedValue;
                 weaponStatsSlider5.value = mobilityValue;
                 
+                var playerModel = dataManager.playerModel;
+                var shopWeaponModel = playerModel.ShopWeapons[currentWeaponName-1];
+                
+                if (shopWeaponModel.IsUnlocked)
+                {
+                    if (shopWeaponModel.IsPurchased)
+                    {
+                        weaponPriceTextParent.gameObject.SetActive(false);
+                        weaponBuyButtonComponent.gameObject.SetActive(false);
+                        weaponEquipButtonComponent.gameObject.SetActive(true);
+                        weaponCustomizeButtonComponent.gameObject.SetActive(true);
+                        
+                        weaponEquipButtonComponent.OnClick.AddListener(() => BuildEquipmentScreen(weapon, true, new()));
+                        weaponCustomizeButtonComponent.OnClick.AddListener(() => BuildCustomizeScreen(weapon));
+                        
+                        content.GetChild(2).gameObject.SetActive(true);
+                        
+                        
+                    }
+                    else
+                    {
+                        weaponPriceTextParent.gameObject.SetActive(true);
+                        weaponBuyButtonComponent.gameObject.SetActive(true);
+                        weaponEquipButtonComponent.gameObject.SetActive(false);
+                        weaponCustomizeButtonComponent.gameObject.SetActive(false);
+
+                        if (weapon.WeaponPrice <= playerModel.Funds.Money)
+                        {
+                            weaponBuyButtonComponent.OnClick.AddListener(() => BuildBuyScreen(weapon, content));
+                        }
+                        else
+                        {
+                            weaponBuyButtonComponent.OnClick.AddListener((() => notEnoughMoneyScreen.gameObject.SetActive(true)));
+                        }
+                    }
+                }
+                else
+                {
+                    weaponPriceTextParent.gameObject.SetActive(false);
+                    weaponBuyButtonComponent.gameObject.SetActive(false);
+                    weaponEquipButtonComponent.gameObject.SetActive(false);
+                    weaponCustomizeButtonComponent.gameObject.SetActive(false);
+                }
             }
         }
     }
+
+    private void BuildEquipmentScreen(WeaponBasicModel basicModel, bool changeable, List<HolsterModel> fakeHolsterModels)
+    {
+        equipmentScreen.gameObject.SetActive(true);
+
+        List<HolsterModel> holsterModels = new();
+        if(changeable) holsterModels = dataManager.playerModel.Holster;
+        else holsterModels = fakeHolsterModels;
+        
+        var applyButton = equipmentScreen.GetChild(1).GetChild(1).GetComponent<Button>();
+        if(changeable) applyButton.onClick.RemoveAllListeners();
+
+        int slotIndex = 0;
+        foreach (var holsterModel in holsterModels)
+        {
+            if (holsterModel.IsLocked)
+            {
+                slotsButton[slotIndex].onClick.RemoveAllListeners();
+                slotsButton[slotIndex].transform.GetChild(0).gameObject.SetActive(false);
+                slotsButton[slotIndex].transform.GetChild(1).gameObject.SetActive(false);
+                slotsButton[slotIndex].transform.GetChild(2).gameObject.SetActive(true);
+            }
+            else if (holsterModel.IsOccupied)
+            {
+                slotsButton[slotIndex].onClick.RemoveAllListeners();
+                slotsButton[slotIndex].transform.GetChild(0).gameObject.SetActive(false);
+                slotsButton[slotIndex].transform.GetChild(1).gameObject.SetActive(true);
+                slotsButton[slotIndex].transform.GetChild(2).gameObject.SetActive(false);
+
+                var image = slotsButton[slotIndex].transform.GetChild(1).GetChild(0).GetComponent<Image>();
+                var currentBasicWeapon = sealedData.WeaponBasics[(int)holsterModel.EquipedWeapon.weaponName - 1];
+                image.sprite = currentBasicWeapon.SpriteReference;
+
+                if (changeable)
+                {
+                    var index = slotIndex;
+                    slotsButton[slotIndex].onClick.AddListener(() => Add(index, basicModel));
+                    slotsButton[slotIndex].transform.GetChild(0).GetChild(0).gameObject.SetActive(true);
+                    slotsButton[slotIndex].transform.GetChild(1).GetChild(2).gameObject.SetActive(true);
+                }
+                else
+                {
+                    slotsButton[slotIndex].transform.GetChild(0).GetChild(0).gameObject.SetActive(false);
+                    slotsButton[slotIndex].transform.GetChild(1).GetChild(2).gameObject.SetActive(false);
+                }
+            }
+            else
+            {
+                slotsButton[slotIndex].onClick.RemoveAllListeners();
+                slotsButton[slotIndex].transform.GetChild(0).gameObject.SetActive(true);
+                slotsButton[slotIndex].transform.GetChild(1).gameObject.SetActive(false);
+                slotsButton[slotIndex].transform.GetChild(2).gameObject.SetActive(false);
+
+                if (changeable)
+                {
+                    var index = slotIndex;
+                    slotsButton[slotIndex].onClick.AddListener(() => Add(index, basicModel));
+                    slotsButton[slotIndex].transform.GetChild(0).GetChild(0).gameObject.SetActive(true);
+                    slotsButton[slotIndex].transform.GetChild(1).GetChild(2).gameObject.SetActive(true);
+                }
+                else
+                {
+                    slotsButton[slotIndex].transform.GetChild(0).GetChild(0).gameObject.SetActive(false);
+                    slotsButton[slotIndex].transform.GetChild(1).GetChild(2).gameObject.SetActive(false);
+                }
+            }
+
+            slotIndex++;
+        }
+        
+        return;
+
+        void Add(int slotIndex, WeaponBasicModel  basicModel)
+        {
+            
+            PlayerModel playerModel = dataManager.playerModel;
+            EquipedWeaponModel equipedWeapon = new();
+            HolsterModel slot = new();
+            ShopWeaponModel shopWeapon =  playerModel.ShopWeapons[(int) basicModel.weaponName - 1];
+            
+            equipedWeapon.weaponName = basicModel.weaponName;
+            equipedWeapon.Suppressor = shopWeapon.Suppressor;
+            equipedWeapon.Sight = shopWeapon.Sight;
+            equipedWeapon.MagazineBulletCount = basicModel.WeaponAttribute.MagazineSize;
+            equipedWeapon.ID = UnityEngine.Random.Range(100000, 999999);
+
+            slot.EquipedWeapon = equipedWeapon;
+            slot.IsOccupied = true;
+            
+            applyButton.onClick.AddListener((() => Apply(slot, slotIndex)));
+            
+            List<HolsterModel> newHolster = dataManager.playerModel.Holster.ToList();
+            newHolster[slotIndex] = slot;
+            BuildEquipmentScreen(basicModel, false, newHolster);
+        }
+
+        void Apply(HolsterModel slot, int slotIndex)
+        {
+            PlayerModel playerModel = dataManager.playerModel;
+            playerModel.Holster[slotIndex] = slot;
+            DataProvider.SavePlayerData(playerModel);
+        }
+    }
+
+    private void BuildCustomizeScreen(WeaponBasicModel basicModel)
+    {
+        
+    }
+
+    private void BuildBuyScreen(WeaponBasicModel basicModel, Transform content)
+    {
+        buyScreen.gameObject.SetActive(true);
+        
+        buyButton.onClick.RemoveAllListeners();
+        buyButton.onClick.AddListener(Buy);
+        return;
+
+        void Buy()
+        {
+            var playerModel = dataManager.playerModel;
+            foreach (var shopWeapon in playerModel.ShopWeapons)
+            {
+                if (shopWeapon.weaponName == basicModel.weaponName)
+                {
+                    var leftoverMoney = playerModel.Funds.Money - basicModel.WeaponPrice;
+                    if (leftoverMoney >= 0)
+                    {
+                        playerModel.Funds.Money -= basicModel.WeaponPrice;
+                        shopWeapon.IsPurchased = true;
+                        Debug.Log($"Purchased: {shopWeapon.weaponName}    BasicModel: {basicModel.weaponName}");
+                    }
+                }
+            }
+            
+            dataManager.UpdatePlayerModel(playerModel);
+            BuildWeaponStatsAdapter((int)basicModel.weaponName, content);
+            BuildFundAdapter();
+        }
+    }
+    
     
     private static void Clear(Transform parent)
     {

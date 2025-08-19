@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Code.Scripts.Data.Language
@@ -11,9 +12,15 @@ namespace Code.Scripts.Data.Language
         /// <param name="key">The key for the translation.</param>
         /// <param name="languageCode">The language code to retrieve the translation for.</param>
         /// <returns>The translated string if found, otherwise returns the key.</returns>
-        public static string Get(string key, LanguageCode languageCode)
+        public static string Get(string key, LanguageCode languageCode, TranslationType translationType)
         {
-            var data = Data();
+            var data = translationType switch
+            {
+                TranslationType.Single => Data(),
+                TranslationType.Multi => DataMulti(),
+                _ => Array.Empty<DataModel>()
+            };
+
             var languageIndex = (int)languageCode;
             foreach (var item in data)
             {
@@ -99,6 +106,9 @@ namespace Code.Scripts.Data.Language
             // (56) "Game Over"
             // (57) "Victory"
             // (58) "Defeat"
+            // (59) "Apply"
+            
+            
             // (59) "Next"
             // (60) "Previous"
             // (61) "Select"
@@ -138,6 +148,13 @@ namespace Code.Scripts.Data.Language
             Malay,          // 17
             Uzbek,          // 18
             Brazilian,      // 19
+        }
+
+        public enum TranslationType
+        {
+            Single,
+            Multi,
+            Story
         }
 
         /// <summary>
@@ -1688,10 +1705,69 @@ namespace Code.Scripts.Data.Language
                     "Mag'lubiyat" // Uzbek
                 }
             };
+            
+            data[59] = new()
+            {
+                Key = "Apply",
+                Translated = new[]
+                {
+                    "Apply", // English
+                    "Aplicar", // Spanish
+                    "Appliquer", // French
+                    "Применить", // Russian
+                    "Übernehmen", // German
+                    "Applica", // Italian
+                    "Aplicar", // Portuguese
+                    "应用", // Chinese (Simplified)
+                    "適用", // Japanese
+                    "적용", // Korean
+                    "تطبيق", // Arabic
+                    "लागू करें", // Hindi
+                    "Ilapat", // Filipino
+                    "Uygula", // Turkish
+                    "Áp dụng", // Vietnamese
+                    "ใช้", // Thai
+                    "Terapkan", // Indonesian
+                    "Terapkan", // Malay
+                    "Qo'llash" // Uzbek
+                }
+            };
 
             return data;
         }
 
+        public static DataModel[] DataMulti()
+        {
+            DataModel[] data = new DataModel[50];
+            data[0] = new()
+            {
+                Key = "NotEnoughFunds",
+                Translated = new[]
+                {
+                    "Not enough funds", // English
+                    "Fondos insuficientes", // Spanish
+                    "Fonds insuffisants", // French
+                    "Недостаточно средств", // Russian
+                    "Nicht genug Guthaben", // German
+                    "Fondi insufficienti", // Italian
+                    "Fundos insuficientes", // Portuguese
+                    "资金不足", // Chinese
+                    "残高不足", // Japanese
+                    "잔액 부족", // Korean
+                    "أموال غير كافية", // Arabic
+                    "पर्याप्त धनराशि नहीं है", // Hindi
+                    "Hindi sapat na pondo", // Filipino
+                    "Yetersiz bakiye", // Turkish
+                    "Không đủ tiền", // Vietnamese
+                    "มีเงินไม่พอ", // Thai
+                    "Dana tidak cukup", // Indonesian
+                    "Dana tidak mencukupi", // Malay
+                    "Mablag' yetarli emas" // Uzbek
+                }
+            };
+
+            return data;
+        }
         public class DataModel
         {
             public string Key { get; set; }

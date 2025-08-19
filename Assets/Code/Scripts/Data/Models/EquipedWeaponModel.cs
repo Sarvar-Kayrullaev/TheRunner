@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Data
 {
@@ -7,9 +8,9 @@ namespace Data
     public class EquipedWeaponModel
     {
         public int ID;
-        public WeaponEnum WeaponEnum;
+        [FormerlySerializedAs("WeaponEnum")] public WeaponName weaponName;
         public int MagazineBulletCount;
-        public bool Suppressed;
-        public bool Scoped;
+        public SuppressorModel Suppressor;
+        public SightModel Sight;
     }
 }

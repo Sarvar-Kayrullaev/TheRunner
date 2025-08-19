@@ -12,6 +12,7 @@ namespace Data
         public BulletBagModel BulletBag;
         public int SelectedWeaponIndex;
         public List<HolsterModel> Holster = new();
+        public List<ShopWeaponModel>  ShopWeapons = new();
     }
 }
 

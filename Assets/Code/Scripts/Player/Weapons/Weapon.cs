@@ -5,18 +5,24 @@ using BotRoot;
 using UnityEngine;
 using Data;
 using Shader;
+using UnityEngine.Serialization;
 
 public class Weapon : MonoBehaviour
 {
-    [Header("Equipment")]
-    public Transform SuppressorTransform;
-    public Transform ScopeTransform;
-    [Header("EquipmentOptions")]
-    public bool isSilenced;
-    public bool isScoped;
+    [Header("Attachment Setup")]
+    public Transform SuppressorParentTransform;
+    public Transform SightParentTransform;
+    [Header("AttachmentOptions")]
+    public SuppressorModel suppressorModel;
+
+    public SightModel sightModel;
+    //
+    bool isScoped = false;
+    bool isSilenced = false;
+    
     [Space]
     public Animator animator;
-    public WeaponEnum WeaponEnum;
+    [FormerlySerializedAs("WeaponEnum")] public WeaponName weaponName;
     [HideInInspector] public WeaponType WeaponType;
     [SerializeField] Transform muzzleFlashPrefab;
     [SerializeField] Transform firePoint;
@@ -118,6 +124,7 @@ public class Weapon : MonoBehaviour
     {
         data = FindFirstObjectByType<StartData>();
         sealedData = FindFirstObjectByType<SealedData>();
+        
         CancelAim();
         camera = Camera.main;
         audio = GetComponent<AudioSource>();
@@ -125,6 +132,39 @@ public class Weapon : MonoBehaviour
         if (TryGetComponent(out Recoil recoil)) this.recoil = recoil;
         InvokeRepeating(nameof(Mark), 0, 0.2f);
         UpdateEquipment();
+    }
+
+    public void SetSuppressor(SuppressorModel suppressor)
+    {
+        SealedSuppressorModel sealedSuppressor = sealedData.Suppressors[(int) suppressor.Type-1];
+        suppressorModel = suppressor;
+        
+        if (sealedSuppressor.Type == SuppressorType.None)
+        {
+            isSilenced = false;
+            if(SuppressorParentTransform.GetChild(0)) Destroy(SuppressorParentTransform.GetChild(0).gameObject);
+        }
+        else
+        {
+            isSilenced = true;
+            GameObject suppressorObject = Instantiate(sealedSuppressor.Prefab, SuppressorParentTransform);
+        }
+    }
+
+    public void SetSight(SightModel sight)
+    {
+        SealedSightModel sealedSight = sealedData.Sights[(int) sight.Type-1];
+        sightModel = sight;
+        if (sealedSight.Type == SightType.IronSights)
+        {
+            isScoped = false;
+            if(SightParentTransform.GetChild(0) != null) Destroy(SightParentTransform.GetChild(0).gameObject);
+        }
+        else
+        {
+            isScoped = true;
+            GameObject sightObject = Instantiate(sealedSight.Prefab, SightParentTransform);
+        }
     }
     private void OnEnable()
     {
@@ -168,8 +208,8 @@ public class Weapon : MonoBehaviour
 
     public void UpdateEquipment()
     {
-        SuppressorTransform.gameObject.SetActive(isSilenced);
-        ScopeTransform.gameObject.SetActive(isScoped);
+        // SuppressorTransform.gameObject.SetActive();
+        // ScopeTransform.gameObject.SetActive(isScoped);
         CancelAim();
     }
     public void Aim(bool aiming)
@@ -183,6 +223,7 @@ public class Weapon : MonoBehaviour
         aim = aiming;
         crosshair.Aiming(aiming);
         animator.SetBool("Aim", aiming);
+        
         if(WeaponType == WeaponType.Sniper && isScoped) if(sniperFocus) sniperFocus.SetFocus(aiming);
     }
 
@@ -371,6 +412,7 @@ public class Weapon : MonoBehaviour
 
     public void ShootSound()
     {
+        
         if (beforeShooting)
         {
             if(isSilenced) audio.PlayOneShot(suppressedFireSounds[0], shootVolume);
@@ -414,7 +456,7 @@ public class Weapon : MonoBehaviour
 
     public int GetAllAmmo()
     {
-        WeaponType type = WeaponTypeConverter(WeaponEnum);
+        WeaponType type = WeaponTypeConverter(weaponName);
         if(type == WeaponType.Handgun) return data.PlayerData.BulletBag.PistolSize;
         if(type == WeaponType.Shotgun) return data.PlayerData.BulletBag.ShotgunSize;
         if(type == WeaponType.SMG) return data.PlayerData.BulletBag.SMGSize;
@@ -426,7 +468,7 @@ public class Weapon : MonoBehaviour
 
     public void SetAllAmmo(int value)
     {
-        WeaponType type = WeaponTypeConverter(WeaponEnum);
+        WeaponType type = WeaponTypeConverter(weaponName);
         if(type == WeaponType.Handgun) data.PlayerData.BulletBag.PistolSize = value;
         if(type == WeaponType.Shotgun) data.PlayerData.BulletBag.ShotgunSize = value;
         if(type == WeaponType.SMG) data.PlayerData.BulletBag.SMGSize = value;
@@ -435,11 +477,11 @@ public class Weapon : MonoBehaviour
         if(type == WeaponType.Machinegun) data.PlayerData.BulletBag.MashineGunSize = value;
     }
 
-    WeaponType WeaponTypeConverter(WeaponEnum weaponEnum)
+    WeaponType WeaponTypeConverter(WeaponName weaponName)
     {
         foreach (WeaponBasicModel weaponModel in sealedData.WeaponBasics)
         {
-            if(weaponModel.WeaponEnum == weaponEnum)
+            if(weaponModel.weaponName == weaponName)
             {
                 return weaponModel.WeaponType;
             }

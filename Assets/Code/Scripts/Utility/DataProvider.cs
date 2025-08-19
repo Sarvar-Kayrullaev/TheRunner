@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 using Code.Scripts.Data.Language;
 using Data;
 
@@ -23,6 +24,7 @@ public static class DataProvider
     {
         FileHandler.SaveToJSON(openWorldModel, OpenWorldFile);
     }
+
     public static SettingsModel LoadSettingsData()
     {
         if (FileHandler.Exists(SettingsFile))
@@ -60,6 +62,18 @@ public static class DataProvider
         }
     }
 
+    public static PlayerModel LoadPlayerData(PlayerModel defaultPlayerModel)
+    {
+        if (FileHandler.Exists(PlayerFile))
+        {
+            return FileHandler.ReadFromJSON<PlayerModel>(PlayerFile);
+        }
+        else
+        {
+            SavePlayerData(defaultPlayerModel);
+            return defaultPlayerModel;
+        }
+    }
     public static PlayerModel LoadPlayerData()
     {
         if (FileHandler.Exists(PlayerFile))
@@ -72,6 +86,7 @@ public static class DataProvider
             return new PlayerModel();
         }
     }
+    
 
     public static OpenWorldModel LoadOpenWorldData(OpenWorldModel startData)
     {

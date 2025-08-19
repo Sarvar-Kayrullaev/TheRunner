@@ -11,6 +11,7 @@ public class LanguageAdapter : MonoBehaviour
 {
     [SerializeField] private FontType fontType;
     [SerializeField] private FontStyle fontStyle;
+    [SerializeField] private Language.TranslationType  translationType;
     [SerializeField] private string key;
 
     private FontAdapter _fontAdapter;
@@ -40,7 +41,7 @@ public class LanguageAdapter : MonoBehaviour
 
         // Once the font is loaded, continue
         _text.font = requiredFont;
-        _text.text = Language.Get(key, languageCode);
+        _text.text = Language.Get(key, languageCode, translationType);
         
         Debug.Log("");
     }

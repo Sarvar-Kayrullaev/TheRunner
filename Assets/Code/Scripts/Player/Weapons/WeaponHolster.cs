@@ -102,9 +102,9 @@ public class WeaponHolster : MonoBehaviour
         weapon.forward = forward;
         weapon.currentAmmo = equipedWeapon.MagazineBulletCount;
         weapon.sniperFocus = sniperFocus;
-        weapon.WeaponType = WeaponTypeConverter(equipedWeapon.WeaponEnum);
-        weapon.isScoped = equipedWeapon.Scoped;
-        weapon.isSilenced = equipedWeapon.Suppressed;
+        weapon.WeaponType = WeaponTypeConverter(equipedWeapon.weaponName);
+        weapon.SetSight(equipedWeapon.Sight);
+        weapon.SetSuppressor(equipedWeapon.Suppressor);
         crosshair.weapon = weapon;
         crosshair.restingSize = weapon.restingAccuracy;
         crosshair.shootSize = weapon.shootAccuracy;
@@ -117,7 +117,7 @@ public class WeaponHolster : MonoBehaviour
         recoil.RecoilRotationTranform = recoilRotation;
         weapon.forceDraw = true;
 
-        RebuildBulletText(equipedWeapon.WeaponEnum);
+        RebuildBulletText(equipedWeapon.weaponName);
 
         RebuildBullet(weapon.currentAmmo, weapon.magazineSize);
     }
@@ -125,9 +125,9 @@ public class WeaponHolster : MonoBehaviour
     public void RedrawWeapon()
     {
         EquipedWeaponModel equipedWeapon = data.PlayerData.Holster[data.PlayerData.SelectedWeaponIndex].EquipedWeapon;
-        if(equipedWeapon.WeaponEnum == WeaponEnum.NONE) return;
+        if(equipedWeapon.weaponName == WeaponName.NONE) return;
         if (transform.childCount > 0) Destroy(transform.GetChild(0).gameObject);
-        GameObject insWeapon = Instantiate(sealedData.GetWeaponBasicModelByName(equipedWeapon.WeaponEnum).WeaponPrefab, transform);
+        GameObject insWeapon = Instantiate(sealedData.GetWeaponBasicModelByName(equipedWeapon.weaponName).WeaponPrefab, transform);
         Weapon weapon = insWeapon.GetComponent<Weapon>();
         Animator insWeaponAnimator = insWeapon.GetComponent<Animator>();
         insWeaponAnimator.Play("ForceDraw");
@@ -142,9 +142,9 @@ public class WeaponHolster : MonoBehaviour
         weapon.forward = forward;
         weapon.currentAmmo = equipedWeapon.MagazineBulletCount;
         weapon.sniperFocus = sniperFocus;
-        weapon.WeaponType = WeaponTypeConverter(equipedWeapon.WeaponEnum);
-        weapon.isScoped = equipedWeapon.Scoped;
-        weapon.isSilenced = equipedWeapon.Suppressed;
+        weapon.WeaponType = WeaponTypeConverter(equipedWeapon.weaponName);
+        weapon.SetSight(equipedWeapon.Sight);
+        weapon.SetSuppressor(equipedWeapon.Suppressor);
         crosshair.weapon = weapon;
         crosshair.restingSize = weapon.restingAccuracy;
         crosshair.shootSize = weapon.shootAccuracy;
@@ -157,7 +157,7 @@ public class WeaponHolster : MonoBehaviour
         recoil.RecoilRotationTranform = recoilRotation;
         weapon.forceDraw = true;
 
-        RebuildBulletText(equipedWeapon.WeaponEnum);
+        RebuildBulletText(equipedWeapon.weaponName);
 
         RebuildBullet(weapon.currentAmmo, weapon.magazineSize);
         weapon.released = true;
@@ -168,7 +168,7 @@ public class WeaponHolster : MonoBehaviour
         if (transform.childCount > 0) Destroy(transform.GetChild(0).gameObject);
         CurrentWeaponID = 0;
 
-        RebuildBulletText(WeaponEnum.NONE);
+        RebuildBulletText(WeaponName.NONE);
 
         RebuildBullet(0, 0);
     }
@@ -184,9 +184,9 @@ public class WeaponHolster : MonoBehaviour
         ammoBag.Build(currentAmmo, magazineSize);
     }
 
-    public void RebuildBulletText(WeaponEnum weaponEnum)
+    public void RebuildBulletText(WeaponName weaponName)
     {
-        WeaponType type = WeaponTypeConverter(weaponEnum);
+        WeaponType type = WeaponTypeConverter(weaponName);
         if (type == WeaponType.Handgun) ammoBagText.text = "" + data.PlayerData.BulletBag.PistolSize;
         else if (type == WeaponType.Shotgun) ammoBagText.text = "" + data.PlayerData.BulletBag.ShotgunSize;
         else if (type == WeaponType.SMG) ammoBagText.text = "" + data.PlayerData.BulletBag.SMGSize;
@@ -196,11 +196,11 @@ public class WeaponHolster : MonoBehaviour
         else ammoBagText.text = "0";
     }
 
-    WeaponType WeaponTypeConverter(WeaponEnum weaponEnum)
+    WeaponType WeaponTypeConverter(WeaponName weaponName)
     {
         foreach (WeaponBasicModel weaponModel in sealedData.WeaponBasics)
         {
-            if (weaponModel.WeaponEnum == weaponEnum)
+            if (weaponModel.weaponName == weaponName)
             {
                 return weaponModel.WeaponType;
             }

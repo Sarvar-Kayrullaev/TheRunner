@@ -113,8 +113,8 @@ public class HolsterManager : MonoBehaviour
         {
             //if (index > 1) return;
             index++;
-            WeaponBasicModel weaponBasic = GetWeaponBasic(sealedData.WeaponBasics, slot.EquipedWeapon.WeaponEnum);
-            bool noWeapon = slot.EquipedWeapon.WeaponEnum == WeaponEnum.NONE;
+            WeaponBasicModel weaponBasic = GetWeaponBasic(sealedData.WeaponBasics, slot.EquipedWeapon.weaponName);
+            bool noWeapon = slot.EquipedWeapon.weaponName == WeaponName.NONE;
             bool isSelected = SelectedWeaponIndex == index - 1;
             if (isSelected & !noWeapon) weaponHolster.DrawWeapon(weaponBasic.WeaponPrefab);
             else if(isSelected & noWeapon) weaponHolster.DrawHand();
@@ -170,7 +170,7 @@ public class HolsterManager : MonoBehaviour
         {
             if(index == data.PlayerData.SelectedWeaponIndex) selectionColor = SelectedColor;
             else selectionColor = UnselectedColor;
-            wheelSlots[index].Rebuild(slot, GetWeaponBasic(sealedData.WeaponBasics, slot.EquipedWeapon.WeaponEnum), this, selectionColor);
+            wheelSlots[index].Rebuild(slot, GetWeaponBasic(sealedData.WeaponBasics, slot.EquipedWeapon.weaponName), this, selectionColor);
             index++;
         }
         RebuildHolsterCursor();
@@ -188,7 +188,7 @@ public class HolsterManager : MonoBehaviour
     {
         SaveCurrentWeaponParams();
         HolsterModel slot = data.PlayerData.Holster[index];
-        bool noWeapon = slot.EquipedWeapon.WeaponEnum == WeaponEnum.NONE;
+        bool noWeapon = slot.EquipedWeapon.weaponName == WeaponName.NONE;
         if (noWeapon) return;
         data.PlayerData.SelectedWeaponIndex = index;
         RebuildFastHolster(data.PlayerData.Holster);
@@ -202,14 +202,14 @@ public class HolsterManager : MonoBehaviour
         {
             EquipedWeaponModel equipedWeapon = data.PlayerData.Holster[data.PlayerData.SelectedWeaponIndex].EquipedWeapon;
             equipedWeapon.MagazineBulletCount = weaponHolster.currentWeapon.currentAmmo;
-            equipedWeapon.Scoped = weaponHolster.currentWeapon.isScoped;
-            equipedWeapon.Suppressed = weaponHolster.currentWeapon.isSilenced;
+            equipedWeapon.Sight = weaponHolster.currentWeapon.sightModel;
+            equipedWeapon.Suppressor = weaponHolster.currentWeapon.suppressorModel;
         }
     }
 
     public void WeaponThrow(HolsterModel holster, int CurrentAmmoSize)
     {
-        WeaponBasicModel weaponBasic = GetWeaponBasic(sealedData.WeaponBasics, holster.EquipedWeapon.WeaponEnum);
+        WeaponBasicModel weaponBasic = GetWeaponBasic(sealedData.WeaponBasics, holster.EquipedWeapon.weaponName);
 
         Quaternion initialRotation = WeaponThrowPoint.rotation;
         Quaternion randomRotation = Random.rotation;
@@ -227,17 +227,17 @@ public class HolsterManager : MonoBehaviour
             dragable.CurrentAmmoSize = CurrentAmmoSize;
             dragable.Bullets = 0;
             dragable.IsThrowed = true;
-            dragable.Suppressed = holster.EquipedWeapon.Suppressed;
-            dragable.Scoped = holster.EquipedWeapon.Scoped;
+            dragable.SuppressorModel = holster.EquipedWeapon.Suppressor;
+            dragable.SightModel = holster.EquipedWeapon.Sight;
         }
 
         /*Reset Holster Data*/
         holster.IsOccupied = false;
         holster.EquipedWeapon.ID = 0;
-        holster.EquipedWeapon.WeaponEnum = WeaponEnum.NONE;
+        holster.EquipedWeapon.weaponName = WeaponName.NONE;
         holster.EquipedWeapon.MagazineBulletCount = 0;
-        holster.EquipedWeapon.Suppressed = false;
-        holster.EquipedWeapon.Scoped = false;
+        holster.EquipedWeapon.Suppressor = new SuppressorModel();
+        holster.EquipedWeapon.Sight = new SightModel();
     }
 
     List<InvertorySlot> WeaponWheelSlots()
@@ -250,11 +250,11 @@ public class HolsterManager : MonoBehaviour
         return list;
     }
 
-    WeaponBasicModel GetWeaponBasic(List<WeaponBasicModel> WeaponBasics, WeaponEnum WeaponEnum)
+    WeaponBasicModel GetWeaponBasic(List<WeaponBasicModel> WeaponBasics, WeaponName weaponName)
     {
         foreach (WeaponBasicModel weaponBasic in WeaponBasics)
         {
-            if (weaponBasic.WeaponEnum == WeaponEnum) return weaponBasic;
+            if (weaponBasic.weaponName == weaponName) return weaponBasic;
         }
         return null;
     }

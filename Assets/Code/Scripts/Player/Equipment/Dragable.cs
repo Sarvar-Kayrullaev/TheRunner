@@ -11,8 +11,8 @@ public class Dragable : MonoBehaviour
     public int ID;
     public int CurrentAmmoSize;
     public int Bullets;
-    public bool Suppressed = false;
-    public bool Scoped = false;
+    public SuppressorModel SuppressorModel;
+    public SightModel SightModel;
 
     [Space][Header("Dragable Params")]
     public float listenerDistance;
@@ -75,7 +75,7 @@ public class Dragable : MonoBehaviour
         if (Bullets <= 0) return;
         if (Prefab.TryGetComponent(out Weapon weapon))
         {
-            WeaponType weaponType = WeaponTypeConverter(weapon.WeaponEnum);
+            WeaponType weaponType = WeaponTypeConverter(weapon.weaponName);
             int bulletBagLevel = data.PlayerData.PlayerAbility.BulletBagLevel;
             if (weaponType == WeaponType.Handgun)
             {
@@ -197,15 +197,15 @@ public class Dragable : MonoBehaviour
                 data.PlayerData.BulletBag.MashineGunSize = result;
                 playerAudio.audio.PlayOneShot(playerAudio.CLIP_PICK_AMMO, playerAudio.Volume);
             }
-            if (weaponHolster.currentWeapon) weaponHolster.RebuildBulletText(weaponHolster.currentWeapon.WeaponEnum);
+            if (weaponHolster.currentWeapon) weaponHolster.RebuildBulletText(weaponHolster.currentWeapon.weaponName);
         }
     }
 
-    WeaponType WeaponTypeConverter(WeaponEnum weaponEnum)
+    WeaponType WeaponTypeConverter(WeaponName weaponName)
     {
         foreach (WeaponBasicModel weaponModel in sealedData.WeaponBasics)
         {
-            if (weaponModel.WeaponEnum == weaponEnum)
+            if (weaponModel.weaponName == weaponName)
             {
                 return weaponModel.WeaponType;
             }

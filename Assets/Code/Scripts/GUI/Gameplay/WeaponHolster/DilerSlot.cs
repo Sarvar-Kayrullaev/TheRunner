@@ -34,8 +34,8 @@ public class DilerSlot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     public void Rebuild(HolsterModel holster, WeaponBasicModel weaponBasicModel, HolsterManager manager, DragableWeapon dragableWeapon, Dragable dragable)
     {
         if(isDragging) return;
-        if(holster.EquipedWeapon.WeaponEnum != WeaponEnum.NONE) this.Image.sprite = weaponBasicModel.SpriteReference;
-        if(holster.EquipedWeapon.WeaponEnum != WeaponEnum.NONE) this.Name.text = weaponBasicModel.Name;
+        if(holster.EquipedWeapon.weaponName != WeaponName.NONE) this.Image.sprite = weaponBasicModel.SpriteReference;
+        if(holster.EquipedWeapon.weaponName != WeaponName.NONE) this.Name.text = weaponBasicModel.Name;
         this.Manager = manager;
         this.holsterModel = holster;
         this.weaponBasic = weaponBasicModel;
@@ -114,10 +114,10 @@ public class DilerSlot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
                     ///change
                     otherInventory.holsterModel.IsOccupied = true;
                     otherInventory.holsterModel.EquipedWeapon.ID = holsterModel.EquipedWeapon.ID;
-                    otherInventory.holsterModel.EquipedWeapon.WeaponEnum = holsterModel.EquipedWeapon.WeaponEnum;
+                    otherInventory.holsterModel.EquipedWeapon.weaponName = holsterModel.EquipedWeapon.weaponName;
                     otherInventory.holsterModel.EquipedWeapon.MagazineBulletCount = holsterModel.EquipedWeapon.MagazineBulletCount;
-                    otherInventory.holsterModel.EquipedWeapon.Suppressed = holsterModel.EquipedWeapon.Suppressed;
-                    otherInventory.holsterModel.EquipedWeapon.Scoped = holsterModel.EquipedWeapon.Scoped;
+                    otherInventory.holsterModel.EquipedWeapon.Suppressor = holsterModel.EquipedWeapon.Suppressor;
+                    otherInventory.holsterModel.EquipedWeapon.Sight = holsterModel.EquipedWeapon.Sight;
                     dragableWeapon.PickSoundEffect();
                 }
                 else
@@ -129,17 +129,17 @@ public class DilerSlot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 
                     otherClone.EquipedWeapon = new();
                     otherClone.EquipedWeapon.ID = otherInventory.holsterModel.EquipedWeapon.ID;
-                    otherClone.EquipedWeapon.WeaponEnum = otherInventory.holsterModel.EquipedWeapon.WeaponEnum;
+                    otherClone.EquipedWeapon.weaponName = otherInventory.holsterModel.EquipedWeapon.weaponName;
                     otherClone.EquipedWeapon.MagazineBulletCount = otherInventory.holsterModel.EquipedWeapon.MagazineBulletCount;
-                    otherClone.EquipedWeapon.Suppressed = otherInventory.holsterModel.EquipedWeapon.Suppressed;
-                    otherClone.EquipedWeapon.Scoped = otherInventory.holsterModel.EquipedWeapon.Scoped;
+                    otherClone.EquipedWeapon.Suppressor = otherInventory.holsterModel.EquipedWeapon.Suppressor;
+                    otherClone.EquipedWeapon.Sight = otherInventory.holsterModel.EquipedWeapon.Sight;
 
                     otherInventory.holsterModel.IsOccupied = true;
                     otherInventory.holsterModel.EquipedWeapon.ID = holsterModel.EquipedWeapon.ID;
-                    otherInventory.holsterModel.EquipedWeapon.WeaponEnum = holsterModel.EquipedWeapon.WeaponEnum;
+                    otherInventory.holsterModel.EquipedWeapon.weaponName = holsterModel.EquipedWeapon.weaponName;
                     otherInventory.holsterModel.EquipedWeapon.MagazineBulletCount = holsterModel.EquipedWeapon.MagazineBulletCount;
-                    otherInventory.holsterModel.EquipedWeapon.Suppressed = holsterModel.EquipedWeapon.Suppressed;
-                    otherInventory.holsterModel.EquipedWeapon.Scoped = holsterModel.EquipedWeapon.Scoped;
+                    otherInventory.holsterModel.EquipedWeapon.Suppressor = holsterModel.EquipedWeapon.Suppressor;
+                    otherInventory.holsterModel.EquipedWeapon.Sight = holsterModel.EquipedWeapon.Sight;
                     dragableWeapon.PickSoundEffect();
                     if (data.PlayerData.SelectedWeaponIndex == otherClone.Index && weaponHolster.currentWeapon) Manager.WeaponThrow(otherClone, weaponHolster.currentWeapon.currentAmmo);
                     else Manager.WeaponThrow(otherClone, otherClone.EquipedWeapon.MagazineBulletCount);

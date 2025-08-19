@@ -1,5 +1,7 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
+
 namespace Data
 {
     [Serializable]
@@ -7,9 +9,8 @@ namespace Data
     {
         public int ID;
         public string Name;
-        public WeaponEnum WeaponEnum;
+        [FormerlySerializedAs("WeaponEnum")] public WeaponName weaponName;
         public WeaponType WeaponType;
-        public ScopeType ScopeType;
         public SuppressorType SuppressorType;
         public int WeaponPrice;
         public Sprite SpriteReference;

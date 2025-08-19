@@ -36,6 +36,8 @@ namespace Data
             SealedData inspector = (SealedData)target;
             
             EditorGUILayout.PropertyField(serializedObject.FindProperty("WeaponBasics"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("Sights"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("Suppressors"));
             serializedObject.ApplyModifiedProperties();
         }
 

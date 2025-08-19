@@ -13,7 +13,7 @@ public class DragableWeapon : MonoBehaviour
     Dragable dragable;
     SealedData sealedData;
     WeaponHolster weaponHolster;
-    WeaponEnum weaponEnum;
+    WeaponName _weaponName;
     StartData data;
     PlayerAudio playerAudio;
     DilerSlot diler;
@@ -47,7 +47,7 @@ public class DragableWeapon : MonoBehaviour
         if(SecondDragableWeaponGUI.TryGetComponent(out DilerSlot diler)) this.diler = diler;
         if (dragable.Prefab.TryGetComponent(out Weapon _weaponComponent)) weaponComponent = _weaponComponent;
         
-        weaponEnum = weaponComponent.WeaponEnum;
+        _weaponName = weaponComponent.weaponName;
         enabled = true;
         this.dragable = dragable;
         DragableWeaponGUI.SetActive(true);
@@ -61,10 +61,10 @@ public class DragableWeapon : MonoBehaviour
         HolsterModel newHolster = new();
         newHolster.EquipedWeapon = new();
         newHolster.EquipedWeapon.ID = dragable.ID;
-        newHolster.EquipedWeapon.WeaponEnum = weaponEnum;
+        newHolster.EquipedWeapon.weaponName = _weaponName;
         newHolster.EquipedWeapon.MagazineBulletCount = dragable.CurrentAmmoSize;
-        newHolster.EquipedWeapon.Suppressed = dragable.Suppressed;
-        newHolster.EquipedWeapon.Scoped = dragable.Scoped;
+        newHolster.EquipedWeapon.Suppressor = dragable.SuppressorModel;
+        newHolster.EquipedWeapon.Sight = dragable.SightModel;
         diler.Rebuild(newHolster, weaponModel, holsterManager,this, dragable);
     }
 
@@ -82,15 +82,15 @@ public class DragableWeapon : MonoBehaviour
         }
         PickSoundEffect();
         Weapon weapon = dragable.Prefab.GetComponent<Weapon>();
-        slot.EquipedWeapon.WeaponEnum = weapon.WeaponEnum;
-        slot.EquipedWeapon.Suppressed = dragable.Suppressed;
-        slot.EquipedWeapon.Scoped = dragable.Scoped;
+        slot.EquipedWeapon.weaponName = weapon.weaponName;
+        slot.EquipedWeapon.Suppressor = dragable.SuppressorModel;
+        slot.EquipedWeapon.Sight = dragable.SightModel;
         slot.EquipedWeapon.MagazineBulletCount = dragable.CurrentAmmoSize;
         slot.EquipedWeapon.ID = dragable.ID;
         slot.IsOccupied = true;
 
-        weapon.isScoped = slot.EquipedWeapon.Scoped;
-        weapon.isSilenced = slot.EquipedWeapon.Suppressed;
+        weapon.SetSight(slot.EquipedWeapon.Sight);
+        weapon.SetSuppressor(slot.EquipedWeapon.Suppressor);
 
         holsterManager.RebuildFastHolster(data.PlayerData.Holster);
         holsterManager.RebuildWheelHolster(data.PlayerData.Holster);
@@ -114,15 +114,15 @@ public class DragableWeapon : MonoBehaviour
                 Debug.Log("Pick");
                 playerAudio.audio.PlayOneShot(playerAudio.CLIP_PICK_WEAPON, playerAudio.Volume);
                 Weapon weapon = dragable.Prefab.GetComponent<Weapon>();
-                slot.EquipedWeapon.WeaponEnum = weapon.WeaponEnum;
-                slot.EquipedWeapon.Suppressed = dragable.Suppressed;
-                slot.EquipedWeapon.Scoped = dragable.Scoped;
+                slot.EquipedWeapon.weaponName = weapon.weaponName;
+                slot.EquipedWeapon.Suppressor = dragable.SuppressorModel;
+                slot.EquipedWeapon.Sight = dragable.SightModel;
                 slot.EquipedWeapon.MagazineBulletCount = dragable.CurrentAmmoSize;
                 slot.EquipedWeapon.ID = dragable.ID;
                 slot.IsOccupied = true;
-
-                weapon.isScoped = slot.EquipedWeapon.Scoped;
-                weapon.isSilenced = slot.EquipedWeapon.Suppressed;
+                
+                weapon.SetSight(slot.EquipedWeapon.Sight);
+                weapon.SetSuppressor(slot.EquipedWeapon.Suppressor);
 
                 holsterManager.RebuildFastHolster(data.PlayerData.Holster);
                 holsterManager.RebuildWheelHolster(data.PlayerData.Holster);
@@ -152,7 +152,7 @@ public class DragableWeapon : MonoBehaviour
     {
         foreach (WeaponBasicModel item in list)
         {
-            if (item.WeaponEnum == weaponEnum)
+            if (item.weaponName == _weaponName)
             {
                 return item;
             }

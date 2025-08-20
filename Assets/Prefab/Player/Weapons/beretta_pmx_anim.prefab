@@ -659,18 +659,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c6583d5551f01747a0d351284723792, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SuppressorTransform: {fileID: 5150554289768631382}
-  ScopeTransform: {fileID: 6189299458019560774}
-  isSilenced: 0
-  isScoped: 0
+  SuppressorParentTransform: {fileID: 5150554289768631382}
+  SightParentTransform: {fileID: 6189299458019560774}
+  suppressorModel:
+    Type: 0
+    Equipped: 0
+  sightModel:
+    Type: 0
+    Equipped: 0
   animator: {fileID: 7738706554201676290}
-  WeaponEnum: 6
+  weaponName: 10
   WeaponType: 0
   muzzleFlashPrefab: {fileID: 1677726478405220394, guid: 1037da0d52baac74aba8233bbb08d75c,
     type: 3}
   firePoint: {fileID: 8969903473731534935}
   bullerPrefab: {fileID: 4376158771152645511, guid: 880d8d1bc8f99f74e973b52a1f87bde7,
     type: 3}
+  ironSightPrefab: {fileID: 0}
   damage: 10
   autoReload: 1
   FOV: 60
@@ -701,8 +706,8 @@ MonoBehaviour:
   obstacleMask:
     serializedVersion: 2
     m_Bits: 128
-  markDistance: 100
-  markAngle: 2
+  markDistance: 300
+  markAngle: 25
   markingTime: 1
   markSound: {fileID: 8300000, guid: 5bdfa1b108975ee4d941ae02da02f313, type: 3}
   hitableLayer:

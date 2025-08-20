@@ -52,7 +52,7 @@ namespace Environment
             if(fractured) return;
             FracturedPrefab.transform.localScale = transform.parent.localScale;
             Instantiate(FracturedPrefab, transform.parent.position, transform.parent.rotation);
-            Debug.Log("Fractued");
+            //Debug.Log("Fractued");
             Destroy(transform.parent.gameObject);
             fractured = true;
         }

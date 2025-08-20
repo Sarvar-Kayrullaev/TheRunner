@@ -18,7 +18,7 @@ public class DilerSlot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 
     private bool isPressing = false;
     public bool isDragging = false;
-    StartData data;
+    private DataManager dataManager;
     WeaponBasicModel weaponBasic;
     [HideInInspector] public HolsterModel holsterModel;
     WeaponHolster weaponHolster;
@@ -27,7 +27,7 @@ public class DilerSlot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 
     void Start()
     {
-        data = FindFirstObjectByType<StartData>();
+        dataManager = FindFirstObjectByType<DataManager>();
         weaponHolster = FindFirstObjectByType<WeaponHolster>();
     }
 
@@ -93,7 +93,7 @@ public class DilerSlot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     {
         if(!isDragging) return;
         GameObject hitObject = eventData.pointerCurrentRaycast.gameObject;
-        float SelectedIndex = data.PlayerData.SelectedWeaponIndex;
+        float SelectedIndex = dataManager.playerModel.SelectedWeaponIndex;
         if(hitObject == null)
         {
             Debug.Log("No Picked");
@@ -141,11 +141,11 @@ public class DilerSlot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
                     otherInventory.holsterModel.EquipedWeapon.Suppressor = holsterModel.EquipedWeapon.Suppressor;
                     otherInventory.holsterModel.EquipedWeapon.Sight = holsterModel.EquipedWeapon.Sight;
                     dragableWeapon.PickSoundEffect();
-                    if (data.PlayerData.SelectedWeaponIndex == otherClone.Index && weaponHolster.currentWeapon) Manager.WeaponThrow(otherClone, weaponHolster.currentWeapon.currentAmmo);
+                    if (dataManager.playerModel.SelectedWeaponIndex == otherClone.Index && weaponHolster.currentWeapon) Manager.WeaponThrow(otherClone, weaponHolster.currentWeapon.currentAmmo);
                     else Manager.WeaponThrow(otherClone, otherClone.EquipedWeapon.MagazineBulletCount);
                 }
-                Manager.RebuildFastHolster(data.PlayerData.Holster);
-                Manager.RebuildWheelHolster(data.PlayerData.Holster);
+                Manager.RebuildFastHolster(dataManager.playerModel.Holster);
+                Manager.RebuildWheelHolster(dataManager.playerModel.Holster);
                 Destroy(dragable.gameObject);
                 dragableWeapon.Close();
                 Debug.Log("Dropped: " + hitObject.name);
@@ -169,8 +169,8 @@ public class DilerSlot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         }
 
         if (Manager.draggingObject) Destroy(Manager.draggingObject);
-        Manager.RebuildFastHolster(data.PlayerData.Holster);
-        Manager.RebuildWheelHolster(data.PlayerData.Holster);
+        Manager.RebuildFastHolster(dataManager.playerModel.Holster);
+        Manager.RebuildWheelHolster(dataManager.playerModel.Holster);
     }
 
 

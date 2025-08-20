@@ -56,7 +56,7 @@ public class AdvancedChunk : MonoBehaviour
                 updateFrame = 60;
                 stopwatch.Stop();
                 long elapsedMs = stopwatch.ElapsedMilliseconds;
-                Debug.Log($"Time: {elapsedMs} ms");
+                //Debug.Log($"Time: {elapsedMs} ms");
             }
 
             //
@@ -98,7 +98,7 @@ public class AdvancedChunk : MonoBehaviour
 
         if (parent.GetInstanceID() == transform.GetInstanceID())
         {
-            Debug.Log("TRACKED: " + trackedChunks);
+            //Debug.Log("TRACKED: " + trackedChunks);
         }
     }
 
@@ -144,7 +144,7 @@ public class AdvancedChunk : MonoBehaviour
             }
             else
             {
-                Debug.Log("current Layer: " + currentLayer);
+                //Debug.Log("current Layer: " + currentLayer);
                 return GetClosestChunk(target, closestChunk);
             }
         }

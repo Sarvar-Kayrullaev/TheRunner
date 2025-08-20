@@ -70,12 +70,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DragableType: 1
-  Prefab: {fileID: 7009115725495146762, guid: deacad9192b3a8f42a4e1b94be2f3510, type: 3}
+  Prefab: {fileID: 3949257630490303170, guid: dea77ce2b2f92a342897500e30ba29ca, type: 3}
   ID: 0
   CurrentAmmoSize: 30
   Bullets: 0
-  Suppressed: 0
-  Scoped: 0
+  SuppressorModel:
+    Type: 0
+    Equipped: 0
+  SightModel:
+    Type: 0
+    Equipped: 0
   listenerDistance: 2
   player: {fileID: 0}
   IsThrowed: 0

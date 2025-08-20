@@ -12,9 +12,9 @@ public class DragableWeapon : MonoBehaviour
     HolsterManager holsterManager;
     Dragable dragable;
     SealedData sealedData;
+    DataManager dataManager;
     WeaponHolster weaponHolster;
     WeaponName _weaponName;
-    StartData data;
     PlayerAudio playerAudio;
     DilerSlot diler;
     Weapon weaponComponent;
@@ -26,8 +26,8 @@ public class DragableWeapon : MonoBehaviour
 
     void Awake()
     {
+        dataManager = FindFirstObjectByType<DataManager>();
         sealedData = FindFirstObjectByType<SealedData>();
-        data = FindFirstObjectByType<StartData>();
         holsterManager = FindFirstObjectByType<HolsterManager>();
         weaponHolster = FindFirstObjectByType<WeaponHolster>();
         playerAudio = FindFirstObjectByType<PlayerAudio>();
@@ -70,14 +70,14 @@ public class DragableWeapon : MonoBehaviour
 
     public void Pick(int slotIndex)
     {
-        HolsterModel slot = data.PlayerData.Holster[slotIndex];
+        HolsterModel slot = dataManager.playerModel.Holster[slotIndex];
         if (slot.IsLocked) return;
 
         Debug.Log("Pick");
 
         if (slot.IsOccupied)
         {
-            if (data.PlayerData.SelectedWeaponIndex == slotIndex) holsterManager.WeaponThrow(slot, weaponHolster.currentWeapon.currentAmmo);
+            if (dataManager.playerModel.SelectedWeaponIndex == slotIndex) holsterManager.WeaponThrow(slot, weaponHolster.currentWeapon.currentAmmo);
             else holsterManager.WeaponThrow(slot, slot.EquipedWeapon.MagazineBulletCount);
         }
         PickSoundEffect();
@@ -92,8 +92,8 @@ public class DragableWeapon : MonoBehaviour
         weapon.SetSight(slot.EquipedWeapon.Sight);
         weapon.SetSuppressor(slot.EquipedWeapon.Suppressor);
 
-        holsterManager.RebuildFastHolster(data.PlayerData.Holster);
-        holsterManager.RebuildWheelHolster(data.PlayerData.Holster);
+        holsterManager.RebuildFastHolster(dataManager.playerModel.Holster);
+        holsterManager.RebuildWheelHolster(dataManager.playerModel.Holster);
         Destroy(dragable.gameObject);
         Close();
     }
@@ -106,7 +106,7 @@ public class DragableWeapon : MonoBehaviour
     public void PickToEmty()
     {
         int index = 0;
-        foreach (HolsterModel slot in data.PlayerData.Holster)
+        foreach (HolsterModel slot in dataManager.playerModel.Holster)
         {
             index++;
             if(!slot.IsLocked && !slot.IsOccupied)
@@ -120,19 +120,22 @@ public class DragableWeapon : MonoBehaviour
                 slot.EquipedWeapon.MagazineBulletCount = dragable.CurrentAmmoSize;
                 slot.EquipedWeapon.ID = dragable.ID;
                 slot.IsOccupied = true;
+                dataManager.playerModel.Holster[index-1] = slot;
+                
+                dataManager.UpdatePlayerModel(dataManager.playerModel); // Data Saved
                 
                 weapon.SetSight(slot.EquipedWeapon.Sight);
                 weapon.SetSuppressor(slot.EquipedWeapon.Suppressor);
 
-                holsterManager.RebuildFastHolster(data.PlayerData.Holster);
-                holsterManager.RebuildWheelHolster(data.PlayerData.Holster);
+                holsterManager.RebuildFastHolster(dataManager.playerModel.Holster);
+                holsterManager.RebuildWheelHolster(dataManager.playerModel.Holster);
                 Destroy(dragable.gameObject);
                 Close();
                 break;
             }
             else
             {
-                if(index == data.PlayerData.Holster.Count)
+                if(index == dataManager.playerModel.Holster.Count)
                 {
                     //The slot is full
                     playerAudio.audio.PlayOneShot(playerAudio.CLIP_NO_SPACE_LEFT, playerAudio.Volume);

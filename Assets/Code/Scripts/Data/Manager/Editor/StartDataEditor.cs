@@ -7,7 +7,7 @@ namespace Data
     [CustomEditor(typeof(StartData))]
     public class StartDataEditor : Editor
     {
-        private string[] tabs = { "OpenWorld", "Player","Shop", "Settings" };
+        private string[] tabs = { "OpenWorld", "Player", "Settings" };
         private int tabIndex = 0;
         public override void OnInspectorGUI()
         {

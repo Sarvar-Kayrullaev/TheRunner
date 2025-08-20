@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -24,21 +25,35 @@ public class WeaponHolster : MonoBehaviour
     public Transform recoilRotation;
     public Transform forward;
     public Camera stackCamera;
-    public SniperFocus sniperFocus;
+    //public SniperFocus sniperFocus;
     [HideInInspector] public Weapon currentWeapon = null;
 
-    private StartData data;
     private SealedData sealedData;
     private HolsterManager holsterManager;
+    private DataManager dataManager;
 
     private void Awake()
     {
-        data = FindFirstObjectByType<StartData>();
         sealedData = FindFirstObjectByType<SealedData>();
         holsterManager = FindFirstObjectByType<HolsterManager>();
+        dataManager = FindFirstObjectByType<DataManager>();
         //sniperFocus = FindFirstObjectByType<SniperFocus>();
         //ResetHolster();
     }
+
+    private void Start()
+    {
+        BuildWeaponHolster();
+    }
+
+    void BuildWeaponHolster()
+    {
+        foreach (Transform child in transform)
+        {
+            
+        }
+    }
+
     public void Update()
     {
         if (Input.GetKeyDown(KeyCode.T))
@@ -85,10 +100,13 @@ public class WeaponHolster : MonoBehaviour
 
     public void DrawWeapon(GameObject Prefab)
     {
-        EquipedWeaponModel equipedWeapon = data.PlayerData.Holster[data.PlayerData.SelectedWeaponIndex].EquipedWeapon;
+        int selectedWeapon = dataManager.playerModel.SelectedWeaponIndex;
+        EquipedWeaponModel equipedWeapon = dataManager.playerModel.Holster[selectedWeapon].EquipedWeapon;
+        Debug.Log($"CurrentID: {CurrentWeaponID} == EquipedID: {equipedWeapon.ID}");
         if (CurrentWeaponID == equipedWeapon.ID) return;
 
         if (transform.childCount > 0) Destroy(transform.GetChild(0).gameObject);
+        
         GameObject insWeapon = Instantiate(Prefab, transform);
         Weapon weapon = insWeapon.GetComponent<Weapon>();
 
@@ -101,7 +119,7 @@ public class WeaponHolster : MonoBehaviour
         weapon.stackCamera = stackCamera;
         weapon.forward = forward;
         weapon.currentAmmo = equipedWeapon.MagazineBulletCount;
-        weapon.sniperFocus = sniperFocus;
+        //weapon.sniperFocus = sniperFocus;
         weapon.WeaponType = WeaponTypeConverter(equipedWeapon.weaponName);
         weapon.SetSight(equipedWeapon.Sight);
         weapon.SetSuppressor(equipedWeapon.Suppressor);
@@ -124,7 +142,9 @@ public class WeaponHolster : MonoBehaviour
 
     public void RedrawWeapon()
     {
-        EquipedWeaponModel equipedWeapon = data.PlayerData.Holster[data.PlayerData.SelectedWeaponIndex].EquipedWeapon;
+        int selectedWeapon = dataManager.playerModel.SelectedWeaponIndex;
+        EquipedWeaponModel equipedWeapon = dataManager.playerModel.Holster[selectedWeapon].EquipedWeapon;
+        
         if(equipedWeapon.weaponName == WeaponName.NONE) return;
         if (transform.childCount > 0) Destroy(transform.GetChild(0).gameObject);
         GameObject insWeapon = Instantiate(sealedData.GetWeaponBasicModelByName(equipedWeapon.weaponName).WeaponPrefab, transform);
@@ -141,7 +161,7 @@ public class WeaponHolster : MonoBehaviour
         weapon.stackCamera = stackCamera;
         weapon.forward = forward;
         weapon.currentAmmo = equipedWeapon.MagazineBulletCount;
-        weapon.sniperFocus = sniperFocus;
+        //weapon.sniperFocus = sniperFocus;
         weapon.WeaponType = WeaponTypeConverter(equipedWeapon.weaponName);
         weapon.SetSight(equipedWeapon.Sight);
         weapon.SetSuppressor(equipedWeapon.Suppressor);
@@ -187,12 +207,12 @@ public class WeaponHolster : MonoBehaviour
     public void RebuildBulletText(WeaponName weaponName)
     {
         WeaponType type = WeaponTypeConverter(weaponName);
-        if (type == WeaponType.Handgun) ammoBagText.text = "" + data.PlayerData.BulletBag.PistolSize;
-        else if (type == WeaponType.Shotgun) ammoBagText.text = "" + data.PlayerData.BulletBag.ShotgunSize;
-        else if (type == WeaponType.SMG) ammoBagText.text = "" + data.PlayerData.BulletBag.SMGSize;
-        else if (type == WeaponType.Rifle) ammoBagText.text = "" + data.PlayerData.BulletBag.RifleSize;
-        else if (type == WeaponType.Sniper) ammoBagText.text = "" + data.PlayerData.BulletBag.SniperSize;
-        else if (type == WeaponType.Machinegun) ammoBagText.text = "" + data.PlayerData.BulletBag.MashineGunSize;
+        if (type == WeaponType.Handgun) ammoBagText.text = "" + dataManager.playerModel.BulletBag.PistolSize;
+        else if (type == WeaponType.Shotgun) ammoBagText.text = "" + dataManager.playerModel.BulletBag.ShotgunSize;
+        else if (type == WeaponType.SMG) ammoBagText.text = "" + dataManager.playerModel.BulletBag.SMGSize;
+        else if (type == WeaponType.Rifle) ammoBagText.text = "" + dataManager.playerModel.BulletBag.RifleSize;
+        else if (type == WeaponType.Sniper) ammoBagText.text = "" + dataManager.playerModel.BulletBag.SniperSize;
+        else if (type == WeaponType.Machinegun) ammoBagText.text = "" + dataManager.playerModel.BulletBag.MashineGunSize;
         else ammoBagText.text = "0";
     }
 

@@ -34,8 +34,8 @@ public class HolsterManager : MonoBehaviour
     [Header("Other Objects")]
     [SerializeField] Transform WeaponThrowPoint;
     [SerializeField] GameObject PlayerCrosshair;
-
-    private StartData data;
+    
+    private DataManager dataManager;
     private SealedData sealedData;
     private WeaponHolster weaponHolster;
     private Player player;
@@ -47,15 +47,17 @@ public class HolsterManager : MonoBehaviour
     [System.Obsolete]
     public void Start()
     {
-        data = FindObjectOfType<StartData>();
-        sealedData = FindObjectOfType<SealedData>();
-        weaponHolster = FindObjectOfType<WeaponHolster>();
+        dataManager = FindFirstObjectByType<DataManager>();
+        sealedData = FindFirstObjectByType<SealedData>();
+        weaponHolster = FindFirstObjectByType<WeaponHolster>();
         player = FindFirstObjectByType<Player>();
         if (HolsterScreen.TryGetComponent(out Animator animator)) this.animator = animator;
-        RebuildFastHolster(data.PlayerData.Holster);
-        RebuildWheelHolster(data.PlayerData.Holster);
-        Canvas canvas = FindObjectOfType<Canvas>();
+        RebuildFastHolster(dataManager.playerModel.Holster);
+        RebuildWheelHolster(dataManager.playerModel.Holster);
+        Canvas canvas = FindFirstObjectByType<Canvas>();
         if (canvas.TryGetComponent(out RectTransform rect)) screenSize = rect.rect.size;
+        
+        Debug.Log(screenSize);
     }
 
     public void Update()
@@ -108,12 +110,24 @@ public class HolsterManager : MonoBehaviour
     public void RebuildFastHolster(List<HolsterModel> slots)
     {
         int index = 0;
-        int SelectedWeaponIndex = data.PlayerData.SelectedWeaponIndex;
+        int SelectedWeaponIndex = dataManager.playerModel.SelectedWeaponIndex;
         foreach (HolsterModel slot in slots)
         {
             //if (index > 1) return;
             index++;
-            WeaponBasicModel weaponBasic = GetWeaponBasic(sealedData.WeaponBasics, slot.EquipedWeapon.weaponName);
+            WeaponBasicModel weaponBasic = null;
+            
+            if (slot.EquipedWeapon.weaponName == WeaponName.NONE)
+            {
+                weaponBasic = new WeaponBasicModel();
+            }
+            else
+            {
+                weaponBasic = sealedData.WeaponBasics[(int)slot.EquipedWeapon.weaponName -1];
+            }
+            
+            Debug.Log($"WeaponBasic: {weaponBasic.Name}     Type: {slot.EquipedWeapon.weaponName}");
+            
             bool noWeapon = slot.EquipedWeapon.weaponName == WeaponName.NONE;
             bool isSelected = SelectedWeaponIndex == index - 1;
             if (isSelected & !noWeapon) weaponHolster.DrawWeapon(weaponBasic.WeaponPrefab);
@@ -168,7 +182,7 @@ public class HolsterManager : MonoBehaviour
 
         foreach (HolsterModel slot in slots)
         {
-            if(index == data.PlayerData.SelectedWeaponIndex) selectionColor = SelectedColor;
+            if(index == dataManager.playerModel.SelectedWeaponIndex) selectionColor = SelectedColor;
             else selectionColor = UnselectedColor;
             wheelSlots[index].Rebuild(slot, GetWeaponBasic(sealedData.WeaponBasics, slot.EquipedWeapon.weaponName), this, selectionColor);
             index++;
@@ -178,7 +192,7 @@ public class HolsterManager : MonoBehaviour
 
     public void RebuildHolsterCursor()
     {
-        int SelectedIndex = data.PlayerData.SelectedWeaponIndex;
+        int SelectedIndex = dataManager.playerModel.SelectedWeaponIndex;
         if(SelectedIndex == 0) HolsterCursor.transform.eulerAngles = new (0,0,0);
         else if(SelectedIndex == 1) HolsterCursor.transform.eulerAngles = new (0,0,-90);
         else if(SelectedIndex == 2) HolsterCursor.transform.eulerAngles = new (0,0,180);
@@ -187,12 +201,12 @@ public class HolsterManager : MonoBehaviour
     public void Selector(int index)
     {
         SaveCurrentWeaponParams();
-        HolsterModel slot = data.PlayerData.Holster[index];
+        HolsterModel slot = dataManager.playerModel.Holster[index];
         bool noWeapon = slot.EquipedWeapon.weaponName == WeaponName.NONE;
         if (noWeapon) return;
-        data.PlayerData.SelectedWeaponIndex = index;
-        RebuildFastHolster(data.PlayerData.Holster);
-        RebuildWheelHolster(data.PlayerData.Holster);
+        dataManager.playerModel.SelectedWeaponIndex = index;
+        RebuildFastHolster(dataManager.playerModel.Holster);
+        RebuildWheelHolster(dataManager.playerModel.Holster);
         CloseHolster();
     }
 
@@ -200,7 +214,7 @@ public class HolsterManager : MonoBehaviour
     {
         if (weaponHolster.currentWeapon)
         {
-            EquipedWeaponModel equipedWeapon = data.PlayerData.Holster[data.PlayerData.SelectedWeaponIndex].EquipedWeapon;
+            EquipedWeaponModel equipedWeapon = dataManager.playerModel.Holster[dataManager.playerModel.SelectedWeaponIndex].EquipedWeapon;
             equipedWeapon.MagazineBulletCount = weaponHolster.currentWeapon.currentAmmo;
             equipedWeapon.Sight = weaponHolster.currentWeapon.sightModel;
             equipedWeapon.Suppressor = weaponHolster.currentWeapon.suppressorModel;

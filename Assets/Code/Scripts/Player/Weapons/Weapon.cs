@@ -27,6 +27,9 @@ public class Weapon : MonoBehaviour
     [SerializeField] Transform muzzleFlashPrefab;
     [SerializeField] Transform firePoint;
     [SerializeField] Transform bullerPrefab;
+    
+    [Header("Attachment")]
+    [SerializeField] GameObject ironSightPrefab;
     [Space]
     [Header("Attribute")]
     [SerializeField] int damage;
@@ -136,13 +139,14 @@ public class Weapon : MonoBehaviour
 
     public void SetSuppressor(SuppressorModel suppressor)
     {
-        SealedSuppressorModel sealedSuppressor = sealedData.Suppressors[(int) suppressor.Type-1];
+        sealedData = FindFirstObjectByType<SealedData>();
+        SealedSuppressorModel sealedSuppressor = sealedData.Suppressors[(int) suppressor.Type];
         suppressorModel = suppressor;
         
         if (sealedSuppressor.Type == SuppressorType.None)
         {
             isSilenced = false;
-            if(SuppressorParentTransform.GetChild(0)) Destroy(SuppressorParentTransform.GetChild(0).gameObject);
+            if(SuppressorParentTransform.childCount > 0) Destroy(SuppressorParentTransform.GetChild(0).gameObject);
         }
         else
         {
@@ -153,16 +157,26 @@ public class Weapon : MonoBehaviour
 
     public void SetSight(SightModel sight)
     {
-        SealedSightModel sealedSight = sealedData.Sights[(int) sight.Type-1];
+        Debug.Log($"SightType: {sight.Type}");
+        sealedData = FindFirstObjectByType<SealedData>();
+        
+        SealedSightModel sealedSight = sealedData.Sights[(int) sight.Type];
         sightModel = sight;
         if (sealedSight.Type == SightType.IronSights)
         {
             isScoped = false;
-            if(SightParentTransform.GetChild(0) != null) Destroy(SightParentTransform.GetChild(0).gameObject);
+            if(SightParentTransform.childCount > 0) Destroy(SightParentTransform.GetChild(0).gameObject);
+
+            if (ironSightPrefab)
+            {
+                GameObject sightObject = Instantiate(ironSightPrefab, SightParentTransform);   
+            }
+            
         }
         else
         {
             isScoped = true;
+            Debug.Log($"SightName: {sealedSight.Name}");
             GameObject sightObject = Instantiate(sealedSight.Prefab, SightParentTransform);
         }
     }

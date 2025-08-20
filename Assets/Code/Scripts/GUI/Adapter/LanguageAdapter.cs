@@ -42,7 +42,5 @@ public class LanguageAdapter : MonoBehaviour
         // Once the font is loaded, continue
         _text.font = requiredFont;
         _text.text = Language.Get(key, languageCode, translationType);
-        
-        Debug.Log("");
     }
 }

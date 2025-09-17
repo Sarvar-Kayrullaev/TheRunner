@@ -1,14 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 namespace BotRoot
 {
     public class BotAction : MonoBehaviour
     {
         [HideInInspector] public BotSetup setup;
+
         void Start()
         {
-            
         }
 
         public void Main()
@@ -52,6 +53,7 @@ namespace BotRoot
                 setup.author.Message("COMMAND");
             }
         }
+
         void Command()
         {
             if (setup.status.Command == BotEnum.Command.Guarding)
@@ -60,22 +62,20 @@ namespace BotRoot
             }
             else if (setup.status.Command == BotEnum.Command.Working)
             {
-
             }
             else if (setup.status.Command == BotEnum.Command.Delivery)
             {
-
             }
             else if (setup.status.Command == BotEnum.Command.Attacking)
             {
-
             }
             else
             {
                 // Special or other
             }
         }
-        void SenseBeforePurpose()
+
+        private void SenseBeforePurpose()
         {
             if (!setup.objects.enemy) setup.utility.IdentifyEnemyTime();
             setup.utility.GetPanic();
@@ -104,7 +104,7 @@ namespace BotRoot
 
                     if (!setup.memory.EnemyPassed)
                     {
-                        Invoke(nameof(CallStaticEnemy), setup.attribute.enemyPassTime);
+                        StartCoroutine(CallStaticEnemy(setup.attribute.enemyPassTime));
                         setup.memory.EnemyPassed = true;
                     }
                 }
@@ -152,14 +152,14 @@ namespace BotRoot
 
         //Invoke
 
-        void CallStaticEnemy()
+        private IEnumerator CallStaticEnemy(float time)
         {
-            if (setup.health.died) return;
+            yield return new WaitForSeconds(time);
+
+            if (setup.health.died) yield break;
             //setup.overall.SetDangerAreas(setup.objects.lastEnemy.position, 30);
             setup.utility.CallStaticEnemy(setup.objects.lastEnemy);
             setup.botAudio.Play(PanicTalking.ENEMY_VISIBLE, setup);
-            print("Call");
         }
     }
-
 }

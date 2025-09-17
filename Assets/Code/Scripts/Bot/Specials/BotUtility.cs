@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using PlayerRoot;
 namespace BotRoot
@@ -10,7 +11,8 @@ namespace BotRoot
         BotObjects objects;
         BotSourceOfAction sourceOfAction;
         bool initialized = false;
-        void Awake()
+
+        private void Awake()
         {
             objects = setup.objects;
             sourceOfAction = setup.sourceOfAction;
@@ -125,7 +127,7 @@ namespace BotRoot
         public void IdentifyEnemyTime()
         {
             if(!initialized) return;
-            if (setup.objects.futureEnemy == null)
+            if (!setup.objects.futureEnemy)
             {
                 setup.attribute._identifyBackTime -= Time.deltaTime;
                 if (setup.attribute._identifyBackTime <= 0)
@@ -146,12 +148,12 @@ namespace BotRoot
                 float enemyDistance = Vector3.Distance(transform.position, objects.futureEnemy.position);
                 float detectionQuality = setup.indicatorUtility.detection();
 
-                if (setup.enemyIndicator == null && detectionQuality > 0)
+                if (!setup.enemyIndicator && detectionQuality > 0)
                 {
                     setup.attribute._identifyEnemyTime = 0;
                     if (objects.futureEnemy.TryGetComponent(out PlayerBody playerBody))
                     {
-                        playerBody.indicatorRegister.CreateIndicator(transform, objects.futureEnemy);
+                        playerBody.indicatorRegister.CreateIndicator(transform, objects.futureEnemy, setup);
                     }
                 }
 
@@ -162,22 +164,25 @@ namespace BotRoot
                 }
                 else
                 {
-                    bool suspection = setup.status.MentalState == BotEnum.MentalState.Suspicion;
-                    bool panic = setup.status.MentalState == BotEnum.MentalState.Panic;
-                    if (objects.futureEnemy.TryGetComponent(out PlayerBody playerBody))
-                    {
-                        TargetStatus targetStatus = playerBody.status;
-                        float targetSpeed = (float)
-                            (targetStatus.movement == Movement.CrouchIdle ? 5 :
-                                (targetStatus.movement == Movement.CrouchWalking ? 10 :
-                                    (targetStatus.movement == Movement.CrouchRunning ? 40 :
-                                        (targetStatus.movement == Movement.Idle ? 15 :
-                                            (targetStatus.movement == Movement.Walking ? 60 :
-                                                targetStatus.movement == Movement.Running ? 70 : 0)))));
+                    var suspection = setup.status.MentalState == BotEnum.MentalState.Suspicion;
+                    var panic = setup.status.MentalState == BotEnum.MentalState.Panic;
+                    
+                    if (!objects.futureEnemy.TryGetComponent(out PlayerBody playerBody)) return;
+                    var targetStatus = playerBody.status;
+                    var targetSpeed = (float)
+                        (targetStatus.movement switch
+                        {
+                            Movement.CrouchIdle => 5,
+                            Movement.CrouchWalking => 10,
+                            Movement.CrouchRunning => 40,
+                            Movement.Idle => 15,
+                            Movement.Walking => 60,
+                            Movement.Running => 70,
+                            _ => 0
+                        });
 
-                        setup.attribute._identifyBackTime = setup.attribute.identifyBackTime;
-                        setup.attribute._identifyEnemyTime += ((Time.deltaTime / enemyDistance / TargetAngle(objects.futureEnemy)) * (setup.memory.EnemyIsAround || panic ? targetSpeed * 3 : suspection ? targetSpeed * 2 : targetSpeed)) * detectionQuality;
-                    }
+                    setup.attribute._identifyBackTime = setup.attribute.identifyBackTime;
+                    setup.attribute._identifyEnemyTime += ((Time.deltaTime / enemyDistance / TargetAngle(objects.futureEnemy)) * (setup.memory.EnemyIsAround || panic ? targetSpeed * 3 : suspection ? targetSpeed * 2 : targetSpeed)) * detectionQuality;
                 }
             }
         }
@@ -185,21 +190,23 @@ namespace BotRoot
         public void CallStaticEnemy(Transform staticEnemy)
         {
             if (setup.health.currentHealth <= 0) return;
-            
-            Collider[] friends = Physics.OverlapSphere(transform.position, 200, setup.memory.friendsLayer);
-            int calledFriendCount = 0;
-            foreach (Collider _friend in friends)
+            var friends = new Collider[50];
+            var size = Physics.OverlapSphereNonAlloc(transform.position, 200, friends, setup.memory.friendsLayer);
+            var calledFriendCount = 0;
+            foreach (var _friend in friends)
             {
                 if (_friend.GetInstanceID() == GetInstanceID()) continue;
-                if (_friend.tag != "Live/Evil" && _friend.name != "character") continue;
-                Transform friend = _friend.transform;
-                BotObjects friendObjects = friend.GetComponent<BotObjects>();
-                if (friendObjects) if (friendObjects.enemy) continue;
+                if (!_friend.CompareTag("Live/Evil") && _friend.name != "character") continue;
+                var friend = _friend.transform;
 
-                BotBase friendMemory = friend.GetComponent<BotBase>();
-                BotStatus friendStatus = friend.GetComponent<BotStatus>();
-                if (friendObjects && friendMemory)
+                if (friend.TryGetComponent(out BotSetup friendSetup))
                 {
+                    var friendObjects = friendSetup.objects;
+                    if (friendObjects) if (friendObjects.enemy) continue;
+
+                    var friendMemory = friendSetup.memory;
+                    var friendStatus = friendSetup.status;
+                    
                     if(!friendMemory.frightened) friendObjects.setup.author.SetAlarmSignal(false);
                     setup.memory.suspectionID = Random.Range(1000000, 9999999);
                     setup.objects.ChangeSuspectionPoint(staticEnemy.position);
@@ -210,7 +217,7 @@ namespace BotRoot
                     friendMemory.frightened = true;
                     friendStatus.Purpose = BotEnum.Purpose.Attacking;
                     friendStatus.MentalState = BotEnum.MentalState.Panic;
-                    calledFriendCount++;
+                    calledFriendCount++;  
                 }
             }
             print("Called Friends Cound = " + calledFriendCount);
@@ -232,32 +239,33 @@ namespace BotRoot
                 setup.status.MentalState = BotEnum.MentalState.Panic;
                 setup.overall.SetLastEnemyVisiblePoint(setup.overall.player.transform.position);
             }
-            Collider[] friends = Physics.OverlapSphere(transform.position, 200, setup.memory.friendsLayer);
-            int calledFriendCount = 0;
+            var friends = Physics.OverlapSphere(transform.position, 200, setup.memory.friendsLayer);
+            var calledFriendCount = 0;
             foreach (Collider _friend in friends)
             {
                 if (_friend.GetInstanceID() == GetInstanceID()) continue;
-                if (_friend.tag != "Live/Evil" && _friend.name != "character") continue;
+                if (!_friend.CompareTag("Live/Evil") && _friend.name != "character") continue;
                 Transform friend = _friend.transform;
-                BotObjects friendObjects = friend.GetComponent<BotObjects>();
-                if (friendObjects) if (friendObjects.enemy) continue;
-
-                BotBase friendMemory = friend.GetComponent<BotBase>();
-                BotStatus friendStatus = friend.GetComponent<BotStatus>();
-                if (friendObjects && friendMemory)
+                
+                if(friend.TryGetComponent(out BotObjects friendObjects) && friend.TryGetComponent(out BotBase friendMemory) && friend.TryGetComponent(out BotStatus friendStatus))
                 {
-                    if(!friendMemory.frightened) friendObjects.setup.author.SetAlarmSignal(false);
-                    setup.memory.suspectionID = Random.Range(1000000, 9999999);
-                    setup.objects.ChangeSuspectionPoint(point);
-                    friendObjects.patrollingPoint.position = point;
-                    friendObjects.staticEnemy = setup.overall.player.transform;
-                    friendObjects.lastEnemy = setup.overall.player.transform;
-                    friendMemory.EnemyIsAround = true;
-                    friendMemory.frightened = true;
-                    friendStatus.Purpose = BotEnum.Purpose.Attacking;
-                    friendStatus.MentalState = BotEnum.MentalState.Panic;
-                    calledFriendCount++;
+                    if (friendObjects) if (friendObjects.enemy) continue;
+                    if (friendObjects && friendMemory)
+                    {
+                        if(!friendMemory.frightened) friendObjects.setup.author.SetAlarmSignal(false);
+                        setup.memory.suspectionID = Random.Range(1000000, 9999999);
+                        setup.objects.ChangeSuspectionPoint(point);
+                        friendObjects.patrollingPoint.position = point;
+                        friendObjects.staticEnemy = setup.overall.player.transform;
+                        friendObjects.lastEnemy = setup.overall.player.transform;
+                        friendMemory.EnemyIsAround = true;
+                        friendMemory.frightened = true;
+                        friendStatus.Purpose = BotEnum.Purpose.Attacking;
+                        friendStatus.MentalState = BotEnum.MentalState.Panic;
+                        calledFriendCount++;
+                    }
                 }
+                
             }
             print("Called Friends Cound = " + calledFriendCount);
         }
@@ -273,20 +281,12 @@ namespace BotRoot
 
         public Transform[] GetFirends()
         {
-            Collider[] lives = Physics.OverlapSphere(transform.position, 200, setup.memory.friendsLayer);
-            List<Transform> friends = new List<Transform>();
+            var lives = Physics.OverlapSphere(transform.position, 200, setup.memory.friendsLayer);
+            var friends = (from friend in lives where friend.GetInstanceID() != GetInstanceID() where friend.CompareTag(transform.tag) select friend.transform).ToList();
 
-            foreach (Collider friend in lives)
-            {
-                if (friend.GetInstanceID() == GetInstanceID()) continue;
-                if (friend.tag == transform.tag)
-                {
-                    friends.Add(friend.transform);
-                }
-            }
-            Transform[] result = new Transform[friends.Count];
-            int index = 0;
-            foreach (Transform friend in friends)
+            var result = new Transform[friends.Count];
+            var index = 0;
+            foreach (var friend in friends)
             {
                 result[index] = friend;
                 index++;
@@ -299,38 +299,37 @@ namespace BotRoot
             Collider[] points = Physics.OverlapSphere(transform.position, 100, setup.memory.hidingPointsLayer);
             foreach (Collider point in points)
             {
-                HidingPoints hidingPoint = point.GetComponent<HidingPoints>();
-                if (!hidingPoint.isBusy)
-                {
-                    hidingPoint.isBusy = true;
-                    if (objects.lastEnemy)
-                        return hidingPoint.GetHidingPoints(objects.lastEnemy.position);
-                    else
-                        return hidingPoint.GetHidingPoints(objects.suspicionPoint.position);
-                }
+                if (!point.TryGetComponent(out HidingPoints hidingPoint)) continue;
+                if (hidingPoint.isBusy) continue;
+                hidingPoint.isBusy = true;
+                return hidingPoint.GetHidingPoints(objects.lastEnemy ? objects.lastEnemy.position : objects.suspicionPoint.position);
             }
             setup.status.assaultCommand = BotEnum.AssaultCommand.Point;
             return null;
         }
         public void AccessToHiding(bool access, float time)
         {
-            if (access) Invoke("HidingTrue", time);
+            if (access) Invoke(nameof(HidingTrue), time);
             else HidingFalse();
         }
-        void HidingTrue()
+
+        private void HidingTrue()
         {
             setup.sourceOfAction.accesToHiding = true;
         }
-        void HidingFalse()
+
+        private void HidingFalse()
         {
             setup.sourceOfAction.accesToHiding = false;
         }
         public void CommandFront(float time)
         {
-            Invoke("CommandFrontInvoke", time);
+            StartCoroutine(CommandFrontInvoke(time));
         }
-        void CommandFrontInvoke()
+
+        private IEnumerator CommandFrontInvoke(float time)
         {
+            yield return new WaitForSeconds(time);
             if (objects.enemy) setup.status.assaultCommand = BotEnum.AssaultCommand.Front;
         }
         public void PlayRandomSound(AudioClip[] clips, AudioSource source)

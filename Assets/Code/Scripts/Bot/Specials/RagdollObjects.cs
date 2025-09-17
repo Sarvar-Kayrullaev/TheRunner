@@ -14,12 +14,14 @@ namespace BotRoot
             SetKinematic(true);
         }
 
-        public void SetDrag(float _drag)
+        public void SetDrag(float drag)
         {
             foreach (var ragdoll in objects)
             {
-                Rigidbody rigidbody = ragdoll.GetComponent<Rigidbody>();
-                rigidbody.linearDamping = _drag;
+                if (ragdoll.TryGetComponent(out Rigidbody component))
+                {
+                    component.linearDamping = drag;
+                }
             }
         }
 
@@ -27,8 +29,10 @@ namespace BotRoot
         {
             foreach (var ragdoll in objects)
             {
-                Rigidbody rigidbody = ragdoll.GetComponent<Rigidbody>();
-                rigidbody.isKinematic = kinematic;
+                if (ragdoll.TryGetComponent(out Rigidbody component))
+                {
+                    component.isKinematic = kinematic;
+                }
             }
         }
 

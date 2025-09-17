@@ -17,6 +17,10 @@ namespace Widget
         [Header("Scaling")]
         public float pressedScale = 0.9f;
         public float selectedScale = 1.1f;
+        
+        [Space]
+        [Header("Objects")]
+        public GameObject selectionEffectObject;
 
         [Space(3)]
         public UnityEvent OnClick;
@@ -38,11 +42,13 @@ namespace Widget
             if (Selected)
             {
                 transform.localScale = Vector3.MoveTowards(transform.localScale, new Vector3(selectedScale, selectedScale, selectedScale), 5 * Time.deltaTime);
+                if(selectionEffectObject) selectionEffectObject.SetActive(true);
             }
             else
             {
                 if (Pressed) return; // If pressed, do not scale back to normal
                 transform.localScale = Vector3.MoveTowards(transform.localScale, new Vector3(1, 1, 1), 5 * Time.deltaTime);
+                if(selectionEffectObject) selectionEffectObject.SetActive(false);
             }
         }
 

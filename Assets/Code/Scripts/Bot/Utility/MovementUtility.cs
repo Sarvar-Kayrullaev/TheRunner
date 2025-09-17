@@ -75,20 +75,21 @@ namespace BotRoot
             else
             {
                 lieAnimationInIdle = GetLieAnimation();
-                Debug.Log(lieAnimationInIdle);
                 CrossFade(lieAnimationInIdle, false);
             }
 
             string GetLieAnimation()
             {
+                #if UNITY_EDITOR 
                 Debug.DrawRay(objects.obstacleDetectorPoint.position, -objects.obstacleDetectorPoint.right * 4);
                 Debug.DrawRay(objects.obstacleDetectorPoint.position, objects.obstacleDetectorPoint.right * 4);
                 Debug.DrawRay(objects.obstacleDetectorPoint.position, -objects.obstacleDetectorPoint.forward * 3);
+                #endif
                 if (lieAnimationInIdle == "")
                 {
-                    bool rayLeft = Physics.Raycast(objects.obstacleDetectorPoint.position, -objects.obstacleDetectorPoint.right, 4, obstacleLayer);
-                    bool rayRight = Physics.Raycast(objects.obstacleDetectorPoint.position, objects.obstacleDetectorPoint.right, 4, obstacleLayer);
-                    bool rayBack = Physics.Raycast(objects.obstacleDetectorPoint.position, -objects.obstacleDetectorPoint.forward, 3, obstacleLayer);
+                    var rayLeft = Physics.Raycast(objects.obstacleDetectorPoint.position, -objects.obstacleDetectorPoint.right, 4, obstacleLayer);
+                    var rayRight = Physics.Raycast(objects.obstacleDetectorPoint.position, objects.obstacleDetectorPoint.right, 4, obstacleLayer);
+                    var rayBack = Physics.Raycast(objects.obstacleDetectorPoint.position, -objects.obstacleDetectorPoint.forward, 3, obstacleLayer);
                     if (rayLeft && rayRight && rayBack) return "Firing Step Back";
 
                     if (distance < stopDistance * 0.7f)
@@ -124,7 +125,7 @@ namespace BotRoot
                 }
                 else
                 {
-                    int randomIndex = new System.Random().Next(0, anims.Length);
+                    var randomIndex = new System.Random().Next(0, anims.Length);
                     return anims[randomIndex];
                 }
             }
@@ -161,109 +162,66 @@ namespace BotRoot
                 angle = utility.Angle(objects.root, moveIndicator);
             }
 
-            float smoothTransform = 0.1f;
-            if (angle <= -158)
+            const float smoothTransform = 0.1f;
+            switch (angle)
             {
-                if (surprised)
-                {
+                case <= -158 when surprised:
                     CrossFadeTime("Surprised 180 Degree Left", smoothTransform, false);
-                }
-                else
-                {
+                    break;
+                case <= -158:
                     CrossFadeTime("180 Degree Left", smoothTransform, false);
-                }
-            }
-            else if (angle <= -113)
-            {
-                if (surprised)
-                {
+                    break;
+                case <= -113 when surprised:
                     CrossFadeTime("Surprised 135 Degree Left", smoothTransform, false);
-                }
-                else
-                {
+                    break;
+                case <= -113:
                     CrossFadeTime("135 Degree Left", smoothTransform, false);
-                }
-            }
-            else if (angle <= -68)
-            {
-                if (surprised)
-                {
+                    break;
+                case <= -68 when surprised:
                     CrossFadeTime("Surprised 90 Degree Left", smoothTransform, false);
-                }
-                else
-                {
+                    break;
+                case <= -68:
                     CrossFadeTime("90 Degree Left", smoothTransform, false);
-                }
-            }
-            else if (angle <= -23)
-            {
-                if (surprised)
-                {
+                    break;
+                case <= -23 when surprised:
                     CrossFadeTime("Surprised 45 Degree Left", smoothTransform, false);
-                }
-                else
-                {
+                    break;
+                case <= -23:
                     CrossFadeTime("45 Degree Left", smoothTransform, false);
-                }
-            }
-            else if (angle <= 22)
-            {
-                if (surprised)
-                {
+                    break;
+                case <= 22 when surprised:
                     CrossFadeTime("Surprised Walk", smoothTransform, false);
-                }
-                else
-                {
+                    break;
+                case <= 22:
                     CrossFadeTime("Walk", smoothTransform, false);
-                }
-            }
-            else if (angle <= 67)
-            {
-                if (surprised)
-                {
+                    break;
+                case <= 67 when surprised:
                     CrossFadeTime("Surprised 45 Degree Right", smoothTransform, false);
-                }
-                else
-                {
+                    break;
+                case <= 67:
                     CrossFadeTime("45 Degree Right", smoothTransform, false);
-                }
-            }
-            else if (angle <= 113)
-            {
-                if (surprised)
-                {
+                    break;
+                case <= 113 when surprised:
                     CrossFadeTime("Surprised 90 Degree Right", smoothTransform, false);
-                }
-                else
-                {
+                    break;
+                case <= 113:
                     CrossFadeTime("90 Degree Right", smoothTransform, false);
-                }
-            }
-            else if (angle <= 158)
-            {
-                if (surprised)
-                {
+                    break;
+                case <= 158 when surprised:
                     CrossFadeTime("Surprised 135 Degree Right", smoothTransform, false);
-                }
-                else
-                {
+                    break;
+                case <= 158:
                     CrossFadeTime("135 Degree Right", smoothTransform, false);
-                }
-            }
-            else if (angle <= 180)
-            {
-                if (surprised)
-                {
+                    break;
+                case <= 180 when surprised:
                     CrossFadeTime("Surprised 180 Degree Right", smoothTransform, false);
-                }
-                else
-                {
+                    break;
+                case <= 180:
                     CrossFadeTime("180 Degree Right", smoothTransform, false);
-                }
-            }
-            else
-            {
-                //CrossFadeTime("Walk");
+                    break;
+                default:
+                    //CrossFadeTime("Walk");
+                    break;
             }
             walking = true;
         }

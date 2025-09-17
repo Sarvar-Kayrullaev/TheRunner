@@ -10,10 +10,20 @@ namespace BotRoot
         private BotSetup setup;
         private int currentPathID;
         private bool IsStealthlyPosition = false;
-        void Start()
+
+        private void Start()
         {
             setup = Owner.GetComponent<BotSetup>();
-            setup.movePosition = this;
+
+            if (Owner.TryGetComponent(out BotSetup setupComponent))
+            {
+                setup =  setupComponent;
+                setup.movePosition = this;
+            }
+            else
+            {
+                Debug.LogError($"{Owner.name} has no BotSetup component");
+            }
         }
 
         public void SetPosition(Vector3 position)
@@ -27,7 +37,7 @@ namespace BotRoot
             IsStealthlyPosition = true;
         }
 
-        void Update()
+        private void Update()
         {
             if (transform.hasChanged)
             {
@@ -40,14 +50,7 @@ namespace BotRoot
 
         public Vector3 GetPosition()
         {
-            if (IsStealthlyPosition)
-            {
-                return lastPosition;
-            }
-            else
-            {
-                return transform.position;
-            }
+            return IsStealthlyPosition ? lastPosition : transform.position;
         }
     }
 }

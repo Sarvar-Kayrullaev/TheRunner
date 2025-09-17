@@ -9,7 +9,6 @@ public class MarkerPoint : MonoBehaviour
 
     [HideInInspector] public Transform target;
 
-    private Camera mainCamera;
     private Image image;
 
     private Sprite mainSprite;
@@ -21,10 +20,15 @@ public class MarkerPoint : MonoBehaviour
     private float currentRepeatRateTime;
 
     private bool isSignalInitialized = false;
+    private Camera mainCamera;
+
+    private void Awake()
+    {
+        mainCamera = Camera.main;
+    }
 
     public void Initialize(Sprite sprite)
     {
-        mainCamera = Camera.main;
         mainSprite = sprite;
         Transform child = transform.GetChild(0);
         if (child)
@@ -73,11 +77,13 @@ public class MarkerPoint : MonoBehaviour
                 {
                     currentRepeatedCount--;
                     currentRepeatRateTime = Time.time + 1f / repeatRate;
-                    Image signalImage = Instantiate(SignalPrefab, transform).GetComponent<Image>();
-                    signalImage.color = signalColor;
+                    if (Instantiate(SignalPrefab, transform).TryGetComponent(out Image signalImage))
+                    {
+                        signalImage.color = signalColor;   
+                    }
                     if (currentRepeatedCount <= 0)
                     {
-                        Invoke(nameof(ResetSignal),1);
+                        StartCoroutine(nameof(ResetSignal),1);
                     }
                 }
             }
@@ -97,17 +103,18 @@ public class MarkerPoint : MonoBehaviour
 
         if(repeatCount <= 0)
         {
-            Invoke(nameof(ResetSignal),1);
+            StartCoroutine(ResetSignal(1));
         }
     }
 
-    void ResetSignal()
+    private IEnumerator ResetSignal(float time)
     {
+        yield return new WaitForSeconds(time);
         isSignalInitialized = false;
         image.sprite = mainSprite;
     }
 
-    void Activation(bool value)
+    private void Activation(bool value)
     {
         foreach (Transform child in transform)
         {

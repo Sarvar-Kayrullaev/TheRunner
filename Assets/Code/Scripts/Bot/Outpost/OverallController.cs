@@ -164,8 +164,6 @@ namespace BotRoot
 
         public void SetLastEnemyVisiblePoint(Vector3 lastEnemyPosition)
         {
-            Debug.Log("Call: Last Enemy Point");
-
             float changedDistance = Vector3.Distance(lastEnemyPoint, lastEnemyPosition);
             lastEnemyPoint = lastEnemyPosition;
             IsLastEnemyPointChecked = false;

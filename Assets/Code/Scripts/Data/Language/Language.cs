@@ -107,6 +107,13 @@ namespace Code.Scripts.Data.Language
             // (57) "Victory"
             // (58) "Defeat"
             // (59) "Apply"
+            // (60) "Sight"
+            // (61) "Silencer"
+            // (62) "Suppressor"
+            // (63) "Magazine"
+            // (64) "Skin"
+            // (65) "Price"
+            // (66) "Attachment"
             
             
             // (59) "Next"
@@ -1730,6 +1737,189 @@ namespace Code.Scripts.Data.Language
                     "Terapkan", // Indonesian
                     "Terapkan", // Malay
                     "Qo'llash" // Uzbek
+                }
+            };
+            
+            data[60] = new()
+            {
+                Key = "Sight",
+                Translated = new[]
+                {
+                    "Sight",         // English
+                    "Mira",       // Spanish
+                    "Viseur",     // French
+                    "Прицел",       // Russian
+                    "Visier",     // German
+                    "Mirino",      // Italian
+                    "Mira",     // Portuguese
+                    "瞄准镜",          // Chinese
+                    "照準器",      // Japanese
+                    "조준경",         // Korean
+                    "منظار",        // Arabic
+                    "दृष्टि",       // Hindi
+                    "Paningin",     // Filipino
+                    "Nişangah",       // Turkish
+                    "Ống ngắm",     // Vietnamese
+                    "ศูนย์เล็ง",      // Thai
+                    "Bidik",         // Indonesian
+                    "Pembidik",        // Malay
+                    "Nishon",       // Uzbek
+                }
+            };
+            data[61] = new()
+            {
+                Key = "Silencer",
+                Translated = new[]
+                {
+                    "Silencer", // English
+                    "Silenciador", // Spanish
+                    "Silencieux", // French
+                    "Глушитель", // Russian
+                    "Schalldämpfer", // German
+                    "Silenziatore", // Italian
+                    "Silenciador", // Portuguese
+                    "消音器", // Chinese
+                    "サプレッサー", // Japanese
+                    "소음기", // Korean
+                    "كاتم الصوت", // Arabic
+                    "साइलेंसर", // Hindi
+                    "Silencer", // Filipino
+                    "Susturucu", // Turkish
+                    "Ống giảm thanh", // Vietnamese
+                    "ที่เก็บเสียง", // Thai
+                    "Perendam", // Indonesian
+                    "Penyenyap", // Malay
+                    "Bostiruvchi", // Uzbek
+                }
+            };
+            data[62] = new()
+            {
+                Key = "Suppressor",
+                Translated = new[]
+                {
+                    "Suppressor", // English
+                    "Supresor", // Spanish
+                    "Suppresseur", // French
+                    "Глушитель", // Russian
+                    "Schalldämpfer", // German
+                    "Soppressore", // Italian
+                    "Supressor", // Portuguese
+                    "消音器", // Chinese
+                    "サプレッサー", // Japanese
+                    "소음기", // Korean
+                    "كاتم الصوت", // Arabic
+                    "दमनकारी", // Hindi
+                    "Supresor", // Filipino
+                    "Bastırıcı", // Turkish
+                    "Ống hãm thanh", // Vietnamese
+                    "ตัวเก็บเสียง", // Thai
+                    "Perendam", // Indonesian
+                    "Penyenyap", // Malay
+                    "Bostiruvchi", // Uzbek
+                }
+            };
+            data[63] = new()
+            {
+                Key = "Magazine",
+                Translated = new[]
+                {
+                    "Magazine", // English
+                    "Cargador", // Spanish
+                    "Chargeur", // French
+                    "Магазин", // Russian
+                    "Magazin", // German
+                    "Caricatore", // Italian
+                    "Carregador", // Portuguese
+                    "弹匣", // Chinese
+                    "マガジン", // Japanese
+                    "탄창", // Korean
+                    "خزنة", // Arabic
+                    "मैगजीन", // Hindi
+                    "Magasin", // Filipino
+                    "Şarjör", // Turkish
+                    "Hộp đạn", // Vietnamese
+                    "ซองกระสุน", // Thai
+                    "Magasin", // Indonesian
+                    "Magazin", // Malay
+                    "O'qdon", // Uzbek
+                }
+            };
+            data[64] = new()
+            {
+                Key = "Skin",
+                Translated = new[]
+                {
+                    "Skin", // English
+                    "Diseño", // Spanish
+                    "Apparence", // French
+                    "Скин", // Russian
+                    "Skin", // German
+                    "Skin", // Italian
+                    "Aparência", // Portuguese
+                    "皮肤", // Chinese
+                    "スキン", // Japanese
+                    "스킨", // Korean
+                    "مظهر", // Arabic
+                    "त्वचा", // Hindi
+                    "Balat", // Filipino
+                    "Kaplama", // Turkish
+                    "Skin", // Vietnamese
+                    "สกิน", // Thai
+                    "Skin", // Indonesian
+                    "Kulit", // Malay
+                    "Teri", // Uzbek
+                }
+            };
+            data[65] = new DataModel()
+            {
+                Key = "Price",
+                Translated = new[]
+                {
+                    "Price", // English
+                    "Precio", // Spanish
+                    "Prix", // French
+                    "Цена", // Russian
+                    "Preis", // German
+                    "Prezzo", // Italian
+                    "Preço", // Portuguese
+                    "价格", // Chinese
+                    "価格", // Japanese
+                    "가격", // Korean
+                    "السعر", // Arabic
+                    "कीमत", // Hindi
+                    "Presyo", // Filipino
+                    "Fiyat", // Turkish
+                    "Giá", // Vietnamese
+                    "ราคา", // Thai
+                    "Harga", // Indonesian
+                    "Harga", // Malay
+                    "Narx", // Uzbek
+                }
+            };
+            data[66] = new DataModel()
+            {
+                Key = "Attachment",
+                Translated = new[]
+                {
+                    "Attachment", // English
+                    "Accesorio", // Spanish
+                    "Accessoire", // French
+                    "Насадка", // Russian
+                    "Aufsatz", // German
+                    "Accessorio", // Italian
+                    "Acessório", // Portuguese
+                    "配件", // Chinese
+                    "アタッチメント", // Japanese
+                    "부착물", // Korean
+                    "ملحق", // Arabic
+                    "अटैचमेंट", // Hindi
+                    "Attachment", // Filipino
+                    "Eklenti", // Turkish
+                    "Phụ kiện", // Vietnamese
+                    "อุปกรณ์เสริม", // Thai
+                    "Lampiran", // Indonesian
+                    "Lampiran", // Malay
+                    "Qoʻshimcha", // Uzbek
                 }
             };
 

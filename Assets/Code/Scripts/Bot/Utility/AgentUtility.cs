@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Serialization;
+
 namespace BotRoot
 {
     public class AgentUtility : MonoBehaviour
@@ -13,7 +15,7 @@ namespace BotRoot
         public Vector3 nextCornerPosition;
         public List<Vector3> pathCorners = new List<Vector3>();
         [HideInInspector] public bool pathCompleted;
-        [HideInInspector] public bool NoPath = false;
+        [HideInInspector] public bool noPath = false;
         [HideInInspector] public NavMeshPathStatus pathStatus;
         [HideInInspector] public bool usedPathFinder = false;
 
@@ -72,7 +74,7 @@ namespace BotRoot
                 moveCorner = 1;
                 pathCompleted = true;
                 DebugPath(pathCorners);
-                NoPath = false;
+                noPath = false;
                 usedPathFinder = false;
             }
             else
@@ -86,8 +88,11 @@ namespace BotRoot
                     {
                         if (overallController.pathFinder.PathInvalid)
                         {
+#if UnityEditor
                             Debug.LogWarning("Path: Invalid By AgentPathFinder, Caller: " + transform.parent.parent.parent.name);
-                            NoPath = true;
+#endif
+                            
+                            noPath = true;
                             pathCompleted = true;
                         }
                         else
@@ -107,7 +112,7 @@ namespace BotRoot
                                 moveCorner = 1;
                                 pathCompleted = true;
                                 DebugPath(pathCorners);
-                                NoPath = false;
+                                noPath = false;
                             }
                         }
 
@@ -129,7 +134,9 @@ namespace BotRoot
                     }
                     else
                     {
+#if UnityEditor
                         Debug.LogWarning("Waiting Path Complete: " + transform.parent.parent.parent.name);
+#endif
                     }
                 }
                 else if (path.status == NavMeshPathStatus.PathInvalid)
@@ -152,7 +159,7 @@ namespace BotRoot
                             pathCompleted = true;
 
                             DebugPath(pathCorners);
-                            NoPath = false;
+                            noPath = false;
                         }
                         else
                         {
@@ -163,8 +170,10 @@ namespace BotRoot
                             {
                                 if (overallController.pathFinder.PathInvalid)
                                 {
+#if UnityEditor
                                     Debug.LogWarning("Path: Invalid By AgentPathFinder, Caller: " + transform.parent.parent.parent.name);
-                                    NoPath = true;
+#endif
+                                    noPath = true;
                                     pathCompleted = true;
                                 }
                                 else
@@ -184,13 +193,15 @@ namespace BotRoot
                                         moveCorner = 1;
                                         pathCompleted = true;
                                         DebugPath(pathCorners);
-                                        NoPath = false;
+                                        noPath = false;
                                     }
                                 }
                             }
                             else
                             {
+#if UnityEditor
                                 Debug.LogWarning("Waiting Path Complete: " + transform.parent.parent.parent.name);
+#endif
                             }
                         }
                     }
@@ -203,8 +214,10 @@ namespace BotRoot
                             {
                                 if (overallController.pathFinder.PathInvalid)
                                 {
+#if UnityEditor
                                     Debug.LogWarning("Path: Invalid By AgentPathFinder, Caller: " + transform.parent.parent.parent.name);
-                                    NoPath = true;
+#endif
+                                    noPath = true;
                                     pathCompleted = true;
                                 }
                                 else
@@ -224,21 +237,25 @@ namespace BotRoot
                                         moveCorner = 1;
                                         pathCompleted = true;
                                         DebugPath(pathCorners);
-                                        NoPath = false;
+                                        noPath = false;
                                     }
                                 }
                             }
                             else
                             {
+#if UnityEditor
                                 Debug.LogWarning("Waiting Path Complete: " + transform.parent.parent.parent.name);
+#endif
                             }
                     }
                 }
                 else
                 {
+#if UnityEditor
                     Debug.LogWarning("Path: Invalid Another Type");
+#endif
                     pathCompleted = true;
-                    NoPath = true;
+                    noPath = true;
                 }
             }
         }
@@ -283,7 +300,8 @@ namespace BotRoot
                 return lastCorner;
             }
         }
-        void DebugPath(List<Vector3> path)
+
+        private static void DebugPath(List<Vector3> path)
         {
 #if UNITY_EDITOR
             for (var i = 1; i < path.Count; i++)

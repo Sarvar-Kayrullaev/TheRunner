@@ -42,7 +42,7 @@ public class WeaponAnimator : StateMachineBehaviour
                 weapon.SetAllAmmo(weapon.GetAllAmmo()-1);
 
                 weapon.holster.ammoBagText.text = "" + weapon.GetAllAmmo();
-                weapon.holster.RebuildBullet(weapon.currentAmmo, weapon.magazineSize);
+                weapon.holster.ResetBullets(weapon.currentAmmo, weapon.magazineSize);
             }
             weapon.isReloading = false;
         }

@@ -33,8 +33,9 @@ public class AgentPathFinder : MonoBehaviour
 
     public Vector3 GetWalkablePointByCenter(Vector3 targetPosition)
     {
-        CancelInvoke(nameof(EnemyNoPartial));
-        Invoke(nameof(EnemyNoPartial), 1);
+        if(_enemyNoPartialCorontine != null) StopCoroutine(_enemyNoPartialCorontine);
+        _enemyNoPartialCorontine = null;
+        _enemyNoPartialCorontine = StartCoroutine(EnemyNoPartial(1));
         EnemyIsInPartial = true;
         target = targetPosition;
         FindPathCompleted = false;
@@ -81,8 +82,11 @@ public class AgentPathFinder : MonoBehaviour
         }
     }
 
-    void EnemyNoPartial()
+    private Coroutine _enemyNoPartialCorontine;
+
+    private IEnumerator EnemyNoPartial(float delay)
     {
+        yield return  new WaitForSeconds(delay);
         EnemyIsInPartial = false;
     }
 
@@ -229,23 +233,23 @@ public class AgentPathFinder : MonoBehaviour
         return null;
     }
 
-    int GetCenterPointIndex(List<Vector3> positions)
+    private int GetCenterPointIndex(List<Vector3> positions)
     {
         if (positions.Count > 0)
         {
-            Vector3 sum = Vector3.zero;
-            foreach (Vector3 point in positions)
+            var sum = Vector3.zero;
+            foreach (var point in positions)
             {
                 sum += point;
             }
 
-            Vector3 averagePosition = sum / positions.Count;
+            var averagePosition = sum / positions.Count;
 
-            float closestDistance = Mathf.Infinity;
-            int closestPositionIndex = 0;
-            for (int i = 0; i < positions.Count; i++)
+            var closestDistance = Mathf.Infinity;
+            var closestPositionIndex = 0;
+            for (var i = 0; i < positions.Count; i++)
             {
-                float distance = Vector3.Distance(averagePosition, positions[i]);
+                var distance = Vector3.Distance(averagePosition, positions[i]);
                 if (distance < closestDistance)
                 {
                     closestPositionIndex = i;
@@ -257,7 +261,9 @@ public class AgentPathFinder : MonoBehaviour
         }
         else
         {
+#if UnityEditor
             Debug.LogError("No List Position.");
+#endif
             return 0;
         }
     }

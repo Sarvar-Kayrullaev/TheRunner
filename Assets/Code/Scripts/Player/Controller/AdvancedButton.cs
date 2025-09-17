@@ -15,12 +15,10 @@ public class AdvancedButton : MonoBehaviour, IPointerDownHandler, IDragHandler, 
 
     private void Start()
     {
-        if (Player)
+        if (!Player) return;
+        if (Player.TryGetComponent(out ButtonListener buttonListenerComponent))
         {
-            if (Player.GetComponent<ButtonListener>() != null)
-            {
-                buttonListener = Player.GetComponent<ButtonListener>();
-            }
+            buttonListener = buttonListenerComponent;
         }
     }
 

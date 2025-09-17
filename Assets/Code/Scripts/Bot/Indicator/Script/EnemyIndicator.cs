@@ -14,6 +14,7 @@ namespace BotRoot
         public AudioClip identifyStartSound;
         public Transform owner;
         public Transform target;
+        public BotSetup setup;
         private RectTransform rect;
         public RectTransform arrowBackground;
         public RectTransform arrowForeground;
@@ -29,26 +30,26 @@ namespace BotRoot
         Animator animator;
         [SerializeField] AnimationClip detectedAnimationClip;
 
-        public void Register(Transform owner, Transform target, AudioSource audioSource)
+        public void Register(Transform owner, Transform target, AudioSource audioSource, BotSetup setup)
         {
             this.owner = owner;
             this.target = target;
             this.audioSource = audioSource;
+            this.setup = setup;
 
-            if (GetComponent<Animator>())
+            if (TryGetComponent(out Animator animator))
             {
-                animator = GetComponent<Animator>();
+                this.animator = animator;
             }
             _destroySelfTimer = destroySelfTime;
-            if (target == null || owner == null)
+            if (!target || !owner)
             {
                 Destroy(gameObject);
                 return;
             }
             StartBounceAnimate();
 
-            BotSetup setup = owner.GetComponent<BotSetup>();
-            setAdvansedProgress(setup.attribute.identifyEnemyTime, setup.attribute._identifyEnemyTime);
+            setAdvansedProgress(setup.attribute.identifyEnemyTime, setup.attribute._identifyEnemyTime); 
             RotateToTheTarget(owner, target);
         }
 
@@ -60,14 +61,14 @@ namespace BotRoot
                 Destroy(gameObject);
                 return;
             }
-            if (target == null || owner == null)
+            if (!target || !owner)
             {
                 Destroy(gameObject);
                 return;
             }
-
-            BotSetup setup = owner.GetComponent<BotSetup>();
-
+            
+            if(!setup) return;
+            
             if (!detected)
             {
                 setAdvansedProgress(setup.attribute.identifyEnemyTime, setup.attribute._identifyEnemyTime);
@@ -82,12 +83,12 @@ namespace BotRoot
                     destroyed = true;
                     detected = true;
                     audioSource.PlayOneShot(identifiedSound, soundVolume);
-                    BotObjects botObjects = owner.GetComponent<BotObjects>();
+                    var botObjects = setup.objects;
                     botObjects.enemy = botObjects.futureEnemy;
                     if (botObjects.futureEnemy) setup.overall.SetLastEnemyVisiblePoint(botObjects.futureEnemy.position);
                     botObjects.lastEnemy = botObjects.futureEnemy;
                     setup.status.MentalState = BotEnum.MentalState.Panic;
-                    owner.GetComponent<BotBase>().EnemyDetected = true;
+                    setup.memory.EnemyDetected = true;
                     setup.author.SetAlarmSignal(true);
                     //setup.utility.CallStaticEnemy(botObjects.futureEnemy);
                     Destroy(gameObject, 1f);
@@ -117,20 +118,21 @@ namespace BotRoot
             }
         }
 
-        protected RectTransform Rect
+        private RectTransform Rect
         {
             get
             {
-                if (rect == null)
+                if (rect is not null) return rect;
+                if (TryGetComponent(out RectTransform rectTransform))
                 {
-                    rect = GetComponent<RectTransform>();
-                    if (rect == null)
-                    {
-                        rect = gameObject.AddComponent<RectTransform>();
-                    }
+                    rect =  rectTransform;
+                    return rect;
                 }
-
-                return rect;
+                else
+                {
+                    //rect = gameObject.AddComponent<RectTransform>();
+                    return null;
+                }
             }
         }
 
@@ -165,21 +167,21 @@ namespace BotRoot
             print("Angle = " + Angle);
         }
 
-        public void RotateToTheTarget(Transform owner, Transform target)
+        public void RotateToTheTarget(Transform _owner, Transform _target)
         {
-            if (owner)
+            if (_owner)
             {
-                position = owner.position;
-                rotation = owner.rotation;
+                position = _owner.position;
+                rotation = _owner.rotation;
             }
-            Vector3 direction = target.position - position;
+            var direction = _target.position - position;
 
             rotation = Quaternion.LookRotation(direction);
             rotation.z = -rotation.y;
             rotation.x = 0;
             rotation.y = 0;
 
-            Vector3 northDirection = new Vector3(0, 0, target.eulerAngles.y - 180);
+            var northDirection = new Vector3(0, 0, _target.eulerAngles.y - 180);
             Rect.localRotation = rotation * Quaternion.Euler(northDirection);
         }
 

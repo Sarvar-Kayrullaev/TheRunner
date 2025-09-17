@@ -18,13 +18,20 @@ namespace BotRoot
         public void Spawn(OverallController overall)
         {
             bot = Instantiate(BotPrefab, transform);
-            setup = bot.GetComponent<BotSetup>();
-            InstantiateIndicators();
+            if (bot.TryGetComponent(out BotSetup setupComponent))
+            {
+                setup = setupComponent;
+                InstantiateIndicators();
 
-            setup.global = FindFirstObjectByType<BotGlobal>();
-            setup.botAudio = setup.global.Audio;
-            setup.objects.guardingPoints = GuardingPoints;
-            setup.overall = overall;
+                setup.global = FindFirstObjectByType<BotGlobal>();
+                setup.botAudio = setup.global.Audio;
+                setup.objects.guardingPoints = GuardingPoints;
+                setup.overall = overall;
+            }
+            else
+            {
+                Debug.LogWarning("Unable to spawn object");
+            }
         }
 
         public void Unspawn()
@@ -37,9 +44,9 @@ namespace BotRoot
             }
         }
 
-        public void InstantiateIndicators()
+        private void InstantiateIndicators()
         {
-            indicatorParent = new("Indicators");
+            indicatorParent = new GameObject("Indicators");
 
             GameObject moveIndicator = new("moveIndicator");
             GameObject movePoint = new("movePoint");

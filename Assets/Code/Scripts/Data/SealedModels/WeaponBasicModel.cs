@@ -9,6 +9,8 @@ namespace Data
     {
         public int ID;
         public string Name;
+        [Multiline]
+        public string Description;
         [FormerlySerializedAs("WeaponEnum")] public WeaponName weaponName;
         public WeaponType WeaponType;
         public SuppressorType SuppressorType;

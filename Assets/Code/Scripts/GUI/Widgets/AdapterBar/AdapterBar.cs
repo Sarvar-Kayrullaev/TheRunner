@@ -67,6 +67,7 @@ namespace Widget
                         if (button.TryGetComponent(out UnityEngine.UI.Image image))
                         {
                             image.sprite = selectedSprite;
+                            image.color = selectedColor;
                         }
                         else
                         {
@@ -94,6 +95,7 @@ namespace Widget
                         if (button.TryGetComponent(out UnityEngine.UI.Image image))
                         {
                             image.sprite = unselectedSprite;
+                            image.color = unselectedColor;
                         }
                         else
                         {

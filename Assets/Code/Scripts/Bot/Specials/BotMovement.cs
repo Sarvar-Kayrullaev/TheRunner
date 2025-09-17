@@ -85,7 +85,7 @@ namespace BotRoot
         }
 
 
-        void CommandMovement(Transform point)
+        private void CommandMovement(Transform point)
         {
             if (status.Command == BotEnum.Command.Attacking)
             {
@@ -143,7 +143,7 @@ namespace BotRoot
             }
             else
             {
-                Debug.LogWarning("No Path");
+                //Debug.LogWarning("No Path");
             }
         }
         void CheckingMovement(Transform point)
@@ -153,7 +153,7 @@ namespace BotRoot
             bool isPathInvalid = agent.pathStatus == NavMeshPathStatus.PathInvalid;
             bool isPathPartial = agent.pathStatus == NavMeshPathStatus.PathPartial;
 
-            if (!isPathInvalid && !isPathPartial && !agent.NoPath)
+            if (!isPathInvalid && !isPathPartial && !agent.noPath)
             {
                 Vector3 MoveToCorner = agent.GetNextCorner();
                 objects.moveIndicator.position = MoveToCorner;
@@ -164,7 +164,9 @@ namespace BotRoot
             }
             else
             {
-                Debug.LogWarning("No Path");
+                #if UNITY_EDITOR
+                //Debug.LogWarning("No Path");
+                #endif
             }
         }
         public void CheckingIdle()
@@ -214,14 +216,14 @@ namespace BotRoot
                 agent.CreatePathCorners(point.position, setup.overall, setup);
                 if (!agent.pathCompleted)
                 {
-                    Debug.LogWarning("Path Not Completed");
+                    print("Path Not Completed");
                     return;
                 }
                 bool isPathInvalid = agent.pathStatus == NavMeshPathStatus.PathInvalid;
                 bool isPathPartial = agent.pathStatus == NavMeshPathStatus.PathPartial;
-                if (isPathInvalid || isPathPartial || agent.NoPath)
+                if (isPathInvalid || isPathPartial || agent.noPath)
                 {
-                    Debug.LogWarning("No Path");
+                    print("No Path");
                     setup.author.Message("No Path: Attack Movement");
                     return;
                 }

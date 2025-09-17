@@ -35,6 +35,12 @@ namespace BotRoot
         public List<Body> bodies = new();
 
         private GameObject markerObject;
+        private Camera _camera;
+
+        private void Awake()
+        {
+            _camera = Camera.main;
+        }
 
         void Start()
         {
@@ -43,7 +49,7 @@ namespace BotRoot
             UpdateBodies(bodiesParent);
         }
 
-        void UpdateBodies(Transform parent)
+        private void UpdateBodies(Transform parent)
         {
             foreach(Transform child in parent)
             {
@@ -64,12 +70,8 @@ namespace BotRoot
                 {
                     Debug = !Debug;
                     RemoveMarker();
-                    SetMark(Camera.main);
                 }
-                else
-                {
-                    SetMark(Camera.main);
-                }
+                SetMark(_camera);
             }
         }
 
@@ -88,7 +90,7 @@ namespace BotRoot
                     marker = screenPoint;
                     screenPoint.target = markerPoint;
                     screenPoint.Initialize(markerSprite);
-                    message = createdMarker.GetChild(1).GetComponent<TMP_Text>();
+                    if(createdMarker.GetChild(1).TryGetComponent(out TMP_Text text)) message = text;
                 }
                 markerObject = createdMarker.gameObject;
             }

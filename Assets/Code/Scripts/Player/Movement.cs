@@ -318,7 +318,6 @@ namespace PlayerRoot
 
         void CollapseDamage()
         {
-            Debug.Log("CollapseTime: "+ collapsingTime);
             if(collapsingTime > 0.8f) player.TakeDamage(20,player.transform);
             else if(collapsingTime > 1) player.TakeDamage(80,player.transform);
             else if(collapsingTime > 1.3f) player.TakeDamage(160,player.transform);
@@ -390,9 +389,9 @@ namespace PlayerRoot
             if (isClimbing)
             {
                 climbLagTimer -= Time.deltaTime;
-                if (currentClimbPosition != null)
+                if (currentClimbPosition)
                 {
-                    Vector3 pos = currentClimbPosition.position;
+                    var pos = currentClimbPosition.position;
                     if (Vector3.Distance(player.transform.position, pos) <= 0.1f && climbLagTimer <= 0)
                     {
                         inCount++;
@@ -416,7 +415,7 @@ namespace PlayerRoot
                 }
                 else
                 {
-                    player.Invoke("ShakeCamera", 0.1f);
+                    player.StartCoroutine(ShakeCamera(0.1f));
                     currentClimbPosition = GetClosestChild(ClimbTransform);
                 }
             }
@@ -493,8 +492,9 @@ namespace PlayerRoot
             }
             lastClickTime = Time.time;
         }
-        void ShakeCamera()
+        private IEnumerator ShakeCamera(float delay)
         {
+            yield return new WaitForSeconds(delay);
             CameraShaker.Instance.ShakeOnce(3, 3, 0.05f, 1);
         }
 

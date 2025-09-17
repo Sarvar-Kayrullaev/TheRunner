@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 namespace Widget
@@ -36,20 +37,21 @@ namespace Widget
             int index = 0;
             foreach (Transform item in barRoot)
             {
-                Image image = item.GetComponent<Image>();
-                ItemButton button = item.GetComponent<ItemButton>();
-                if (index == selectedIndex)
+                if (item.GetChild(0).TryGetComponent(out TMP_Text text) && item.TryGetComponent(out ItemButton button))
                 {
-                    SelectFragment(index);
-                    if (image) image.color = selectedColor;
-                    if (button) button.Selected = true;
+                    if (index == selectedIndex)
+                    {
+                        SelectFragment(index);
+                        text.color = selectedColor;
+                        button.Selected = true;
+                    }
+                    else
+                    {
+                        text.color = unselectedColor;
+                        button.Selected = false;
+                    }
+                    index++;
                 }
-                else
-                {
-                    if (image)image.color = unselectedColor;
-                    if (button) button.Selected = false;
-                }
-                index++;
             }
         }
 

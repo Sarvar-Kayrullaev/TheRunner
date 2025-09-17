@@ -59,24 +59,26 @@ namespace BotRoot
         {
             Transform Weapon = setup.objects.Weapon;
             Weapon.parent = null;
-            if(Weapon.TryGetComponent(out MeshCollider collider)) collider.enabled = true;
-            if(Weapon.TryGetComponent(out Dragable dragable)) dragable.enabled = true;
-            if(Weapon.TryGetComponent(out Rigidbody rigidbody))
+            if(Weapon.TryGetComponent(out MeshCollider colliderComponent)) colliderComponent.enabled = true;
+            if(Weapon.TryGetComponent(out Dragable dragableComponent)) dragableComponent.enabled = true;
+            if(Weapon.TryGetComponent(out Rigidbody rigidbodyComponent))
             {
-                rigidbody.useGravity = true;
-                rigidbody.isKinematic = false;
-                rigidbody.AddExplosionForce(1000,Vector3.down,10);
+                rigidbodyComponent.useGravity = true;
+                rigidbodyComponent.isKinematic = false;
+                rigidbodyComponent.AddExplosionForce(1000,Vector3.down,10);
             }
         }
 
         public void Hit(Vector3 point)
         {
             hitPoint = point;
-            Invoke(nameof(HitInvoke),1);
+
+            StartCoroutine(HitWait(1));
         }
 
-        public void HitInvoke()
+        private IEnumerator HitWait(float time)
         {
+            yield return new WaitForSeconds(time);
             setup.utility.CallToShotPosition(hitPoint);
         }
     }

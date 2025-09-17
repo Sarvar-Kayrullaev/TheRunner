@@ -60,7 +60,8 @@ public class CarController : MonoBehaviour
     public Slider slider;
     [HideInInspector] public Player player;
     private bool playerIsClose = false;
-    void Start()
+
+    private void Start()
     {
         player = FindFirstObjectByType<Player>();
 
@@ -71,7 +72,8 @@ public class CarController : MonoBehaviour
 
         InvokeRepeating(nameof(UpdateListener), 0, 0.4f);
     }
-    void UpdateListener()
+
+    private void UpdateListener()
     {
         float distance = Vector3.Distance(player.transform.position, transform.position);
         if (distance < listenerDistance)
@@ -85,7 +87,8 @@ public class CarController : MonoBehaviour
             playerIsClose = false;
         }
     }
-    void Update()
+
+    private void Update()
     {
         if (playerIsClose)
         {
@@ -103,8 +106,8 @@ public class CarController : MonoBehaviour
         }
 
         // Get input for acceleration and braking
-        float acceleration = Input.GetAxis("Vertical");
-        float steering = Input.GetAxis("Horizontal");
+        var acceleration = Input.GetAxis("Vertical");
+        var steering = Input.GetAxis("Horizontal");
 
         currentTransmissionTime -= Time.deltaTime;
         currentPreviousGearBackTime -= Time.deltaTime;
@@ -138,7 +141,7 @@ public class CarController : MonoBehaviour
         // }
     }
 
-    void WheelRotation()
+    private void WheelRotation()
     {
         frontLeftWheelTransform.Rotate(frontLeftWheel.rpm / 60 * 360 * Time.deltaTime, 0, 0);
         frontRightWheelTransform.Rotate(frontRightWheel.rpm / 60 * 360 * Time.deltaTime, 0, 0);
@@ -153,7 +156,8 @@ public class CarController : MonoBehaviour
         temp1.y = frontRightWheel.steerAngle - frontRightWheelTransform.localEulerAngles.z;
         frontRightWheelTransform.localEulerAngles = temp1;
     }
-    void ApplyThrottle(float throttleInput)
+
+    private void ApplyThrottle(float throttleInput)
     {
         float torque = throttleInput * gearTorques[currentGear];
         float speed = rigidbody.linearVelocity.magnitude * 3.6f; // Convert m/s to km/h
@@ -180,14 +184,14 @@ public class CarController : MonoBehaviour
         }
     }
 
-    void ApplySteering(float steeringInput)
+    private void ApplySteering(float steeringInput)
     {
         float steerAngle = maxSteerAngle * steeringInput;
         frontLeftWheel.steerAngle = steerAngle;
         frontRightWheel.steerAngle = steerAngle;
     }
 
-    void UpdateGear(float acceleration)
+    private void UpdateGear(float acceleration)
     {
         float speed = rigidbody.linearVelocity.magnitude * 3.6f; // Convert m/s to km/h
 
@@ -214,7 +218,7 @@ public class CarController : MonoBehaviour
         }
     }
 
-    void HandBrake()
+    private void HandBrake()
     {
         //Debug.Log("brakes " + braked);
         if (Input.GetButton("Jump"))
@@ -236,19 +240,20 @@ public class CarController : MonoBehaviour
             rearRightWheel.brakeTorque = 0;
         }
     }
-    void TransmissionBrake()
+
+    private void TransmissionBrake()
     {
         rearLeftWheel.brakeTorque = maxBrakeTorque * 20;
         rearRightWheel.brakeTorque = maxBrakeTorque * 20;
     }
 
-    void DisplaySpeed()
+    private void DisplaySpeed()
     {
-        float speed = rigidbody.linearVelocity.magnitude * 3.6f; // Convert m/s to km/h
+        var speed = rigidbody.linearVelocity.magnitude * 3.6f; // Convert m/s to km/h
         //Debug.Log("Speed: " + Mathf.Round(speed) + " km/h");
     }
 
-    void Audio(float torque)
+    private void Audio(float torque)
     {
         currentPitch = Mathf.Lerp(currentPitch, 1, 0.005f);
         //slider.value = Lerp(currentPitch, 0.8f, 1);
@@ -275,7 +280,6 @@ public class CarController : MonoBehaviour
             StartCoroutine(PlayAudio(TireRollingAudioSource, TireRollingClip, 0.0f, volume, true, false));
             StartCoroutine(PlayAudio(EngineAudioSource, MovingEngineClip, 0.0f, 0.3f, true, false));
             StartCoroutine(PlayAudio(OneShotAudioSource, StartEngineClip, 0.0f, 0.3f, false, true));
-            Debug.Log("CarSound 2");
         }
         else
         {
@@ -283,18 +287,18 @@ public class CarController : MonoBehaviour
         }
     }
 
-    void Audio2(float torque)
+    private static void Audio2(float torque)
     {
         //currentPitch = Mathf.Lerp(currentPitch, 1,0.1f);
         //slider.value = MinNormalizedValue(currentPitch,0.9f,1);
     }
 
-    float Lerp(float cursor, float min, float max)
+    private static float Lerp(float cursor, float min, float max)
     {
         return (float)(cursor * (max - min) + min);
     }
 
-    IEnumerator PlayAudio(AudioSource source,AudioClip clip, float delay,float volume, bool loop, bool playOneShot)
+    private static IEnumerator PlayAudio(AudioSource source,AudioClip clip, float delay,float volume, bool loop, bool playOneShot)
     {
         yield return new WaitForSeconds(delay);
         if (source.isPlaying) source.Stop();

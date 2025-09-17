@@ -79,8 +79,9 @@ public class Outline : MonoBehaviour {
   private Material outlineFillMaterial;
 
   private bool needsUpdate;
+  private bool onVisible;
 
-  void Awake() {
+  private void Awake() {
 
     // Cache renderers
     renderers = GetComponentsInChildren<Renderer>();
@@ -99,7 +100,7 @@ public class Outline : MonoBehaviour {
     needsUpdate = true;
   }
 
-  void OnEnable() {
+  private void OnEnable() {
     foreach (var renderer in renderers) {
 
       // Append outline shaders
@@ -112,7 +113,7 @@ public class Outline : MonoBehaviour {
     }
   }
 
-  void OnValidate() {
+  private void OnValidate() {
 
     // Update material properties
     needsUpdate = true;
@@ -129,10 +130,10 @@ public class Outline : MonoBehaviour {
     }
   }
 
-  void Update() {
+  private void Update() {
     if (needsUpdate) {
       needsUpdate = false;
-
+      
       UpdateMaterialProperties();
     }
   }
@@ -177,7 +178,7 @@ public class Outline : MonoBehaviour {
     }
   }
 
-  void LoadSmoothNormals() {
+  private void LoadSmoothNormals() {
 
     // Retrieve or generate smooth normals
     foreach (var meshFilter in GetComponentsInChildren<MeshFilter>()) {
@@ -218,7 +219,7 @@ public class Outline : MonoBehaviour {
     }
   }
 
-  List<Vector3> SmoothNormals(Mesh mesh) {
+  private static List<Vector3> SmoothNormals(Mesh mesh) {
 
     // Group vertices by location
     var groups = mesh.vertices.Select((vertex, index) => new KeyValuePair<Vector3, int>(vertex, index)).GroupBy(pair => pair.Key);
@@ -252,7 +253,7 @@ public class Outline : MonoBehaviour {
     return smoothNormals;
   }
 
-  void CombineSubmeshes(Mesh mesh, Material[] materials) {
+  private static void CombineSubmeshes(Mesh mesh, Material[] materials) {
 
     // Skip meshes with a single submesh
     if (mesh.subMeshCount == 1) {

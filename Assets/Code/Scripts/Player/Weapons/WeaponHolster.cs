@@ -87,57 +87,65 @@ public class WeaponHolster : MonoBehaviour
         holsterManager.SaveCurrentWeaponParams();
         if (transform.childCount > 0)
         {
-            if (transform.GetChild(transform.childCount - 1).GetComponent<HandActionController>()) return;
+            if (transform.GetChild(transform.childCount - 1).TryGetComponent(out HandActionController handActionControllerComponent))
+            {
+                return;
+            }
         }
 
         foreach (Transform child in transform)
         {
             child.gameObject.SetActive(false);
         }
-        Transform hand = Instantiate(climbHand, transform);
-        hand.GetComponent<HandActionController>().holster = this;
+        var hand = Instantiate(climbHand, transform);
+
+        if (hand.TryGetComponent(out HandActionController handActionController))
+        {
+            handActionController.holster = this;
+        }
     }
 
     public void DrawWeapon(GameObject Prefab)
     {
         int selectedWeapon = dataManager.playerModel.SelectedWeaponIndex;
         EquipedWeaponModel equipedWeapon = dataManager.playerModel.Holster[selectedWeapon].EquipedWeapon;
-        Debug.Log($"CurrentID: {CurrentWeaponID} == EquipedID: {equipedWeapon.ID}");
         if (CurrentWeaponID == equipedWeapon.ID) return;
 
         if (transform.childCount > 0) Destroy(transform.GetChild(0).gameObject);
         
         GameObject insWeapon = Instantiate(Prefab, transform);
-        Weapon weapon = insWeapon.GetComponent<Weapon>();
+        if (insWeapon.TryGetComponent(out Weapon weapon))
+        {
+            weapon.released = CurrentWeaponID == equipedWeapon.ID;
+            CurrentWeaponID = equipedWeapon.ID;
+            currentWeapon = weapon;
+            weapon.holster = this;
+            weapon.crosshair = crosshair;
+            TryGetComponent(out WeaponSway weaponSwayComponent);
+            weapon.sway = weaponSwayComponent;
+            weapon.stackCamera = stackCamera;
+            weapon.forward = forward;
+            weapon.currentAmmo = equipedWeapon.MagazineBulletCount;
+            //weapon.sniperFocus = sniperFocus;
+            weapon.WeaponType = WeaponTypeConverter(equipedWeapon.weaponName);
+            weapon.SetSight(equipedWeapon.Sight);
+            weapon.SetSuppressor(equipedWeapon.Suppressor);
+            crosshair.weapon = weapon;
+            crosshair.restingSize = weapon.restingAccuracy;
+            crosshair.shootSize = weapon.shootAccuracy;
+            crosshair.walkSize = weapon.walkAccuracy;
+            crosshair.runSize = weapon.runAccuracy;
+            crosshair.aimAccuracyRate = weapon.aimAccuracyRate;
+            
+            weapon.TryGetComponent(out Recoil recoilComponent);
+            recoilComponent.RecoilPositionTranform = recoilPosition;
+            recoilComponent.RecoilRotationTranform = recoilRotation;
+            weapon.forceDraw = true;
 
-        weapon.released = CurrentWeaponID == equipedWeapon.ID;
-        CurrentWeaponID = equipedWeapon.ID;
-        currentWeapon = weapon;
-        weapon.holster = this;
-        weapon.crosshair = crosshair;
-        weapon.sway = GetComponent<WeaponSway>();
-        weapon.stackCamera = stackCamera;
-        weapon.forward = forward;
-        weapon.currentAmmo = equipedWeapon.MagazineBulletCount;
-        //weapon.sniperFocus = sniperFocus;
-        weapon.WeaponType = WeaponTypeConverter(equipedWeapon.weaponName);
-        weapon.SetSight(equipedWeapon.Sight);
-        weapon.SetSuppressor(equipedWeapon.Suppressor);
-        crosshair.weapon = weapon;
-        crosshair.restingSize = weapon.restingAccuracy;
-        crosshair.shootSize = weapon.shootAccuracy;
-        crosshair.walkSize = weapon.walkAccuracy;
-        crosshair.runSize = weapon.runAccuracy;
-        crosshair.aimAccuracyRate = weapon.aimAccuracyRate;
+            RebuildBulletText(equipedWeapon.weaponName);
 
-        Recoil recoil = weapon.GetComponent<Recoil>();
-        recoil.RecoilPositionTranform = recoilPosition;
-        recoil.RecoilRotationTranform = recoilRotation;
-        weapon.forceDraw = true;
-
-        RebuildBulletText(equipedWeapon.weaponName);
-
-        RebuildBullet(weapon.currentAmmo, weapon.magazineSize);
+            RebuildBullet(weapon.currentAmmo, weapon.magazineSize);
+        }
     }
 
     public void RedrawWeapon()
@@ -202,6 +210,11 @@ public class WeaponHolster : MonoBehaviour
     public void RebuildBullet(int currentAmmo, int magazineSize)
     {
         ammoBag.Build(currentAmmo, magazineSize);
+    }
+
+    public void ResetBullets(int currentAmmo, int  magazineSize)
+    {
+        ammoBag.ResetBullets(currentAmmo, magazineSize);
     }
 
     public void RebuildBulletText(WeaponName weaponName)

@@ -23,6 +23,7 @@ public class ShopAdapter : MonoBehaviour
     [Header("Fund Setup")]
     [SerializeField] private TMP_Text moneyText;
     [SerializeField] private TMP_Text goldText;
+    [Space] [SerializeField] private TMP_Text moneyTextCustomization;
 
     [Header("Weapon Content Setup")]
     [SerializeField] private RectTransform weaponContentParent;
@@ -30,6 +31,8 @@ public class ShopAdapter : MonoBehaviour
 
     [Header("Weapon Stats Setup")]
     [SerializeField] private RectTransform weaponTitleTextParent;
+    [SerializeField] private RectTransform weaponDescriptionParent;
+    
     [SerializeField] private RectTransform weaponStatsBar1;
     [SerializeField] private RectTransform weaponStatsBar2;
     [SerializeField] private RectTransform weaponStatsBar3;
@@ -39,7 +42,8 @@ public class ShopAdapter : MonoBehaviour
     [SerializeField] private RectTransform weaponPriceTextParent;
     [Space(10)]
     [SerializeField] private TMP_Text weaponTitleText;
-    [SerializeField]private TMP_Text weaponPriceText;
+    [SerializeField] private TMP_Text weaponDescriptionText;
+    [SerializeField] private TMP_Text weaponPriceText;
     [Space(10)]
     [SerializeField] private TMP_Text weaponStatsValueText1;
     [SerializeField] private TMP_Text weaponStatsValueText2;
@@ -120,9 +124,9 @@ public class ShopAdapter : MonoBehaviour
                 var itemView = Instantiate(contentPrefab, weaponContentParent);
                 
                 var shopWeapon = playerModel.ShopWeapons[(int) model.weaponName-1];
-                itemView.transform.GetChild(2).gameObject.SetActive(shopWeapon is { IsUnlocked: true, IsPurchased: true });
+                //itemView.transform.GetChild(2).gameObject.SetActive(shopWeapon is { IsUnlocked: true, IsPurchased: true });
 
-                if (itemView.transform.GetChild(0).TryGetComponent(out Image image))
+                if (itemView.transform.GetChild(1).TryGetComponent(out Image image))
                 {
                     image.sprite = model.SpriteReference;
                 }
@@ -151,11 +155,11 @@ public class ShopAdapter : MonoBehaviour
         {
             if (currentIndex == index)
             {
-                content.GetChild(1).gameObject.SetActive(true);
+                content.GetChild(0).gameObject.SetActive(true);
             }
             else
             {
-                content.GetChild(1).gameObject.SetActive(false);
+                content.GetChild(0).gameObject.SetActive(false);
             }
 
             currentIndex++;
@@ -166,6 +170,8 @@ public class ShopAdapter : MonoBehaviour
     {
         moneyText.text = dataManager.playerModel.Funds.Money.ToString();
         goldText.text = dataManager.playerModel.Funds.Gold.ToString();
+        moneyTextCustomization.text = dataManager.playerModel.Funds.Money.ToString();
+        SetPreferredSizeWidth(moneyTextCustomization);
     }
     
     public void BuildWeaponStatsAdapter(int weaponName, Transform content)
@@ -197,6 +203,11 @@ public class ShopAdapter : MonoBehaviour
             if (currentWeaponName == weaponName)
             {
                 weaponTitleText.text = weapon.Name;
+                weaponDescriptionText.text = weapon.Description;
+                if (weaponDescriptionText.TryGetComponent(out TextAdapter textAdapter))
+                {
+                    textAdapter.FixParentAspect(weaponDescriptionText);
+                }
                 weaponPriceText.text = weapon.WeaponPrice.ToString();
 
                 var damage = weapon.WeaponAttribute.Damage;
@@ -238,7 +249,7 @@ public class ShopAdapter : MonoBehaviour
                         weaponEquipButtonComponent.OnClick.AddListener(() => BuildEquipmentScreen(weapon, true, new()));
                         weaponCustomizeButtonComponent.OnClick.AddListener(() => BuildCustomizeScreen(weapon));
                         
-                        content.GetChild(2).gameObject.SetActive(true);
+                        //content.GetChild(2).gameObject.SetActive(true);
                         
                         
                     }
@@ -375,7 +386,8 @@ public class ShopAdapter : MonoBehaviour
 
     private void BuildCustomizeScreen(WeaponBasicModel basicModel)
     {
-        
+        moneyTextCustomization.text = dataManager.playerModel.Funds.Money.ToString();
+        SetPreferredSizeWidth(moneyTextCustomization);
     }
 
     private void BuildBuyScreen(WeaponBasicModel basicModel, Transform content)
@@ -440,5 +452,10 @@ public class ShopAdapter : MonoBehaviour
         }
     }
 
-
+    public void SetPreferredSizeWidth(TMP_Text text)
+    {
+        var preferredSize = text.GetPreferredValues();
+        var preferredWidth = preferredSize.x;
+        text.rectTransform.sizeDelta = new Vector2(preferredWidth, text.rectTransform.sizeDelta.y);
+    }
 }

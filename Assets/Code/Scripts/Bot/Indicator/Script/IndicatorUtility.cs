@@ -43,7 +43,6 @@ namespace BotRoot
 
         public void ChangeDistance(Vector3 point)
         {
-            Debug.Log("Sus Point Changed");
             if(!ChangedDistance)
             {
                 float distance = Vector3.Distance(point, setup.transform.position);

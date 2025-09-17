@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -23,7 +24,8 @@ namespace BotRoot
 
         public void Reset()
         {
-            CancelInvoke(nameof(SetIsNotBusy));
+            if(_setIsNotBusyCoroutine != null) StopCoroutine(_setIsNotBusyCoroutine);
+            _setIsNotBusyCoroutine = null;
             pointed = null;
             IsBusy = false;
             points = new();
@@ -36,10 +38,17 @@ namespace BotRoot
         public void SetAreaIsDanger()
         {
             SafePoint = false;
-            CancelInvoke(nameof(SetAreaIsSafe));
-            Invoke(nameof(SetAreaIsSafe),120);
-        }
+            if (_coroutine != null) StopCoroutine(_coroutine);
 
+            _coroutine = SetAreaIsSafe(120);
+            StartCoroutine(_coroutine);
+        }
+        
+        private IEnumerator _coroutine;
+        private IEnumerator SetAreaIsSafe(float time)
+        {
+            yield return new WaitForSeconds(time);
+        }
         public void SetAreaIsSafe()
         {
             SafePoint = true;
@@ -48,11 +57,13 @@ namespace BotRoot
         public void SetIsBusy()
         {
             IsBusy = true;
-            Invoke(nameof(SetIsNotBusy),120);
+            _setIsNotBusyCoroutine = StartCoroutine(SetIsNotBusy(120));
         }
 
-        public void SetIsNotBusy()
+        private Coroutine _setIsNotBusyCoroutine;
+        private IEnumerator SetIsNotBusy(float time)
         {
+            yield return new WaitForSeconds(time);
             IsBusy = false;
         }
     }

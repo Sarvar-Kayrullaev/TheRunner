@@ -11,12 +11,13 @@ namespace BotRoot
         public int TalkingSoundVariant;
 
         public bool debug = false;
-        void Start()
+
+        private void Start()
         {
             action = setup.action;
         }
 
-        void Update()
+        private void Update()
         {
             if (setup.initialized)
             {

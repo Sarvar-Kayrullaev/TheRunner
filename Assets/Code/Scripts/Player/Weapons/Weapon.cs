@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -6,6 +7,7 @@ using UnityEngine;
 using Data;
 using Shader;
 using UnityEngine.Serialization;
+using Random = UnityEngine.Random;
 
 public class Weapon : MonoBehaviour
 {
@@ -407,8 +409,10 @@ public class Weapon : MonoBehaviour
         Destroy(muzzleFlash, 1);
 
         Transform bullet = Instantiate(bullerPrefab, firePoint.position, firePoint.rotation);
-        ParabolicBullet parabolicBullet = bullet.GetComponent<ParabolicBullet>();
-        parabolicBullet.Initialize(firePoint, bulletSpeed, bulletGravity, damage, holster.player);
+        if (bullet.TryGetComponent(out ParabolicBullet parabolicBulletComponent))
+        {
+            parabolicBulletComponent.Initialize(firePoint, bulletSpeed, bulletGravity, damage, holster.player);
+        }
     }
 
     void CallToEnemy()

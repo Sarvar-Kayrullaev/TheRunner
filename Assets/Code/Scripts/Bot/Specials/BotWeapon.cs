@@ -55,7 +55,8 @@ namespace BotRoot
                 _averageShootCount = AverageShootCount;
             }
         }
-        public void Shoot()
+
+        private void Shoot()
         {
             if (setup.objects.enemy)
             {
@@ -76,8 +77,8 @@ namespace BotRoot
             }
 
             setup.source.PlayOneShot(shootSound, 0.7f);
-            Transform _muzzleFlash = Instantiate(muzzleFlash, firePoint.position, firePoint.rotation);
-            Destroy(_muzzleFlash.gameObject, 0.05f);
+            var muzzleFlashTransform = Instantiate(muzzleFlash, firePoint.position, firePoint.rotation);
+            Destroy(muzzleFlashTransform.gameObject, 0.05f);
 
             RaycastHit hit;
             float crosshairSize = accuracy * 0.001f;
@@ -95,9 +96,10 @@ namespace BotRoot
             {
                 firePoint.LookAt(forward.position + offset * 150);
             }
-            Transform bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
-            BotBullet parabolicBullet = bullet.GetComponent<BotBullet>();
-            parabolicBullet.Initialize(firePoint, bulletSpeed, bulletGravity, Damage, setup);
+            if (Instantiate(bulletPrefab, firePoint.position, firePoint.rotation) .TryGetComponent(out BotBullet parabolicBullet))
+            {
+                parabolicBullet.Initialize(firePoint, bulletSpeed, bulletGravity, Damage, setup);
+            }
 
             // bool random = Random.value > 0.6f;
             // if (setup.objects.enemy && random)

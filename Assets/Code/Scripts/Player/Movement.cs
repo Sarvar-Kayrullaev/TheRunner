@@ -14,6 +14,7 @@ namespace PlayerRoot
         // PRIVATES //
         private bool isCrouching;
         private bool isGrounded;
+        private bool isSlopeGrounded;
         private bool canDownToGround = true;
         private bool isRunning;
         private bool jump;
@@ -27,6 +28,7 @@ namespace PlayerRoot
 
         private Vector3 moveDirection;
         private Vector3 slopeNormal;
+        private Vector3 slopeSurface;
 
         private Transform ClimbTransform;
         private Transform currentClimbPosition;
@@ -36,7 +38,7 @@ namespace PlayerRoot
         float rotationX = 0;
         float climbLagTime = 0.3f;
         float climbLagTimer;
-        float slopeForce;
+        float slopeForce = 100;
         float slopeForceRayLength;
         float groundDistance;
         float crouchHeight;
@@ -66,30 +68,31 @@ namespace PlayerRoot
         private float collapsingTime;
         private bool collapseDamaged = false;
 
+        private float _slopeResistanceForce = 1;
+        private float _slopeFrictionForce = 1;
+        private bool _slopeBlockControl = false;
+
         [System.Obsolete]
         public void Initialize(Player player)
         {
             this.player = player;
             holster = player.holster;
             character = player.character;
-            debug = GameObject.FindObjectOfType<Gameplay.Debug>();
+            debug = Object.FindObjectOfType<Gameplay.Debug>();
         }
 
         public void Update(Vector2 move, Vector2 mouse)
         {
             if (player.Died) return;
-            bool canMove = player.canMove;
+            var canMove = player.canMove;
             isGrounded = canDownToGround && Utility.IsGrounded(player);
+            isSlopeGrounded = canDownToGround && Utility.IsSlopeGrounded(player);
             player.OnGround = isGrounded;
             slopeNormal = Utility.GetSlopeNormal(player);
             jumpAccessTime -= Time.deltaTime;
-            float groundDistance = GroundDistance();
+            var groundDistance = GroundDistance();
             maxDistanceOfLeaveGround = maxDistanceOfLeaveGround < groundDistance ? groundDistance : maxDistanceOfLeaveGround;
 
-            if (Input.GetKeyDown(KeyCode.C))
-            {
-
-            }
             // start crouch
             if (Input.GetKeyDown(KeyCode.C)) isCrouching = !isCrouching;
             crouchHeight = Mathf.Lerp(crouchHeight, isCrouching ? player.crouchHeight : 2, Time.deltaTime * player.crouchingSmooth);
@@ -141,8 +144,12 @@ namespace PlayerRoot
                 curSpeedX = canMove ? (isRunning ? player.runningSpeed : player.walkingSpeed) * move.y : 0;
                 curSpeedY = canMove ? (isRunning ? player.runningSpeed : player.walkingSpeed) * move.x : 0;
             }
-            float movementDirectionY = moveDirection.y;
-            moveDirection = (forward * curSpeedX) + (right * curSpeedY);
+            var movementDirectionY = moveDirection.y;
+            // Plane Movement //
+            
+            if (!_slopeBlockControl) moveDirection = (forward * curSpeedX) + (right * curSpeedY);
+            
+            // Plane Movement //
             StepSound(move);
 
             jumpDownLimitTimer -= Time.deltaTime;
@@ -212,15 +219,29 @@ namespace PlayerRoot
             }
 
             // ------- SLOPE ------- //
-
+            
             isSlope = Vector3.Angle(Vector3.up, slopeNormal) >= player.slipAngle;
             if (isSlope && !jump)
             {
-                float slopeAngle = Vector3.Angle(Vector3.up, slopeNormal);
-                Vector3 normal = slopeNormal;
-                Vector3 c = Vector3.Cross(Vector3.up, normal);
-                Vector3 u = Vector3.Cross(c, normal);
-                Vector3 slidingDirection = u * 4f;
+                if (isGrounded)
+                {
+                    _slopeResistanceForce = Mathf.Clamp(_slopeResistanceForce - Time.deltaTime * 1, 0, 1f);
+                    moveDirection *= _slopeResistanceForce;
+                    if (_slopeResistanceForce > 0.1f) _slopeBlockControl = true;
+                    if (_slopeResistanceForce > 0.5f)
+                    {
+                        _isSkidding = true;
+                        _isSkiddingReset = true;
+                        SkiddingSound();
+                    }
+
+                    _slopeFrictionForce = 0.3f;
+                }
+                var slopeAngle = Vector3.Angle(Vector3.up, slopeNormal);
+                var normal = slopeNormal;
+                var c = Vector3.Cross(Vector3.up, normal);
+                var u = Vector3.Cross(c, normal);
+                var slidingDirection = u * 3f;
                 if (isGrounded)
                 {
                     moveDirection.y = 0;
@@ -229,7 +250,44 @@ namespace PlayerRoot
                     moveDirection.y += slidingDirection.y;
                 }
             }
+            else if(!jump)
+            {
+                
+                if (isGrounded)
+                {
+                    _slopeFrictionForce = Mathf.Clamp(_slopeFrictionForce - Time.deltaTime * 1, 0, 1f);
+                    if (_slopeFrictionForce == 0)
+                    {
+                        _slopeBlockControl = false;
+                        _isSkidding = false;
+                        StopSkiddingSound();
+                    }
+                }
+
+                if (_slopeFrictionForce == 0)
+                {
+                    _slopeResistanceForce = Mathf.Clamp(_slopeResistanceForce + Time.deltaTime * 1, 0f, 1f);
+                }
+                var normal = slopeNormal;
+                var c = Vector3.Cross(Vector3.up, normal);
+                var u = Vector3.Cross(c, normal);
+                var slidingDirection = u * (3f * _slopeFrictionForce);
+                if (isGrounded)
+                {
+                    moveDirection.y = 0;
+                    moveDirection.x += slidingDirection.x;
+                    moveDirection.z += slidingDirection.z;
+                    moveDirection.y += slidingDirection.y;
+                }
+            }
+            
+            if (isGrounded)
+            {
+                if(canDownToGround) moveDirection += Vector3.down * slopeForce;
+            }
+            
             // ------- SLOPE ------- //
+            
             bool headbob;
             if (isGrounded) headbob = true;
             else
@@ -240,11 +298,11 @@ namespace PlayerRoot
 
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                float timeSinceLastClick = Time.time - lastClickTime;
+                var timeSinceLastClick = Time.time - lastClickTime;
                 accessTime = 0.3f;
                 if (ClimbTransform)
                 {
-                    Vector3 climbEulerAngles = Formula.RelativeToParent(ClimbTransform.localEulerAngles, ClimbTransform.parent.parent.eulerAngles);
+                    var climbEulerAngles = Formula.RelativeToParent(ClimbTransform.localEulerAngles, ClimbTransform.parent.parent.eulerAngles);
                     if (CompareEuler(player.transform.eulerAngles, climbEulerAngles, 45))
                     {
                         if (timeSinceLastClick <= doubleClickTime)
@@ -279,7 +337,7 @@ namespace PlayerRoot
                 {
                     if (ClimbTransform)
                     {
-                        Vector3 climbEulerAngles = Formula.RelativeToParent(ClimbTransform.localEulerAngles, ClimbTransform.parent.parent.eulerAngles);
+                        var climbEulerAngles = Formula.RelativeToParent(ClimbTransform.localEulerAngles, ClimbTransform.parent.parent.eulerAngles);
                         if (CompareEuler(player.transform.eulerAngles, climbEulerAngles, 45))
                         {
                             holster.Climb();
@@ -301,22 +359,23 @@ namespace PlayerRoot
                 {
                     moveDirection.y -= player.gravity * Time.deltaTime;
                 }
+
                 character.Move(moveDirection * Time.deltaTime);
             }
 
             if (canMove)
             {
-                float Sensitivity = player.Mobile ? (player.lookSpeed * 0.1f) : player.lookSpeed;
-                rotationX += -mouse.y * Sensitivity;
+                var sensitivity = player.Mobile ? (player.lookSpeed * 0.1f) : player.lookSpeed;
+                rotationX += -mouse.y * sensitivity;
                 rotationX = Mathf.Clamp(rotationX, -player.lookXLimit, player.lookXLimit);
                 player.Head.localRotation = Quaternion.Euler(rotationX, 0, 0);
-                player.transform.rotation *= Quaternion.Euler(0, mouse.x * Sensitivity, 0);
+                player.transform.rotation *= Quaternion.Euler(0, mouse.x * sensitivity, 0);
             }
 
             player.status.crouch = isCrouching;
         }
 
-        void CollapseDamage()
+        private void CollapseDamage()
         {
             if(collapsingTime > 0.8f) player.TakeDamage(20,player.transform);
             else if(collapsingTime > 1) player.TakeDamage(80,player.transform);
@@ -340,13 +399,14 @@ namespace PlayerRoot
             player.Head.localRotation = Quaternion.Euler(rotationX, 0, 0);
             player.transform.rotation *= Quaternion.Euler(0, mouse.x * (player.lookSpeed * 0.1f), 0);
         }
-        public Vector2 Speed(Vector2 vector)
+
+        private Vector2 Speed(Vector2 vector)
         {
-            bool aim = false;
+            var aim = false;
             if (holster.currentWeapon) aim = holster.currentWeapon.aim;
 
-            float y = vector.y < 0 ? vector.y / 2 : vector.y;
-            float x = vector.x / 2;
+            var y = vector.y < 0 ? vector.y / 2 : vector.y;
+            var x = vector.x / 2;
             y = aim ? y / 2 : y;
             x = aim ? x / 2 : x;
             return new Vector3(x, y);
@@ -356,19 +416,15 @@ namespace PlayerRoot
         {
             if (isGrounded) return false;
 
-            RaycastHit hit;
-            if (Physics.Raycast(player.transform.position, Vector3.down, out hit, character.height / 2 * slopeForceRayLength))
-                return true;
-            return false;
+            return Physics.Raycast(player.transform.position, Vector3.down, character.height / 2 * slopeForceRayLength);
         }
 
-        float GroundDistance()
+        private float GroundDistance()
         {
             if (isGrounded) return 0;
-            RaycastHit hit;
-            Vector3 origin = player.transform.position;
+            var origin = player.transform.position;
             origin.y -= player.character.height / 2;
-            if (Physics.Raycast(origin, Vector3.down, out hit, 5))
+            if (Physics.Raycast(origin, Vector3.down, out var hit, 5))
                 return hit.distance;
             else return 5;
         }
@@ -384,7 +440,7 @@ namespace PlayerRoot
             else return false;
         }
 
-        void ClimbProgress()
+        private void ClimbProgress()
         {
             if (isClimbing)
             {
@@ -420,7 +476,8 @@ namespace PlayerRoot
                 }
             }
         }
-        bool jumpAccess = true;
+
+        private bool jumpAccess = true;
 
         public void MobileJump()
         {
@@ -521,6 +578,29 @@ namespace PlayerRoot
                     ClimbTransform = null;
                 }
             }
+        }
+
+        private bool _isSkidding;
+        private bool _isSkiddingReset = true;
+        private void SkiddingSound()
+        {
+            if (_isSkidding && _isSkiddingReset)
+            {
+                if (player.skiddingAudioSource.isPlaying)
+                {
+                    player.skiddingAudioSource.Stop();
+                }
+
+                player.skiddingAudioSource.volume = 1;
+                player.skiddingAudioSource.clip = player.skiddingSound;
+                player.skiddingAudioSource.Play();
+                _isSkiddingReset = false;
+            }
+        }
+
+        private void StopSkiddingSound()
+        {
+            player.skiddingAudioSource.volume -= Time.deltaTime * 4;
         }
         void StepSound(Vector2 vector)
         {

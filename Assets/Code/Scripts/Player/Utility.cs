@@ -8,20 +8,38 @@ namespace PlayerRoot
     {
         public static bool IsGrounded(Player player)
         {
-            Transform transform = player.transform;
-            Vector3 groundPosition = transform.position;
+            var transform = player.transform;
+            var groundPosition = transform.position;
             groundPosition.y -= (player.character.height / 2) - player.GroundCheckPositionY;
             return Physics.CheckSphere(groundPosition, player.GroundCheckRadius, player.groundMask);
         }
 
+        public static bool IsSlopeGrounded(Player player)
+        {
+            var transform = player.transform;
+            var groundPosition = transform.position;
+            groundPosition.y -= (player.character.height / 2) - player.GroundCheckPositionY;
+            return Physics.CheckSphere(groundPosition, player.GroundCheckRadius * 1.2f, player.groundMask);
+        }
+        
+        public static bool IsGroundedTripleChecked(Player player)
+        {
+            var transform = player.transform;
+            var groundCheckPosition = new Vector3(transform.position.x, transform.position.y - player.character.height * 0.26f, transform.position.z);
+            var grounded1 = Physics.CheckSphere(groundCheckPosition, 0.45f, player.groundMask);
+            var grounded2 = Physics.Raycast(transform.position, Vector3.down, player.character.height * 0.5f + 0.25f, player.groundMask);
+            if (player.character.isGrounded) return true;
+            return grounded1 || grounded2;
+        }
+
         public static Vector3 GetSlopeNormal(Player player)
         {
-            Transform transform = player.transform;
-            Vector3 groundPosition = transform.position;
+            var transform = player.transform;
+            var groundPosition = transform.position;
             groundPosition.y -= (player.character.height / 2) - player.GroundCheckPositionY;
             RaycastHit hit;
-            float minDistance = float.MaxValue;
-            RaycastHit nearestHit = new RaycastHit();
+            var minDistance = float.MaxValue;
+            var nearestHit = new RaycastHit();
 
             if (Physics.Raycast(groundPosition, Vector3.down * 1f, out hit))
             {
@@ -30,18 +48,18 @@ namespace PlayerRoot
             }
             else
             {
-                int numRaycasts = 8;
-                RaycastHit[] hits = new RaycastHit[numRaycasts];
-                for (int a = 1; a < 3; a++)
+                var numRaycasts = 8;
+                var hits = new RaycastHit[numRaycasts];
+                for (var a = 1; a < 3; a++)
                 {
-                    for (int i = 0; i < numRaycasts; i++)
+                    for (var i = 0; i < numRaycasts; i++)
                     {
                         float angle = i * (360 / numRaycasts);
-                        Vector3 direction = Quaternion.Euler(35 * a, angle, 0) * (Vector3.down * 1f);
+                        var direction = Quaternion.Euler(35 * a, angle, 0) * (Vector3.down * 1f);
                         Debug.DrawRay(groundPosition, direction, Color.red);
                         if (Physics.Raycast(groundPosition, direction, out hits[i]))
                         {
-                            float distance = Vector3.Distance(groundPosition, hits[i].point);
+                            var distance = Vector3.Distance(groundPosition, hits[i].point);
                             if (distance < minDistance)
                             {
                                 minDistance = distance;
@@ -53,6 +71,22 @@ namespace PlayerRoot
             }
 
             return nearestHit.normal;
+        }
+        
+        public static bool OnSlope(Player player, out RaycastHit slopeHit)
+        {
+            if (Physics.Raycast(player.transform.position, Vector3.down, out slopeHit, player.character.height * 0.5f + 1f))
+            {
+                var angle = Vector3.Angle(Vector3.up, slopeHit.normal);
+                return angle < 45 && angle != 0;
+            }
+
+            return false;
+        }
+        
+        public static Vector3 GetSlopeMoveDirection(Vector3 moveDirection, RaycastHit slopeHit)
+        {
+            return Vector3.ProjectOnPlane(moveDirection, slopeHit.normal).normalized;
         }
     }
 }

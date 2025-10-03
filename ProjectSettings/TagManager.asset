@@ -12,6 +12,8 @@ TagManager:
   - Footsteps/Wood
   - IgnorePlayer
   - Footsteps/Concrete
+  - Environment
+  - Destructible
   layers:
   - Default
   - TransparentFX
@@ -48,6 +50,9 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Star
+    uniqueID: 3917848037
     locked: 0
   m_RenderingLayers:
   - Default

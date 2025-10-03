@@ -5,135 +5,146 @@ namespace Environment
 {
     public class Object : MonoBehaviour
     {
+        private static readonly int BaseMap = UnityEngine.Shader.PropertyToID("_BaseMap");
+        private static readonly int BumpMap = UnityEngine.Shader.PropertyToID("_BumpMap");
+        
         [Space]
         [Header("Object Properties")]
-        public float UpdateTime = 0.5f;
-        public float EasingUpdateTime = 3;
-        [Space]
-        public float EasingUpdateDistance = 100;
-        public float ColliderCullingDistance = 50;
-        [Space]
-        public GameObject FracturedPrefab;
+        public float updateTime = 0.5f;
+        public float easingUpdateTime = 3;
+        public float easingUpdateDistance = 100;
+        public float colliderCullingDistance = 50;
+        public GameObject fracturedPrefab;
         [Space]
         [Header("Billboard Properties")]
         public Transform billboard;
-        [Space]
-        public Vector2 Tiling;
-        public int Vertical;
-        public int SpriteOffset = 0;
-        public bool inverseOffcet = false;
+        public Vector2 tiling;
+        public int vertical;
+        public int spriteOffset;
+        public bool inverseOffcet = true;
+        [Space] [Header("Sounds")] 
+        public GameObject audioSourcePrefab;
+        public AudioClip fracturingSound;
 
-        private Material material;
-        private Transform target;
-        private MeshCollider meshCollider;
-        private Rigidbody rigidBody;
-        private Vector3 startPosition;
-        private Vector3 transformForward;
-        private Vector2 offset;
-        private Vector2 tiling;
-        private float cameraDistance;
-        private bool isEasingUpdate = false;
-        private bool isPhysic = true;
-        private bool fractured = false;
+        private Material _material;
+        private Transform _target;
+        private MeshCollider _meshCollider;
+        private Rigidbody _rigidBody;
+        private Vector3 _startPosition;
+        private Vector3 _transformForward;
+        private Vector2 _offset;
+        private Vector2 _tiling;
+        private float _cameraDistance;
+        private bool _isEasingUpdate;
+        private bool _isPhysic = true;
+        private bool _fractured;
 
         private void Start()
         {
-            startPosition = billboard.position;
-            transformForward = billboard.forward;
-            if (billboard.TryGetComponent(out Renderer renderer)) material = renderer.material;
-            if (TryGetComponent(out MeshCollider meshCollider)) this.meshCollider = meshCollider;
-            if (TryGetComponent(out Rigidbody rigidBody)) this.rigidBody = rigidBody;
-            target = Camera.main.transform;
+            _startPosition = billboard.position;
+            _transformForward = billboard.forward;
+            if (billboard.TryGetComponent(out Renderer rendererComponent)) _material = rendererComponent.material;
+            if (TryGetComponent(out MeshCollider meshCollider)) this._meshCollider = meshCollider;
+            if (TryGetComponent(out Rigidbody rigidBody)) this._rigidBody = rigidBody;
+            _target = Camera.main?.transform;
             
-            InvokeRepeating(nameof(Refresh), 0, UpdateTime);
+            InvokeRepeating(nameof(Refresh), 0, updateTime);
         }
         public void Fracturing()
         {
-            if(fractured) return;
-            FracturedPrefab.transform.localScale = transform.parent.localScale;
-            Instantiate(FracturedPrefab, transform.parent.position, transform.parent.rotation);
+            _meshCollider.enabled = false;
+            if(_fractured) return;
+            fracturedPrefab.transform.localScale = transform.parent.localScale;
+            Instantiate(fracturedPrefab, transform.parent.position, transform.parent.rotation);
             //Debug.Log("Fractued");
             Destroy(transform.parent.gameObject);
-            fractured = true;
+            _fractured = true;
+        }
+
+        public void PlaySound()
+        {
+            var audioSourceObject = Instantiate(audioSourcePrefab, transform.position, transform.rotation);
+            if (audioSourceObject.TryGetComponent(out AudioSource audioSourceComponent))
+            {
+                audioSourceComponent.PlayOneShot(fracturingSound, 1);
+            }
         }
 
         private void Refresh()
         {
-            cameraDistance = Vector3.Distance(target.position, startPosition);
-            InvokeController(cameraDistance);
-            ColliderCulling(cameraDistance);
-            billboard.LookAt(new Vector3(target.position.x, billboard.position.y, target.position.z));
+            _cameraDistance = Vector3.Distance(_target.position, _startPosition);
+            InvokeController(_cameraDistance);
+            ColliderCulling(_cameraDistance);
+            billboard.LookAt(new Vector3(_target.position.x, billboard.position.y, _target.position.z));
             SpriteUpdate();
         }
 
-        void SpriteUpdate()
+        private void SpriteUpdate()
         {
-            Vector3 targetDir = target.position - startPosition;
+            var targetDir = _target.position - _startPosition;
             targetDir.y = 0;
-            float angle = Vector3.SignedAngle(targetDir, transformForward, Vector3.up);
+            var angle = Vector3.SignedAngle(targetDir, _transformForward, Vector3.up);
 
-            float oneItemSizeX = 1 / Tiling.x;
-            float oneITemSizeY = 1 / Tiling.y;
+            var oneItemSizeX = 1 / tiling.x;
+            var oneITemSizeY = 1 / tiling.y;
 
-            offset.y = oneITemSizeY * Vertical;
-            tiling.x = oneItemSizeX;
-            tiling.y = oneITemSizeY;
+            _offset.y = oneITemSizeY * vertical;
+            _tiling.x = oneItemSizeX;
+            _tiling.y = oneITemSizeY;
 
-            float unit = 360 / Tiling.x;
+            var unit = 360 / tiling.x;
             if(inverseOffcet) unit = -unit;
-            int Cursor = CalculateUnits(angle, unit, (int)Tiling.x);
+            var cursor = CalculateUnits(angle, unit, (int)tiling.x);
 
-            offset.x = oneItemSizeX * (Cursor + SpriteOffset);
-            material.SetTextureOffset("_BaseMap", offset);
-            material.SetTextureScale("_BaseMap", tiling);
-            material.SetTextureOffset("_BumpMap", offset);
-            material.SetTextureScale("_BumpMap", tiling);
+            _offset.x = oneItemSizeX * (cursor + spriteOffset);
+            _material.SetTextureOffset(BaseMap, _offset);
+            _material.SetTextureScale(BaseMap, _tiling);
+            _material.SetTextureOffset(BumpMap, _offset);
+            _material.SetTextureScale(BumpMap, _tiling);
         }
 
-        public int CalculateUnits(float angle, float unit, int TileX)
+        private static int CalculateUnits(float angle, float unit, int tileX)
         {
             angle -= unit / 2;
-            int calculeted = (int)Math.Ceiling(angle / unit) + (TileX / 2);
-            if (calculeted == 0) return TileX;
-            else return calculeted;
+            var calculeted = (int)Math.Ceiling(angle / unit) + (tileX / 2);
+            return calculeted == 0 ? tileX : calculeted;
         }
 
         private void InvokeController(float playerDistance)
         {
-            bool Easing = EasingUpdateDistance <= playerDistance;
-            if (Easing && !isEasingUpdate)
+            var easing = easingUpdateDistance <= playerDistance;
+            switch (easing)
             {
-                CancelInvoke(nameof(Refresh));
-                InvokeRepeating(nameof(Refresh), EasingUpdateTime, EasingUpdateTime);
-                isEasingUpdate = true;
-            }
-            else if (!Easing && isEasingUpdate)
-            {
-                CancelInvoke(nameof(Refresh));
-                InvokeRepeating(nameof(Refresh), UpdateTime, UpdateTime);
-                isEasingUpdate = false;
+                case true when !_isEasingUpdate:
+                    CancelInvoke(nameof(Refresh));
+                    InvokeRepeating(nameof(Refresh), easingUpdateTime, easingUpdateTime);
+                    _isEasingUpdate = true;
+                    break;
+                case false when _isEasingUpdate:
+                    CancelInvoke(nameof(Refresh));
+                    InvokeRepeating(nameof(Refresh), updateTime, updateTime);
+                    _isEasingUpdate = false;
+                    break;
             }
         }
 
         private void ColliderCulling(float playerDistance)
         {
-            bool culling = ColliderCullingDistance <= playerDistance;
-            if (culling && isPhysic)
+            var isCulling = colliderCullingDistance <= playerDistance;
+            switch (isCulling)
             {
-                rigidBody.isKinematic = true;
-                rigidBody.useGravity = false;
-                meshCollider.enabled = false;
-                isPhysic = false;
-            }
-            else
-            {
-                if (!culling && !isPhysic)
-                {
-                    rigidBody.isKinematic = false;
-                    rigidBody.useGravity = false;
-                    meshCollider.enabled = true;
-                    isPhysic = true;
-                }
+                case true when _isPhysic:
+                    _rigidBody.isKinematic = true;
+                    _rigidBody.useGravity = false;
+                    _meshCollider.enabled = false;
+                    _isPhysic = false;
+                    break;
+                case false when !_isPhysic:
+                    _rigidBody.isKinematic = true;
+                    _rigidBody.useGravity = false;
+                    _meshCollider.enabled = true;
+                    _isPhysic = true;
+                    break;
             }
         }
     }

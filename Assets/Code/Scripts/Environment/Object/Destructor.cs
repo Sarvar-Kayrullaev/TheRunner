@@ -1,35 +1,40 @@
+using System;
 using BotRoot;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Environment
 {
     public class Destructor : MonoBehaviour
     {
+        public bool isVelocity = false;
+        public int velocityMultipler = 1;
+        public int destruction = 100;
 
-        public bool IsVelocity = false;
-        public int VelocityMultipler = 1;
-        public int Destruction = 100;
+        private Rigidbody _rb;
 
-        private Rigidbody rb;
-
-        void Start()
+        private void Start()
         {
-            if (TryGetComponent(out Rigidbody rb)) this.rb = rb;
+            if (TryGetComponent(out Rigidbody rb)) this._rb = rb;
         }
 
-        void OnTriggerEnter(Collider other)
+        private void OnTriggerEnter(Collider other)
         {
-            if (other.gameObject.tag == "Fracture")
+            if (other.CompareTag("Destructible"))
             {
-                Fracture fracture = other.gameObject.GetComponent<Fracture>();
-                int force = IsVelocity ? (int)rb.linearVelocity.magnitude * VelocityMultipler : Destruction;
+                if (!other.gameObject.TryGetComponent(out Fracture fracture)) return;
+                var force = isVelocity ? (int)_rb.linearVelocity.magnitude * velocityMultipler : destruction;
                 fracture.TakeHealth(force);
             }
-            else if (other.gameObject.tag == "Environment")
+            else if (other.gameObject.CompareTag("Environment"))
             {
-                if (other.TryGetComponent(out Object _object)) _object.Fracturing();
+                if (other.TryGetComponent(out Object element))
+                {
+                    element.PlaySound();
+                    element.Fracturing();
+                }
             }
-            else if (other.gameObject.tag == "Live/Evil")
+            else if (other.gameObject.CompareTag("Live/Evil"))
             {
                 if (other.TryGetComponent(out HitableObject hitable))
                 {

@@ -34,8 +34,8 @@ public class DilerSlot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     public void Rebuild(HolsterModel holster, WeaponBasicModel weaponBasicModel, HolsterManager manager, DragableWeapon dragableWeapon, Dragable dragable)
     {
         if(isDragging) return;
-        if(holster.EquipedWeapon.weaponName != WeaponName.NONE) this.Image.sprite = weaponBasicModel.SpriteReference;
-        if(holster.EquipedWeapon.weaponName != WeaponName.NONE) this.Name.text = weaponBasicModel.Name;
+        if(holster.equipedWeapon.weaponName != WeaponName.NONE) this.Image.sprite = weaponBasicModel.spriteReference;
+        if(holster.equipedWeapon.weaponName != WeaponName.NONE) this.Name.text = weaponBasicModel.name;
         this.Manager = manager;
         this.holsterModel = holster;
         this.weaponBasic = weaponBasicModel;
@@ -112,37 +112,37 @@ public class DilerSlot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
                 if(otherInventory.IsOccupied == false)
                 {
                     ///change
-                    otherInventory.holsterModel.IsOccupied = true;
-                    otherInventory.holsterModel.EquipedWeapon.ID = holsterModel.EquipedWeapon.ID;
-                    otherInventory.holsterModel.EquipedWeapon.weaponName = holsterModel.EquipedWeapon.weaponName;
-                    otherInventory.holsterModel.EquipedWeapon.MagazineBulletCount = holsterModel.EquipedWeapon.MagazineBulletCount;
-                    otherInventory.holsterModel.EquipedWeapon.Suppressor = holsterModel.EquipedWeapon.Suppressor;
-                    otherInventory.holsterModel.EquipedWeapon.Sight = holsterModel.EquipedWeapon.Sight;
+                    otherInventory.holsterModel.isOccupied = true;
+                    otherInventory.holsterModel.equipedWeapon.id = holsterModel.equipedWeapon.id;
+                    otherInventory.holsterModel.equipedWeapon.weaponName = holsterModel.equipedWeapon.weaponName;
+                    otherInventory.holsterModel.equipedWeapon.magazineBulletCount = holsterModel.equipedWeapon.magazineBulletCount;
+                    otherInventory.holsterModel.equipedWeapon.suppressor = holsterModel.equipedWeapon.suppressor;
+                    otherInventory.holsterModel.equipedWeapon.sight = holsterModel.equipedWeapon.sight;
                     dragableWeapon.PickSoundEffect();
                 }
                 else
                 {
                     HolsterModel otherClone = new();
-                    otherClone.Index = otherInventory.holsterModel.Index;
-                    otherClone.IsOccupied = otherInventory.holsterModel.IsOccupied;
-                    otherClone.IsLocked = otherInventory.holsterModel.IsLocked;
+                    otherClone.index = otherInventory.holsterModel.index;
+                    otherClone.isOccupied = otherInventory.holsterModel.isOccupied;
+                    otherClone.isLocked = otherInventory.holsterModel.isLocked;
 
-                    otherClone.EquipedWeapon = new();
-                    otherClone.EquipedWeapon.ID = otherInventory.holsterModel.EquipedWeapon.ID;
-                    otherClone.EquipedWeapon.weaponName = otherInventory.holsterModel.EquipedWeapon.weaponName;
-                    otherClone.EquipedWeapon.MagazineBulletCount = otherInventory.holsterModel.EquipedWeapon.MagazineBulletCount;
-                    otherClone.EquipedWeapon.Suppressor = otherInventory.holsterModel.EquipedWeapon.Suppressor;
-                    otherClone.EquipedWeapon.Sight = otherInventory.holsterModel.EquipedWeapon.Sight;
+                    otherClone.equipedWeapon = new();
+                    otherClone.equipedWeapon.id = otherInventory.holsterModel.equipedWeapon.id;
+                    otherClone.equipedWeapon.weaponName = otherInventory.holsterModel.equipedWeapon.weaponName;
+                    otherClone.equipedWeapon.magazineBulletCount = otherInventory.holsterModel.equipedWeapon.magazineBulletCount;
+                    otherClone.equipedWeapon.suppressor = otherInventory.holsterModel.equipedWeapon.suppressor;
+                    otherClone.equipedWeapon.sight = otherInventory.holsterModel.equipedWeapon.sight;
 
-                    otherInventory.holsterModel.IsOccupied = true;
-                    otherInventory.holsterModel.EquipedWeapon.ID = holsterModel.EquipedWeapon.ID;
-                    otherInventory.holsterModel.EquipedWeapon.weaponName = holsterModel.EquipedWeapon.weaponName;
-                    otherInventory.holsterModel.EquipedWeapon.MagazineBulletCount = holsterModel.EquipedWeapon.MagazineBulletCount;
-                    otherInventory.holsterModel.EquipedWeapon.Suppressor = holsterModel.EquipedWeapon.Suppressor;
-                    otherInventory.holsterModel.EquipedWeapon.Sight = holsterModel.EquipedWeapon.Sight;
+                    otherInventory.holsterModel.isOccupied = true;
+                    otherInventory.holsterModel.equipedWeapon.id = holsterModel.equipedWeapon.id;
+                    otherInventory.holsterModel.equipedWeapon.weaponName = holsterModel.equipedWeapon.weaponName;
+                    otherInventory.holsterModel.equipedWeapon.magazineBulletCount = holsterModel.equipedWeapon.magazineBulletCount;
+                    otherInventory.holsterModel.equipedWeapon.suppressor = holsterModel.equipedWeapon.suppressor;
+                    otherInventory.holsterModel.equipedWeapon.sight = holsterModel.equipedWeapon.sight;
                     dragableWeapon.PickSoundEffect();
-                    if (dataManager.playerModel.SelectedWeaponIndex == otherClone.Index && weaponHolster.currentWeapon) Manager.WeaponThrow(otherClone, weaponHolster.currentWeapon.currentAmmo);
-                    else Manager.WeaponThrow(otherClone, otherClone.EquipedWeapon.MagazineBulletCount);
+                    if (dataManager.playerModel.SelectedWeaponIndex == otherClone.index && weaponHolster.currentWeapon) Manager.WeaponThrow(otherClone, weaponHolster.currentWeapon.currentAmmo);
+                    else Manager.WeaponThrow(otherClone, otherClone.equipedWeapon.magazineBulletCount);
                 }
                 Manager.RebuildFastHolster(dataManager.playerModel.Holster);
                 Manager.RebuildWheelHolster(dataManager.playerModel.Holster);

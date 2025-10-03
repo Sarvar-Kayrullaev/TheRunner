@@ -5025,12 +5025,9 @@ MonoBehaviour:
   startTime: -1
   obstaclesMask:
     serializedVersion: 2
-    m_Bits: 400
-  Particle: {fileID: 2128198841679251010, guid: abcc6e39e7a78b24e99aaf9e395b1abd,
+    m_Bits: 131472
+  instanceSound: {fileID: 4376158771152645511, guid: e4624a8e3e13fb24b9dcc7083e63b6ec,
     type: 3}
-  InstanceSound: {fileID: 4376158771152645511, guid: e4624a8e3e13fb24b9dcc7083e63b6ec,
-    type: 3}
-  StopUpdate: 0
 --- !u!1 &8307242660967858507
 GameObject:
   m_ObjectHideFlags: 0

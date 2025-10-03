@@ -117,20 +117,20 @@ public class HolsterManager : MonoBehaviour
             index++;
             WeaponBasicModel weaponBasic = null;
             
-            if (slot.EquipedWeapon.weaponName == WeaponName.NONE)
+            if (slot.equipedWeapon.weaponName == WeaponName.NONE)
             {
                 weaponBasic = new WeaponBasicModel();
             }
             else
             {
-                weaponBasic = sealedData.WeaponBasics[(int)slot.EquipedWeapon.weaponName -1];
+                weaponBasic = sealedData.WeaponBasics[(int)slot.equipedWeapon.weaponName -1];
             }
             
-            Debug.Log($"WeaponBasic: {weaponBasic.Name}     Type: {slot.EquipedWeapon.weaponName}");
+            Debug.Log($"WeaponBasic: {weaponBasic.name}     Type: {slot.equipedWeapon.weaponName}");
             
-            bool noWeapon = slot.EquipedWeapon.weaponName == WeaponName.NONE;
+            bool noWeapon = slot.equipedWeapon.weaponName == WeaponName.NONE;
             bool isSelected = SelectedWeaponIndex == index - 1;
-            if (isSelected & !noWeapon) weaponHolster.DrawWeapon(weaponBasic.WeaponPrefab);
+            if (isSelected & !noWeapon) weaponHolster.DrawWeapon(weaponBasic.weaponPrefab);
             else if(isSelected & noWeapon) weaponHolster.DrawHand();
 
             if(isSelected & !noWeapon & !holterEnabled) PlayerCrosshair.SetActive(true);
@@ -149,8 +149,8 @@ public class HolsterManager : MonoBehaviour
                     Slot_1_Image.gameObject.SetActive(true);
                     Slot_1_Text.gameObject.SetActive(true);
 
-                    Slot_1_Image.sprite = weaponBasic.SpriteReference;
-                    Slot_1_Text.text = weaponBasic.Name;
+                    Slot_1_Image.sprite = weaponBasic.spriteReference;
+                    Slot_1_Text.text = weaponBasic.name;
                 }
             }
             else if (index == 2)
@@ -166,8 +166,8 @@ public class HolsterManager : MonoBehaviour
                     Slot_2_Image.gameObject.SetActive(true);
                     Slot_2_Text.gameObject.SetActive(true);
 
-                    Slot_2_Image.sprite = weaponBasic.SpriteReference;
-                    Slot_2_Text.text = weaponBasic.Name;
+                    Slot_2_Image.sprite = weaponBasic.spriteReference;
+                    Slot_2_Text.text = weaponBasic.name;
                 }
             }
         }
@@ -184,7 +184,7 @@ public class HolsterManager : MonoBehaviour
         {
             if(index == dataManager.playerModel.SelectedWeaponIndex) selectionColor = SelectedColor;
             else selectionColor = UnselectedColor;
-            wheelSlots[index].Rebuild(slot, GetWeaponBasic(sealedData.WeaponBasics, slot.EquipedWeapon.weaponName), this, selectionColor);
+            wheelSlots[index].Rebuild(slot, GetWeaponBasic(sealedData.WeaponBasics, slot.equipedWeapon.weaponName), this, selectionColor);
             index++;
         }
         RebuildHolsterCursor();
@@ -202,7 +202,7 @@ public class HolsterManager : MonoBehaviour
     {
         SaveCurrentWeaponParams();
         HolsterModel slot = dataManager.playerModel.Holster[index];
-        bool noWeapon = slot.EquipedWeapon.weaponName == WeaponName.NONE;
+        bool noWeapon = slot.equipedWeapon.weaponName == WeaponName.NONE;
         if (noWeapon) return;
         dataManager.playerModel.SelectedWeaponIndex = index;
         RebuildFastHolster(dataManager.playerModel.Holster);
@@ -214,44 +214,44 @@ public class HolsterManager : MonoBehaviour
     {
         if (weaponHolster.currentWeapon)
         {
-            EquipedWeaponModel equipedWeapon = dataManager.playerModel.Holster[dataManager.playerModel.SelectedWeaponIndex].EquipedWeapon;
-            equipedWeapon.MagazineBulletCount = weaponHolster.currentWeapon.currentAmmo;
-            equipedWeapon.Sight = weaponHolster.currentWeapon.sightModel;
-            equipedWeapon.Suppressor = weaponHolster.currentWeapon.suppressorModel;
+            EquipedWeaponModel equipedWeapon = dataManager.playerModel.Holster[dataManager.playerModel.SelectedWeaponIndex].equipedWeapon;
+            equipedWeapon.magazineBulletCount = weaponHolster.currentWeapon.currentAmmo;
+            equipedWeapon.sight = weaponHolster.currentWeapon.sightModel;
+            equipedWeapon.suppressor = weaponHolster.currentWeapon.suppressorModel;
         }
     }
 
     public void WeaponThrow(HolsterModel holster, int CurrentAmmoSize)
     {
-        WeaponBasicModel weaponBasic = GetWeaponBasic(sealedData.WeaponBasics, holster.EquipedWeapon.weaponName);
+        WeaponBasicModel weaponBasic = GetWeaponBasic(sealedData.WeaponBasics, holster.equipedWeapon.weaponName);
 
         Quaternion initialRotation = WeaponThrowPoint.rotation;
         Quaternion randomRotation = Random.rotation;
         randomRotation = Quaternion.Euler(randomRotation.eulerAngles * 0.1f);
         Quaternion randomizedRotation = initialRotation * randomRotation;
 
-        GameObject throwed = Instantiate(weaponBasic.DroppedWeaponPrefab, WeaponThrowPoint.position, randomizedRotation);
+        GameObject throwed = Instantiate(weaponBasic.droppedWeaponPrefab, WeaponThrowPoint.position, randomizedRotation);
         if(throwed.TryGetComponent(out Rigidbody rigidbody)) rigidbody.AddForce(WeaponThrowPoint.forward*700);
         if (throwed.TryGetComponent(out Dragable dragable))
         {
             /*Set Dragable Attributes*/
-            dragable.DragableType = DragableType.Weapon;
-            dragable.Prefab = weaponBasic.WeaponPrefab;
-            dragable.ID = holster.EquipedWeapon.ID;
-            dragable.CurrentAmmoSize = CurrentAmmoSize;
-            dragable.Bullets = 0;
-            dragable.IsThrowed = true;
-            dragable.SuppressorModel = holster.EquipedWeapon.Suppressor;
-            dragable.SightModel = holster.EquipedWeapon.Sight;
+            dragable.dragableType = DragableType.Weapon;
+            dragable.prefab = weaponBasic.weaponPrefab;
+            dragable.id = holster.equipedWeapon.id;
+            dragable.currentAmmoSize = CurrentAmmoSize;
+            dragable.bullets = 0;
+            dragable.isThrowed = true;
+            dragable.suppressorModel = holster.equipedWeapon.suppressor;
+            dragable.sightModel = holster.equipedWeapon.sight;
         }
 
         /*Reset Holster Data*/
-        holster.IsOccupied = false;
-        holster.EquipedWeapon.ID = 0;
-        holster.EquipedWeapon.weaponName = WeaponName.NONE;
-        holster.EquipedWeapon.MagazineBulletCount = 0;
-        holster.EquipedWeapon.Suppressor = new SuppressorModel();
-        holster.EquipedWeapon.Sight = new SightModel();
+        holster.isOccupied = false;
+        holster.equipedWeapon.id = 0;
+        holster.equipedWeapon.weaponName = WeaponName.NONE;
+        holster.equipedWeapon.magazineBulletCount = 0;
+        holster.equipedWeapon.suppressor = new SuppressorModel();
+        holster.equipedWeapon.sight = new SightModel();
     }
 
     List<InvertorySlot> WeaponWheelSlots()

@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using PlayerRoot;
 using BotRoot;
+using Environment;
+using UnityEngine.Serialization;
+
 public class ParabolicBullet : MonoBehaviour
 {
-    private int damage;
+    private int _damage;
     [SerializeField] private float speed;
     [SerializeField] private float gravity;
     [SerializeField] Player player;
@@ -21,13 +24,10 @@ public class ParabolicBullet : MonoBehaviour
     [SerializeField] private bool isInitialized = false;
     [SerializeField] private float startTime = -1;
     [SerializeField] private LayerMask obstaclesMask;
-    [SerializeField] Transform Particle;
-    [SerializeField] private Transform InstanceSound;
-    [SerializeField]
-    private bool StopUpdate = false;
-    private bool childOuted = false;
-    float destroySelfTime;
-    private List<Collider> ignoredColliders = new();
+    [SerializeField] private Transform instanceSound;
+    private bool _childOuted = false;
+    private float _destroySelfTime;
+    private List<Collider> _ignoredColliders = new();
 
     public void Initialize(Transform startPoint, float speed, float gravity, int damage, Player player)
     {
@@ -35,11 +35,11 @@ public class ParabolicBullet : MonoBehaviour
         startForward = startPoint.forward;
         this.speed = speed;
         this.gravity = gravity;
-        this.damage = damage;
+        this._damage = damage;
         this.player = player;
         isInitialized = true;
         startTime = -1;
-        destroySelfTime = 5;
+        _destroySelfTime = 5;
 
         float distanceOfStartPoint = Vector3.Distance(player.playerCamera.transform.position, startPosition);
         if (Physics.Raycast(player.playerCamera.transform.position, startPosition - player.playerCamera.transform.position, out RaycastHit hit, distanceOfStartPoint, obstaclesMask))
@@ -60,14 +60,14 @@ public class ParabolicBullet : MonoBehaviour
     {
         startPosition = position;
         startForward = direction;
-        this.damage = damage;
+        this._damage = damage;
         startTime = -1;
     }
 
     private Vector3 FindPointOnParabole(float time)
     {
-        Vector3 point = startPosition + (startForward * speed * time);
-        Vector3 gravityVec = Vector3.down * gravity * time * time;
+        var point = startPosition + (startForward * (speed * time));
+        var gravityVec = Vector3.down * (gravity * time * time);
         return point + gravityVec;
     }
 
@@ -77,51 +77,67 @@ public class ParabolicBullet : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        if (StopUpdate) return;
         if (!isInitialized) return;
         if (startTime < 0) startTime = Time.time;
 
-        float curretTime = Time.time - startTime;
-        float nextTime = curretTime + Time.fixedDeltaTime;
-        Vector3 currentPoint = FindPointOnParabole(curretTime);
-        Vector3 nextPoint = FindPointOnParabole(nextTime);
+        var curretTime = Time.time - startTime;
+        var nextTime = curretTime + Time.fixedDeltaTime;
+        var currentPoint = FindPointOnParabole(curretTime);
+        var nextPoint = FindPointOnParabole(nextTime);
 
-        if (CastRayBetweenPoints(currentPoint, nextPoint, out RaycastHit hit))
+        if (CastRayBetweenPoints(currentPoint, nextPoint, out var hit))
         {
-            if (!childOuted)
+            print("Hit " + hit.collider.name);
+            if (!_childOuted)
             {
                 if (transform.childCount > 0)
                 {
-                    Transform trail = transform.GetChild(0);
+                    var trail = transform.GetChild(0);
                     trail.position = hit.point;
                     trail.SetParent(null);
                 }
-                childOuted = true;
+                _childOuted = true;
             }
 
-            bool ignored = ignoredColliders.Contains(hit.collider);
+            var ignored = _ignoredColliders.Contains(hit.collider);
 
             if (!ignored)
             {
-                ignoredColliders.Add(hit.collider);
+                _ignoredColliders.Add(hit.collider);
 
                 if (hit.transform.TryGetComponent(out HitableObject hitable))
                 {
                     hitable.HitVisualize(hit.point, hit.normal);
-                    hitable.HitBullet(damage, player.transform);
+                    hitable.HitBullet(_damage, player.transform);
 
                     hitable.power = power;
                     hitable.radius = radius;
                     hitable.forceDirection = startPosition;
 
                     if (hitable.hitBulletSound)
-                        if (Instantiate(InstanceSound, hit.point, Quaternion.identity).TryGetComponent(out AudioSource audioSource))
+                        if (Instantiate(instanceSound, hit.point, Quaternion.identity).TryGetComponent(out AudioSource audioSource))
                         {
                             audioSource.PlayOneShot(hitable.hitBulletSound);
                         }
                     Destroy(gameObject);
                 }
-
+                else if (hit.transform.TryGetComponent(out Environment.Object element))
+                {
+                    element.Fracturing();
+                }
+                else if (hit.transform.tag == "Destructible")
+                {
+                    if (hit.transform.TryGetComponent(out Fracture fracture))
+                    {
+                        fracture.HitSoundPlay();
+                        fracture.TakeHealth(1);
+                        var playerDirection = fracture.transform.position - startPosition;
+                        var normalizedDirection = playerDirection.normalized;
+                        if(hit.transform.TryGetComponent(out Rigidbody hitRigidBody)) hitRigidBody.AddForce(normalizedDirection * 10, ForceMode.Impulse);
+                        var destruction = Instantiate(fracture.hitParticle,hit.point, transform.rotation);
+                        Destroy(destruction.gameObject, 3);
+                    }
+                }
                 if (hit.collider.CompareTag("AI/Listener"))
                 {
                     if (hit.transform.TryGetComponent(out BotSensor sensor))
@@ -130,8 +146,8 @@ public class ParabolicBullet : MonoBehaviour
                         hit.collider.enabled = false;
                         sensor.InvokeEnableListener(5);
                     }
-                    Vector3 direction = (nextPoint - currentPoint).normalized;
-                    ContinueBullet(hit.point, direction, damage);
+                    var direction = (nextPoint - currentPoint).normalized;
+                    ContinueBullet(hit.point, direction, _damage);
                 }
                 else
                 {
@@ -145,14 +161,13 @@ public class ParabolicBullet : MonoBehaviour
     }
     private void Update()
     {
-        if (StopUpdate) return;
         if (!isInitialized || startTime < 0) return;
 
         float currentTime = Time.time - startTime;
         Vector3 currentPoint = FindPointOnParabole(currentTime);
         transform.position = currentPoint;
-        destroySelfTime -= Time.deltaTime;
-        if (destroySelfTime <= 0)
+        _destroySelfTime -= Time.deltaTime;
+        if (_destroySelfTime <= 0)
         {
 
             Destroy(gameObject);

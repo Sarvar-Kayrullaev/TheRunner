@@ -15,9 +15,9 @@ GameObject:
   - component: {fileID: 214541232021552309}
   - component: {fileID: 214541232021552308}
   - component: {fileID: 214541232021552267}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: cactus_8_body_5
-  m_TagString: Untagged
+  m_TagString: Destructible
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -29,13 +29,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 214541232021552266}
+  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0.00022315979, y: -0.00049382215, z: -0.03529768}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1676319884805501602}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &3169060294647753843
 MeshFilter:
@@ -62,6 +62,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -94,10 +97,21 @@ Rigidbody:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 214541232021552266}
-  serializedVersion: 2
+  serializedVersion: 5
   m_Mass: 3
-  m_Drag: 0
-  m_AngularDrag: 0.05
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
@@ -110,6 +124,7 @@ FixedJoint:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 214541232021552266}
+  serializedVersion: 1
   m_ConnectedBody: {fileID: 1676319884805501603}
   m_ConnectedArticulationBody: {fileID: 0}
   m_BreakForce: 1500
@@ -126,9 +141,17 @@ MeshCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 214541232021552266}
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
   m_IsTrigger: 0
+  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 4
+  serializedVersion: 5
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -6144602287070551095, guid: 13e289855d1564f49ab50722de312c65, type: 3}
@@ -144,8 +167,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa1e8ac1bcdae9b4a85c0f9c17e5f5eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Health: 10
-  DestructionParticle: {fileID: 8643044617244880250, guid: 64e787eaa1d35a64aabc4190a33a6bf7, type: 3}
+  health: 10
+  disintegrationParticle: {fileID: 2059057164675306756, guid: 7236c3169fe6e9a4c8276cc53d7141ad,
+    type: 3}
+  destructionParticle: {fileID: 2059057164675306756, guid: e04622e6176d37947a64974698c8bd94,
+    type: 3}
+  hitParticle: {fileID: 2059057164675306756, guid: b52dee3c845480c4f832d0f20b3994f3,
+    type: 3}
+  destructionPosition: {x: 0, y: -0.2, z: 0}
+  audioSourcePrefab: {fileID: 4376158771152645506, guid: 293cdfbf28100e74f8c2f09c289c95c9,
+    type: 3}
+  destructionSounds:
+  - {fileID: 8300000, guid: 11c2d6bb276a67945b6695f3c7d87fda, type: 3}
+  - {fileID: 8300000, guid: a931abd6e89240f4489abcc9401aa384, type: 3}
+  - {fileID: 8300000, guid: ed14fbbfe379f454baeae157e8a0cba5, type: 3}
+  fracturingSounds:
+  - {fileID: 8300000, guid: ba127158c910f754f839118aad27faa0, type: 3}
+  - {fileID: 8300000, guid: 94280ef7df410ca45ad8ed6c1d370acc, type: 3}
+  - {fileID: 8300000, guid: 6e3c2541416d8ab4db7d402806c9ae16, type: 3}
+  - {fileID: 8300000, guid: 14012b6b22916fe4dbcf3f328bc18ee4, type: 3}
+  hitSounds:
+  - {fileID: 8300000, guid: c217ec943bc0cef4e9b62d707b8e1bc6, type: 3}
+  - {fileID: 8300000, guid: 9d92d47449c58214eb93cbb3dbd1ebb1, type: 3}
+  - {fileID: 8300000, guid: d7bcb83e2df07d94eb55f0b623ca5485, type: 3}
 --- !u!1 &516003931046279418
 GameObject:
   m_ObjectHideFlags: 0
@@ -161,9 +205,9 @@ GameObject:
   - component: {fileID: 516003931046279397}
   - component: {fileID: 516003931046279396}
   - component: {fileID: 516003931046279419}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: cactus_8_branch_2
-  m_TagString: Untagged
+  m_TagString: Destructible
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -175,13 +219,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 516003931046279418}
+  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0.0004751205, y: -0.031771462, z: -0.040347036}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4803958016337778044}
-  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &5249174493876424309
 MeshFilter:
@@ -208,6 +252,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -240,10 +287,21 @@ Rigidbody:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 516003931046279418}
-  serializedVersion: 2
+  serializedVersion: 5
   m_Mass: 3
-  m_Drag: 0
-  m_AngularDrag: 0.05
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
@@ -256,6 +314,7 @@ FixedJoint:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 516003931046279418}
+  serializedVersion: 1
   m_ConnectedBody: {fileID: 4314733660513789822}
   m_ConnectedArticulationBody: {fileID: 0}
   m_BreakForce: 1500
@@ -272,9 +331,17 @@ MeshCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 516003931046279418}
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
   m_IsTrigger: 0
+  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 4
+  serializedVersion: 5
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 5190991781715525994, guid: 13e289855d1564f49ab50722de312c65, type: 3}
@@ -290,8 +357,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa1e8ac1bcdae9b4a85c0f9c17e5f5eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Health: 10
-  DestructionParticle: {fileID: 8643044617244880250, guid: 64e787eaa1d35a64aabc4190a33a6bf7, type: 3}
+  health: 10
+  disintegrationParticle: {fileID: 2059057164675306756, guid: 7236c3169fe6e9a4c8276cc53d7141ad,
+    type: 3}
+  destructionParticle: {fileID: 2059057164675306756, guid: e04622e6176d37947a64974698c8bd94,
+    type: 3}
+  hitParticle: {fileID: 2059057164675306756, guid: b52dee3c845480c4f832d0f20b3994f3,
+    type: 3}
+  destructionPosition: {x: 0.01, y: -0.52, z: 0.27}
+  audioSourcePrefab: {fileID: 4376158771152645506, guid: 293cdfbf28100e74f8c2f09c289c95c9,
+    type: 3}
+  destructionSounds:
+  - {fileID: 8300000, guid: 11c2d6bb276a67945b6695f3c7d87fda, type: 3}
+  - {fileID: 8300000, guid: a931abd6e89240f4489abcc9401aa384, type: 3}
+  - {fileID: 8300000, guid: ed14fbbfe379f454baeae157e8a0cba5, type: 3}
+  fracturingSounds:
+  - {fileID: 8300000, guid: ba127158c910f754f839118aad27faa0, type: 3}
+  - {fileID: 8300000, guid: 94280ef7df410ca45ad8ed6c1d370acc, type: 3}
+  - {fileID: 8300000, guid: 6e3c2541416d8ab4db7d402806c9ae16, type: 3}
+  - {fileID: 8300000, guid: 14012b6b22916fe4dbcf3f328bc18ee4, type: 3}
+  hitSounds:
+  - {fileID: 8300000, guid: c217ec943bc0cef4e9b62d707b8e1bc6, type: 3}
+  - {fileID: 8300000, guid: 9d92d47449c58214eb93cbb3dbd1ebb1, type: 3}
+  - {fileID: 8300000, guid: d7bcb83e2df07d94eb55f0b623ca5485, type: 3}
 --- !u!1 &2028078611157161127
 GameObject:
   m_ObjectHideFlags: 0
@@ -307,9 +395,9 @@ GameObject:
   - component: {fileID: 11354264672321980}
   - component: {fileID: 11354264672321971}
   - component: {fileID: 11354264672321970}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: cactus_8_branch_3
-  m_TagString: Untagged
+  m_TagString: Destructible
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -321,13 +409,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2028078611157161127}
+  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0.02004795, y: 0.011973186, z: -0.024201654}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4803958016337778044}
-  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &11354264672321969
 MeshFilter:
@@ -354,6 +442,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -386,10 +477,21 @@ Rigidbody:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2028078611157161127}
-  serializedVersion: 2
+  serializedVersion: 5
   m_Mass: 3
-  m_Drag: 0
-  m_AngularDrag: 0.05
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
@@ -402,6 +504,7 @@ FixedJoint:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2028078611157161127}
+  serializedVersion: 1
   m_ConnectedBody: {fileID: 4314733660513789822}
   m_ConnectedArticulationBody: {fileID: 0}
   m_BreakForce: 1500
@@ -418,9 +521,17 @@ MeshCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2028078611157161127}
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
   m_IsTrigger: 0
+  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 4
+  serializedVersion: 5
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 6674408430876697331, guid: 13e289855d1564f49ab50722de312c65, type: 3}
@@ -436,8 +547,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa1e8ac1bcdae9b4a85c0f9c17e5f5eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Health: 10
-  DestructionParticle: {fileID: 8643044617244880250, guid: 64e787eaa1d35a64aabc4190a33a6bf7, type: 3}
+  health: 10
+  disintegrationParticle: {fileID: 2059057164675306756, guid: 7236c3169fe6e9a4c8276cc53d7141ad,
+    type: 3}
+  destructionParticle: {fileID: 2059057164675306756, guid: e04622e6176d37947a64974698c8bd94,
+    type: 3}
+  hitParticle: {fileID: 2059057164675306756, guid: b52dee3c845480c4f832d0f20b3994f3,
+    type: 3}
+  destructionPosition: {x: -0.15, y: -0.21, z: -0.12}
+  audioSourcePrefab: {fileID: 4376158771152645506, guid: 293cdfbf28100e74f8c2f09c289c95c9,
+    type: 3}
+  destructionSounds:
+  - {fileID: 8300000, guid: 11c2d6bb276a67945b6695f3c7d87fda, type: 3}
+  - {fileID: 8300000, guid: a931abd6e89240f4489abcc9401aa384, type: 3}
+  - {fileID: 8300000, guid: ed14fbbfe379f454baeae157e8a0cba5, type: 3}
+  fracturingSounds:
+  - {fileID: 8300000, guid: ba127158c910f754f839118aad27faa0, type: 3}
+  - {fileID: 8300000, guid: 94280ef7df410ca45ad8ed6c1d370acc, type: 3}
+  - {fileID: 8300000, guid: 6e3c2541416d8ab4db7d402806c9ae16, type: 3}
+  - {fileID: 8300000, guid: 14012b6b22916fe4dbcf3f328bc18ee4, type: 3}
+  hitSounds:
+  - {fileID: 8300000, guid: c217ec943bc0cef4e9b62d707b8e1bc6, type: 3}
+  - {fileID: 8300000, guid: 9d92d47449c58214eb93cbb3dbd1ebb1, type: 3}
+  - {fileID: 8300000, guid: d7bcb83e2df07d94eb55f0b623ca5485, type: 3}
 --- !u!1 &2305032076292244416
 GameObject:
   m_ObjectHideFlags: 0
@@ -449,9 +581,9 @@ GameObject:
   - component: {fileID: 1492607759768066426}
   - component: {fileID: 1492607759768066404}
   - component: {fileID: 1492607759768066427}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Fractured_8
-  m_TagString: Untagged
+  m_TagString: Destructible
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -463,14 +595,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2305032076292244416}
+  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 7, y: 0, z: 0}
-  m_LocalScale: {x: 1.4, y: 1.4, z: 1.4}
+  m_LocalScale: {x: 1.4000001, y: 1.4, z: 1.4000001}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 5132912455480484139}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1492607759768066404
 MonoBehaviour:
@@ -492,10 +624,21 @@ Rigidbody:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2305032076292244416}
-  serializedVersion: 2
+  serializedVersion: 5
   m_Mass: 3
-  m_Drag: 0
-  m_AngularDrag: 0.05
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
   m_UseGravity: 0
   m_IsKinematic: 1
   m_Interpolate: 0
@@ -516,9 +659,9 @@ GameObject:
   - component: {fileID: 2533716741221473799}
   - component: {fileID: 2533716741221473798}
   - component: {fileID: 2533716741221473797}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: cactus_8_body_1
-  m_TagString: Untagged
+  m_TagString: Destructible
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -530,6 +673,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2976921789095059526}
+  serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071067}
   m_LocalPosition: {x: 0, y: 0.1527, z: 0}
   m_LocalScale: {x: 10, y: 10, z: 10}
@@ -537,7 +681,6 @@ Transform:
   m_Children:
   - {fileID: 2629514729979497969}
   m_Father: {fileID: 1492607759768066426}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &7774825909659507907
 MeshFilter:
@@ -564,6 +707,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -596,12 +742,23 @@ Rigidbody:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2976921789095059526}
-  serializedVersion: 2
+  serializedVersion: 5
   m_Mass: 3
-  m_Drag: 0
-  m_AngularDrag: 0.05
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
@@ -612,6 +769,7 @@ FixedJoint:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2976921789095059526}
+  serializedVersion: 1
   m_ConnectedBody: {fileID: 1492607759768066427}
   m_ConnectedArticulationBody: {fileID: 0}
   m_BreakForce: 1500
@@ -628,9 +786,17 @@ MeshCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2976921789095059526}
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
   m_IsTrigger: 0
+  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 4
+  serializedVersion: 5
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 4338743471611021288, guid: 13e289855d1564f49ab50722de312c65, type: 3}
@@ -646,8 +812,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa1e8ac1bcdae9b4a85c0f9c17e5f5eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Health: 10
-  DestructionParticle: {fileID: 8643044617244880250, guid: 64e787eaa1d35a64aabc4190a33a6bf7, type: 3}
+  health: 10
+  disintegrationParticle: {fileID: 2059057164675306756, guid: 7236c3169fe6e9a4c8276cc53d7141ad,
+    type: 3}
+  destructionParticle: {fileID: 2059057164675306756, guid: e04622e6176d37947a64974698c8bd94,
+    type: 3}
+  hitParticle: {fileID: 2059057164675306756, guid: b52dee3c845480c4f832d0f20b3994f3,
+    type: 3}
+  destructionPosition: {x: 0, y: -0.2, z: 0}
+  audioSourcePrefab: {fileID: 4376158771152645506, guid: 293cdfbf28100e74f8c2f09c289c95c9,
+    type: 3}
+  destructionSounds:
+  - {fileID: 8300000, guid: 11c2d6bb276a67945b6695f3c7d87fda, type: 3}
+  - {fileID: 8300000, guid: a931abd6e89240f4489abcc9401aa384, type: 3}
+  - {fileID: 8300000, guid: ed14fbbfe379f454baeae157e8a0cba5, type: 3}
+  fracturingSounds:
+  - {fileID: 8300000, guid: ba127158c910f754f839118aad27faa0, type: 3}
+  - {fileID: 8300000, guid: 94280ef7df410ca45ad8ed6c1d370acc, type: 3}
+  - {fileID: 8300000, guid: 6e3c2541416d8ab4db7d402806c9ae16, type: 3}
+  - {fileID: 8300000, guid: 14012b6b22916fe4dbcf3f328bc18ee4, type: 3}
+  hitSounds:
+  - {fileID: 8300000, guid: c217ec943bc0cef4e9b62d707b8e1bc6, type: 3}
+  - {fileID: 8300000, guid: 9d92d47449c58214eb93cbb3dbd1ebb1, type: 3}
+  - {fileID: 8300000, guid: d7bcb83e2df07d94eb55f0b623ca5485, type: 3}
 --- !u!1 &4314733660513789821
 GameObject:
   m_ObjectHideFlags: 0
@@ -663,9 +850,9 @@ GameObject:
   - component: {fileID: 4314733660513789817}
   - component: {fileID: 4314733660513789816}
   - component: {fileID: 4314733660513789823}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: cactus_8_body_3
-  m_TagString: Untagged
+  m_TagString: Destructible
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -677,6 +864,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4314733660513789821}
+  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0.0003900528, y: 0.00017394542, z: -0.027608577}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -687,7 +875,6 @@ Transform:
   - {fileID: 6767580299822279196}
   - {fileID: 1915177636074937468}
   m_Father: {fileID: 2629514729979497969}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &5947374703529249200
 MeshFilter:
@@ -714,6 +901,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -746,10 +936,21 @@ Rigidbody:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4314733660513789821}
-  serializedVersion: 2
+  serializedVersion: 5
   m_Mass: 3
-  m_Drag: 0
-  m_AngularDrag: 0.05
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
@@ -762,6 +963,7 @@ FixedJoint:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4314733660513789821}
+  serializedVersion: 1
   m_ConnectedBody: {fileID: 2629514729979497970}
   m_ConnectedArticulationBody: {fileID: 0}
   m_BreakForce: 1500
@@ -778,9 +980,17 @@ MeshCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4314733660513789821}
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
   m_IsTrigger: 0
+  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 4
+  serializedVersion: 5
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 5113202639251116737, guid: 13e289855d1564f49ab50722de312c65, type: 3}
@@ -796,8 +1006,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa1e8ac1bcdae9b4a85c0f9c17e5f5eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Health: 10
-  DestructionParticle: {fileID: 8643044617244880250, guid: 64e787eaa1d35a64aabc4190a33a6bf7, type: 3}
+  health: 10
+  disintegrationParticle: {fileID: 2059057164675306756, guid: 7236c3169fe6e9a4c8276cc53d7141ad,
+    type: 3}
+  destructionParticle: {fileID: 2059057164675306756, guid: e04622e6176d37947a64974698c8bd94,
+    type: 3}
+  hitParticle: {fileID: 2059057164675306756, guid: b52dee3c845480c4f832d0f20b3994f3,
+    type: 3}
+  destructionPosition: {x: 0, y: -0.2, z: 0}
+  audioSourcePrefab: {fileID: 4376158771152645506, guid: 293cdfbf28100e74f8c2f09c289c95c9,
+    type: 3}
+  destructionSounds:
+  - {fileID: 8300000, guid: 11c2d6bb276a67945b6695f3c7d87fda, type: 3}
+  - {fileID: 8300000, guid: a931abd6e89240f4489abcc9401aa384, type: 3}
+  - {fileID: 8300000, guid: ed14fbbfe379f454baeae157e8a0cba5, type: 3}
+  fracturingSounds:
+  - {fileID: 8300000, guid: ba127158c910f754f839118aad27faa0, type: 3}
+  - {fileID: 8300000, guid: 94280ef7df410ca45ad8ed6c1d370acc, type: 3}
+  - {fileID: 8300000, guid: 6e3c2541416d8ab4db7d402806c9ae16, type: 3}
+  - {fileID: 8300000, guid: 14012b6b22916fe4dbcf3f328bc18ee4, type: 3}
+  hitSounds:
+  - {fileID: 8300000, guid: c217ec943bc0cef4e9b62d707b8e1bc6, type: 3}
+  - {fileID: 8300000, guid: 9d92d47449c58214eb93cbb3dbd1ebb1, type: 3}
+  - {fileID: 8300000, guid: d7bcb83e2df07d94eb55f0b623ca5485, type: 3}
 --- !u!1 &5275257979718915642
 GameObject:
   m_ObjectHideFlags: 0
@@ -813,9 +1044,9 @@ GameObject:
   - component: {fileID: 5275257979718915621}
   - component: {fileID: 5275257979718915620}
   - component: {fileID: 5275257979718915643}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: cactus_8_branch_1
-  m_TagString: Untagged
+  m_TagString: Destructible
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -827,13 +1058,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5275257979718915642}
+  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0.02374611, y: 0.017789837, z: -0.03456895}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4803958016337778044}
-  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &5660826138229386702
 MeshFilter:
@@ -860,6 +1091,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -892,10 +1126,21 @@ Rigidbody:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5275257979718915642}
-  serializedVersion: 2
+  serializedVersion: 5
   m_Mass: 3
-  m_Drag: 0
-  m_AngularDrag: 0.05
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
@@ -908,6 +1153,7 @@ FixedJoint:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5275257979718915642}
+  serializedVersion: 1
   m_ConnectedBody: {fileID: 4314733660513789822}
   m_ConnectedArticulationBody: {fileID: 0}
   m_BreakForce: 1500
@@ -924,9 +1170,17 @@ MeshCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5275257979718915642}
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
   m_IsTrigger: 0
+  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 4
+  serializedVersion: 5
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -7156046523424807989, guid: 13e289855d1564f49ab50722de312c65, type: 3}
@@ -942,8 +1196,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa1e8ac1bcdae9b4a85c0f9c17e5f5eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Health: 10
-  DestructionParticle: {fileID: 8643044617244880250, guid: 64e787eaa1d35a64aabc4190a33a6bf7, type: 3}
+  health: 10
+  disintegrationParticle: {fileID: 2059057164675306756, guid: 7236c3169fe6e9a4c8276cc53d7141ad,
+    type: 3}
+  destructionParticle: {fileID: 2059057164675306756, guid: e04622e6176d37947a64974698c8bd94,
+    type: 3}
+  hitParticle: {fileID: 2059057164675306756, guid: b52dee3c845480c4f832d0f20b3994f3,
+    type: 3}
+  destructionPosition: {x: 0.27, y: -0.42, z: -0.18}
+  audioSourcePrefab: {fileID: 4376158771152645506, guid: 293cdfbf28100e74f8c2f09c289c95c9,
+    type: 3}
+  destructionSounds:
+  - {fileID: 8300000, guid: 11c2d6bb276a67945b6695f3c7d87fda, type: 3}
+  - {fileID: 8300000, guid: a931abd6e89240f4489abcc9401aa384, type: 3}
+  - {fileID: 8300000, guid: ed14fbbfe379f454baeae157e8a0cba5, type: 3}
+  fracturingSounds:
+  - {fileID: 8300000, guid: ba127158c910f754f839118aad27faa0, type: 3}
+  - {fileID: 8300000, guid: 94280ef7df410ca45ad8ed6c1d370acc, type: 3}
+  - {fileID: 8300000, guid: 6e3c2541416d8ab4db7d402806c9ae16, type: 3}
+  - {fileID: 8300000, guid: 14012b6b22916fe4dbcf3f328bc18ee4, type: 3}
+  hitSounds:
+  - {fileID: 8300000, guid: c217ec943bc0cef4e9b62d707b8e1bc6, type: 3}
+  - {fileID: 8300000, guid: 9d92d47449c58214eb93cbb3dbd1ebb1, type: 3}
+  - {fileID: 8300000, guid: d7bcb83e2df07d94eb55f0b623ca5485, type: 3}
 --- !u!1 &5741049012563385224
 GameObject:
   m_ObjectHideFlags: 0
@@ -959,9 +1234,9 @@ GameObject:
   - component: {fileID: 2629514729979497981}
   - component: {fileID: 2629514729979497980}
   - component: {fileID: 2629514729979497971}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: cactus_8_body_2
-  m_TagString: Untagged
+  m_TagString: Destructible
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -973,6 +1248,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5741049012563385224}
+  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0.00048535957, y: 0.00042082786, z: -0.04744714}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -980,7 +1256,6 @@ Transform:
   m_Children:
   - {fileID: 4803958016337778044}
   m_Father: {fileID: 5132912455480484139}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &6053931801825883041
 MeshFilter:
@@ -1007,6 +1282,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1039,10 +1317,21 @@ Rigidbody:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5741049012563385224}
-  serializedVersion: 2
+  serializedVersion: 5
   m_Mass: 3
-  m_Drag: 0
-  m_AngularDrag: 0.05
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
@@ -1055,6 +1344,7 @@ FixedJoint:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5741049012563385224}
+  serializedVersion: 1
   m_ConnectedBody: {fileID: 2533716741221473796}
   m_ConnectedArticulationBody: {fileID: 0}
   m_BreakForce: 1500
@@ -1071,9 +1361,17 @@ MeshCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5741049012563385224}
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
   m_IsTrigger: 0
+  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 4
+  serializedVersion: 5
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 6730749550492397456, guid: 13e289855d1564f49ab50722de312c65, type: 3}
@@ -1089,8 +1387,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa1e8ac1bcdae9b4a85c0f9c17e5f5eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Health: 10
-  DestructionParticle: {fileID: 8643044617244880250, guid: 64e787eaa1d35a64aabc4190a33a6bf7, type: 3}
+  health: 10
+  disintegrationParticle: {fileID: 2059057164675306756, guid: 7236c3169fe6e9a4c8276cc53d7141ad,
+    type: 3}
+  destructionParticle: {fileID: 2059057164675306756, guid: e04622e6176d37947a64974698c8bd94,
+    type: 3}
+  hitParticle: {fileID: 2059057164675306756, guid: b52dee3c845480c4f832d0f20b3994f3,
+    type: 3}
+  destructionPosition: {x: 0, y: -0.2, z: 0}
+  audioSourcePrefab: {fileID: 4376158771152645506, guid: 293cdfbf28100e74f8c2f09c289c95c9,
+    type: 3}
+  destructionSounds:
+  - {fileID: 8300000, guid: 11c2d6bb276a67945b6695f3c7d87fda, type: 3}
+  - {fileID: 8300000, guid: a931abd6e89240f4489abcc9401aa384, type: 3}
+  - {fileID: 8300000, guid: ed14fbbfe379f454baeae157e8a0cba5, type: 3}
+  fracturingSounds:
+  - {fileID: 8300000, guid: ba127158c910f754f839118aad27faa0, type: 3}
+  - {fileID: 8300000, guid: 94280ef7df410ca45ad8ed6c1d370acc, type: 3}
+  - {fileID: 8300000, guid: 6e3c2541416d8ab4db7d402806c9ae16, type: 3}
+  - {fileID: 8300000, guid: 14012b6b22916fe4dbcf3f328bc18ee4, type: 3}
+  hitSounds:
+  - {fileID: 8300000, guid: c217ec943bc0cef4e9b62d707b8e1bc6, type: 3}
+  - {fileID: 8300000, guid: 9d92d47449c58214eb93cbb3dbd1ebb1, type: 3}
+  - {fileID: 8300000, guid: d7bcb83e2df07d94eb55f0b623ca5485, type: 3}
 --- !u!1 &9175190013688785306
 GameObject:
   m_ObjectHideFlags: 0
@@ -1106,9 +1425,9 @@ GameObject:
   - component: {fileID: 1676319884805501614}
   - component: {fileID: 1676319884805501613}
   - component: {fileID: 1676319884805501612}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: cactus_8_body_4
-  m_TagString: Untagged
+  m_TagString: Destructible
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1120,6 +1439,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9175190013688785306}
+  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0.000031852716, y: -0.00018997668, z: -0.020115219}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -1127,7 +1447,6 @@ Transform:
   m_Children:
   - {fileID: 1108931576206257210}
   m_Father: {fileID: 4803958016337778044}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &8960409714928493902
 MeshFilter:
@@ -1154,6 +1473,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1186,10 +1508,21 @@ Rigidbody:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9175190013688785306}
-  serializedVersion: 2
+  serializedVersion: 5
   m_Mass: 3
-  m_Drag: 0
-  m_AngularDrag: 0.05
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
@@ -1202,6 +1535,7 @@ FixedJoint:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9175190013688785306}
+  serializedVersion: 1
   m_ConnectedBody: {fileID: 4314733660513789822}
   m_ConnectedArticulationBody: {fileID: 0}
   m_BreakForce: 1500
@@ -1218,9 +1552,17 @@ MeshCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9175190013688785306}
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
   m_IsTrigger: 0
+  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 4
+  serializedVersion: 5
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 4960717701533572549, guid: 13e289855d1564f49ab50722de312c65, type: 3}
@@ -1236,5 +1578,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa1e8ac1bcdae9b4a85c0f9c17e5f5eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Health: 10
-  DestructionParticle: {fileID: 8643044617244880250, guid: 64e787eaa1d35a64aabc4190a33a6bf7, type: 3}
+  health: 10
+  disintegrationParticle: {fileID: 2059057164675306756, guid: 7236c3169fe6e9a4c8276cc53d7141ad,
+    type: 3}
+  destructionParticle: {fileID: 2059057164675306756, guid: e04622e6176d37947a64974698c8bd94,
+    type: 3}
+  hitParticle: {fileID: 2059057164675306756, guid: b52dee3c845480c4f832d0f20b3994f3,
+    type: 3}
+  destructionPosition: {x: 0, y: -0.2, z: 0}
+  audioSourcePrefab: {fileID: 4376158771152645506, guid: 293cdfbf28100e74f8c2f09c289c95c9,
+    type: 3}
+  destructionSounds:
+  - {fileID: 8300000, guid: 11c2d6bb276a67945b6695f3c7d87fda, type: 3}
+  - {fileID: 8300000, guid: a931abd6e89240f4489abcc9401aa384, type: 3}
+  - {fileID: 8300000, guid: ed14fbbfe379f454baeae157e8a0cba5, type: 3}
+  fracturingSounds:
+  - {fileID: 8300000, guid: ba127158c910f754f839118aad27faa0, type: 3}
+  - {fileID: 8300000, guid: 94280ef7df410ca45ad8ed6c1d370acc, type: 3}
+  - {fileID: 8300000, guid: 6e3c2541416d8ab4db7d402806c9ae16, type: 3}
+  - {fileID: 8300000, guid: 14012b6b22916fe4dbcf3f328bc18ee4, type: 3}
+  hitSounds:
+  - {fileID: 8300000, guid: c217ec943bc0cef4e9b62d707b8e1bc6, type: 3}
+  - {fileID: 8300000, guid: 9d92d47449c58214eb93cbb3dbd1ebb1, type: 3}
+  - {fileID: 8300000, guid: d7bcb83e2df07d94eb55f0b623ca5485, type: 3}

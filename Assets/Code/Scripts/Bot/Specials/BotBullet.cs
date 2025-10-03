@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Environment;
 using UnityEngine;
 using PlayerRoot;
 
@@ -14,9 +15,7 @@ namespace BotRoot
         [SerializeField] private Vector3 startPosition;
         [SerializeField] private Vector3 startForward;
 
-        [Space(2)]
-        [Header("ExplosionForce")]
-        public float power;
+        [Space(2)] [Header("ExplosionForce")] public float power;
         public float radius;
 
         [SerializeField] private bool isInitialized = false;
@@ -49,8 +48,10 @@ namespace BotRoot
 
         private bool CastRayBetweenPoints(Vector3 startPoint, Vector3 endPoint, out RaycastHit hit)
         {
-            return Physics.Raycast(startPoint, endPoint - startPoint, out hit, (endPoint - startPoint).magnitude, obstaclesMask);
+            return Physics.Raycast(startPoint, endPoint - startPoint, out hit, (endPoint - startPoint).magnitude,
+                obstaclesMask);
         }
+
         private void FixedUpdate()
         {
             if (StopUpdate) return;
@@ -68,14 +69,19 @@ namespace BotRoot
             {
                 if (hit.transform.TryGetComponent(out HitableObject hitable))
                 {
-                    if (hitable.hitBulletSound) if (Instantiate(InstanceSound, hit.point, Quaternion.identity).TryGetComponent(out AudioSource audioSource))
+                    if (hitable.hitBulletSound)
+                        if (Instantiate(InstanceSound, hit.point, Quaternion.identity)
+                            .TryGetComponent(out AudioSource audioSource))
                         {
                             audioSource.PlayOneShot(hitable.hitBulletSound);
                         }
+
                     if (hit.transform.TryGetComponent(out PlayerBody playerBody))
                     {
-                        playerBody.player.damageNavigatorRegister.CreateIndicator(setup.transform, playerBody.player.transform);
+                        playerBody.player.damageNavigatorRegister.CreateIndicator(setup.transform,
+                            playerBody.player.transform);
                     }
+
                     if (hitable) hitable.HitVisualize(hit.point, hit.normal);
                     if (hitable) hitable.HitBullet(damage, setup.transform);
                     if (hitable)
@@ -86,8 +92,25 @@ namespace BotRoot
                         Destroy(gameObject);
                     }
                 }
+                else if (hit.transform.TryGetComponent(out Environment.Object element))
+                {
+                    element.Fracturing();
+                }
+                else if (hit.transform.tag == "Destructible")
+                {
+                    if (hit.transform.TryGetComponent(out Fracture fracture))
+                    {
+                        fracture.TakeHealth(3);
+                        var playerDirection = fracture.transform.position - startPosition;
+                        var normalizedDirection = playerDirection.normalized;
+                        if(hit.transform.TryGetComponent(out Rigidbody hitRigidBody)) hitRigidBody.AddForce(normalizedDirection * 10, ForceMode.Impulse);
+                        var destruction = Instantiate(fracture.hitParticle,hit.point, transform.rotation);
+                        Destroy(destruction.gameObject, 3);
+                    }
+                }
             }
         }
+
         private void Update()
         {
             if (StopUpdate) return;
@@ -99,10 +122,8 @@ namespace BotRoot
             destroySelfTime -= Time.deltaTime;
             if (destroySelfTime <= 0)
             {
-
                 Destroy(gameObject);
             }
         }
     }
 }
-

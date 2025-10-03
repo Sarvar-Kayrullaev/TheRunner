@@ -7,10 +7,10 @@ namespace Data
     [Serializable]
     public class EquipedWeaponModel
     {
-        public int ID;
-        [FormerlySerializedAs("WeaponEnum")] public WeaponName weaponName;
-        public int MagazineBulletCount;
-        public SuppressorModel Suppressor;
-        public SightModel Sight;
+        public int id;
+        public WeaponName weaponName;
+        public int magazineBulletCount;
+        public SuppressorModel suppressor;
+        public SightModel sight;
     }
 }

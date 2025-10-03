@@ -1,14 +1,15 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Data
 {
     [Serializable]
     public class HolsterModel
     {
-        public int Index;
-        public bool IsOccupied;
-        public bool IsLocked;
-        public EquipedWeaponModel EquipedWeapon;
+        public int index;
+        public bool isOccupied;
+        public bool isLocked;
+        public EquipedWeaponModel equipedWeapon;
     }
 }

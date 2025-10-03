@@ -15,9 +15,9 @@ GameObject:
   - component: {fileID: 2253784790209458106}
   - component: {fileID: 2253784790209458105}
   - component: {fileID: 2253784790209458104}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: cactus_2_body_2
-  m_TagString: Untagged
+  m_TagString: Destructible
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -170,9 +170,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa1e8ac1bcdae9b4a85c0f9c17e5f5eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Health: 10
-  DestructionParticle: {fileID: 8643044617244880250, guid: 64e787eaa1d35a64aabc4190a33a6bf7,
+  health: 10
+  disintegrationParticle: {fileID: 2059057164675306756, guid: 7236c3169fe6e9a4c8276cc53d7141ad,
     type: 3}
+  destructionParticle: {fileID: 2059057164675306756, guid: e04622e6176d37947a64974698c8bd94,
+    type: 3}
+  hitParticle: {fileID: 2059057164675306756, guid: b52dee3c845480c4f832d0f20b3994f3,
+    type: 3}
+  destructionPosition: {x: 0, y: -0.24, z: 0}
+  audioSourcePrefab: {fileID: 4376158771152645506, guid: 293cdfbf28100e74f8c2f09c289c95c9,
+    type: 3}
+  destructionSounds:
+  - {fileID: 8300000, guid: 11c2d6bb276a67945b6695f3c7d87fda, type: 3}
+  - {fileID: 8300000, guid: a931abd6e89240f4489abcc9401aa384, type: 3}
+  - {fileID: 8300000, guid: ed14fbbfe379f454baeae157e8a0cba5, type: 3}
+  fracturingSounds:
+  - {fileID: 8300000, guid: ba127158c910f754f839118aad27faa0, type: 3}
+  - {fileID: 8300000, guid: 94280ef7df410ca45ad8ed6c1d370acc, type: 3}
+  - {fileID: 8300000, guid: 6e3c2541416d8ab4db7d402806c9ae16, type: 3}
+  - {fileID: 8300000, guid: 14012b6b22916fe4dbcf3f328bc18ee4, type: 3}
+  hitSounds:
+  - {fileID: 8300000, guid: c217ec943bc0cef4e9b62d707b8e1bc6, type: 3}
+  - {fileID: 8300000, guid: 9d92d47449c58214eb93cbb3dbd1ebb1, type: 3}
+  - {fileID: 8300000, guid: d7bcb83e2df07d94eb55f0b623ca5485, type: 3}
 --- !u!1 &5289717177248415088
 GameObject:
   m_ObjectHideFlags: 0
@@ -188,9 +208,9 @@ GameObject:
   - component: {fileID: 2420250611516472908}
   - component: {fileID: 2420250611516472907}
   - component: {fileID: 2420250611516472906}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: cactus_2_branch_1
-  m_TagString: Untagged
+  m_TagString: Destructible
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -340,9 +360,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa1e8ac1bcdae9b4a85c0f9c17e5f5eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Health: 10
-  DestructionParticle: {fileID: 8643044617244880250, guid: 64e787eaa1d35a64aabc4190a33a6bf7,
+  health: 10
+  disintegrationParticle: {fileID: 2059057164675306756, guid: 7236c3169fe6e9a4c8276cc53d7141ad,
     type: 3}
+  destructionParticle: {fileID: 2059057164675306756, guid: e04622e6176d37947a64974698c8bd94,
+    type: 3}
+  hitParticle: {fileID: 2059057164675306756, guid: b52dee3c845480c4f832d0f20b3994f3,
+    type: 3}
+  destructionPosition: {x: 0.09, y: -0.18, z: -0.19}
+  audioSourcePrefab: {fileID: 4376158771152645506, guid: 293cdfbf28100e74f8c2f09c289c95c9,
+    type: 3}
+  destructionSounds:
+  - {fileID: 8300000, guid: 11c2d6bb276a67945b6695f3c7d87fda, type: 3}
+  - {fileID: 8300000, guid: a931abd6e89240f4489abcc9401aa384, type: 3}
+  - {fileID: 8300000, guid: ed14fbbfe379f454baeae157e8a0cba5, type: 3}
+  fracturingSounds:
+  - {fileID: 8300000, guid: ba127158c910f754f839118aad27faa0, type: 3}
+  - {fileID: 8300000, guid: 94280ef7df410ca45ad8ed6c1d370acc, type: 3}
+  - {fileID: 8300000, guid: 6e3c2541416d8ab4db7d402806c9ae16, type: 3}
+  - {fileID: 8300000, guid: 14012b6b22916fe4dbcf3f328bc18ee4, type: 3}
+  hitSounds:
+  - {fileID: 8300000, guid: c217ec943bc0cef4e9b62d707b8e1bc6, type: 3}
+  - {fileID: 8300000, guid: 9d92d47449c58214eb93cbb3dbd1ebb1, type: 3}
+  - {fileID: 8300000, guid: d7bcb83e2df07d94eb55f0b623ca5485, type: 3}
 --- !u!1 &5814048988010674208
 GameObject:
   m_ObjectHideFlags: 0
@@ -358,9 +398,9 @@ GameObject:
   - component: {fileID: 2007599202009796132}
   - component: {fileID: 2007599202009796130}
   - component: {fileID: 2007599202009796133}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: cactus_2_body_1
-  m_TagString: Untagged
+  m_TagString: Destructible
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -457,7 +497,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
@@ -489,9 +529,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa1e8ac1bcdae9b4a85c0f9c17e5f5eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Health: 10
-  DestructionParticle: {fileID: 8643044617244880250, guid: 64e787eaa1d35a64aabc4190a33a6bf7,
+  health: 10
+  disintegrationParticle: {fileID: 2059057164675306756, guid: 7236c3169fe6e9a4c8276cc53d7141ad,
     type: 3}
+  destructionParticle: {fileID: 2059057164675306756, guid: e04622e6176d37947a64974698c8bd94,
+    type: 3}
+  hitParticle: {fileID: 2059057164675306756, guid: b52dee3c845480c4f832d0f20b3994f3,
+    type: 3}
+  destructionPosition: {x: 0, y: -0.22, z: 0}
+  audioSourcePrefab: {fileID: 4376158771152645506, guid: 293cdfbf28100e74f8c2f09c289c95c9,
+    type: 3}
+  destructionSounds:
+  - {fileID: 8300000, guid: 11c2d6bb276a67945b6695f3c7d87fda, type: 3}
+  - {fileID: 8300000, guid: a931abd6e89240f4489abcc9401aa384, type: 3}
+  - {fileID: 8300000, guid: ed14fbbfe379f454baeae157e8a0cba5, type: 3}
+  fracturingSounds:
+  - {fileID: 8300000, guid: ba127158c910f754f839118aad27faa0, type: 3}
+  - {fileID: 8300000, guid: 94280ef7df410ca45ad8ed6c1d370acc, type: 3}
+  - {fileID: 8300000, guid: 6e3c2541416d8ab4db7d402806c9ae16, type: 3}
+  - {fileID: 8300000, guid: 14012b6b22916fe4dbcf3f328bc18ee4, type: 3}
+  hitSounds:
+  - {fileID: 8300000, guid: c217ec943bc0cef4e9b62d707b8e1bc6, type: 3}
+  - {fileID: 8300000, guid: 9d92d47449c58214eb93cbb3dbd1ebb1, type: 3}
+  - {fileID: 8300000, guid: d7bcb83e2df07d94eb55f0b623ca5485, type: 3}
 --- !u!64 &2007599202009796133
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -529,9 +589,9 @@ GameObject:
   - component: {fileID: 6023108309382477714}
   - component: {fileID: 6023108309382477713}
   - component: {fileID: 6023108309382477712}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: cactus_2_body_3
-  m_TagString: Untagged
+  m_TagString: Destructible
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -681,9 +741,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa1e8ac1bcdae9b4a85c0f9c17e5f5eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Health: 10
-  DestructionParticle: {fileID: 8643044617244880250, guid: 64e787eaa1d35a64aabc4190a33a6bf7,
+  health: 10
+  disintegrationParticle: {fileID: 2059057164675306756, guid: 7236c3169fe6e9a4c8276cc53d7141ad,
     type: 3}
+  destructionParticle: {fileID: 2059057164675306756, guid: e04622e6176d37947a64974698c8bd94,
+    type: 3}
+  hitParticle: {fileID: 2059057164675306756, guid: b52dee3c845480c4f832d0f20b3994f3,
+    type: 3}
+  destructionPosition: {x: 0, y: -0.22, z: 0}
+  audioSourcePrefab: {fileID: 4376158771152645506, guid: 293cdfbf28100e74f8c2f09c289c95c9,
+    type: 3}
+  destructionSounds:
+  - {fileID: 8300000, guid: 11c2d6bb276a67945b6695f3c7d87fda, type: 3}
+  - {fileID: 8300000, guid: a931abd6e89240f4489abcc9401aa384, type: 3}
+  - {fileID: 8300000, guid: ed14fbbfe379f454baeae157e8a0cba5, type: 3}
+  fracturingSounds:
+  - {fileID: 8300000, guid: ba127158c910f754f839118aad27faa0, type: 3}
+  - {fileID: 8300000, guid: 94280ef7df410ca45ad8ed6c1d370acc, type: 3}
+  - {fileID: 8300000, guid: 6e3c2541416d8ab4db7d402806c9ae16, type: 3}
+  - {fileID: 8300000, guid: 14012b6b22916fe4dbcf3f328bc18ee4, type: 3}
+  hitSounds:
+  - {fileID: 8300000, guid: c217ec943bc0cef4e9b62d707b8e1bc6, type: 3}
+  - {fileID: 8300000, guid: 9d92d47449c58214eb93cbb3dbd1ebb1, type: 3}
+  - {fileID: 8300000, guid: d7bcb83e2df07d94eb55f0b623ca5485, type: 3}
 --- !u!1 &8401452577755558067
 GameObject:
   m_ObjectHideFlags: 0
@@ -695,9 +775,9 @@ GameObject:
   - component: {fileID: 9213278759905962505}
   - component: {fileID: 8401452577755558068}
   - component: {fileID: 8401452577755558069}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Fractured_2
-  m_TagString: Untagged
+  m_TagString: Destructible
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -773,9 +853,9 @@ GameObject:
   - component: {fileID: 1209382734093439044}
   - component: {fileID: 1209382734093439043}
   - component: {fileID: 1209382734093439042}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: cactus_2_branch_2
-  m_TagString: Untagged
+  m_TagString: Destructible
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -925,6 +1005,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa1e8ac1bcdae9b4a85c0f9c17e5f5eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Health: 10
-  DestructionParticle: {fileID: 8643044617244880250, guid: 64e787eaa1d35a64aabc4190a33a6bf7,
+  health: 10
+  disintegrationParticle: {fileID: 2059057164675306756, guid: 7236c3169fe6e9a4c8276cc53d7141ad,
     type: 3}
+  destructionParticle: {fileID: 2059057164675306756, guid: e04622e6176d37947a64974698c8bd94,
+    type: 3}
+  hitParticle: {fileID: 2059057164675306756, guid: b52dee3c845480c4f832d0f20b3994f3,
+    type: 3}
+  destructionPosition: {x: 0.03, y: -0.14, z: 0.17}
+  audioSourcePrefab: {fileID: 4376158771152645506, guid: 293cdfbf28100e74f8c2f09c289c95c9,
+    type: 3}
+  destructionSounds:
+  - {fileID: 8300000, guid: 11c2d6bb276a67945b6695f3c7d87fda, type: 3}
+  - {fileID: 8300000, guid: a931abd6e89240f4489abcc9401aa384, type: 3}
+  - {fileID: 8300000, guid: ed14fbbfe379f454baeae157e8a0cba5, type: 3}
+  fracturingSounds:
+  - {fileID: 8300000, guid: ba127158c910f754f839118aad27faa0, type: 3}
+  - {fileID: 8300000, guid: 94280ef7df410ca45ad8ed6c1d370acc, type: 3}
+  - {fileID: 8300000, guid: 6e3c2541416d8ab4db7d402806c9ae16, type: 3}
+  - {fileID: 8300000, guid: 14012b6b22916fe4dbcf3f328bc18ee4, type: 3}
+  hitSounds:
+  - {fileID: 8300000, guid: c217ec943bc0cef4e9b62d707b8e1bc6, type: 3}
+  - {fileID: 8300000, guid: 9d92d47449c58214eb93cbb3dbd1ebb1, type: 3}
+  - {fileID: 8300000, guid: d7bcb83e2df07d94eb55f0b623ca5485, type: 3}

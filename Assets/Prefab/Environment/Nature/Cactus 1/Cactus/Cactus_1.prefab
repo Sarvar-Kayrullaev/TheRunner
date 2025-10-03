@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5221079581685405286}
   - component: {fileID: 5221079581685405287}
-  m_Layer: 8
+  m_Layer: 7
   m_Name: Cactus_1
   m_TagString: Environment
   m_Icon: {fileID: 0}
@@ -24,6 +24,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5221079581685405284}
+  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -6.725708, y: 0.027811527, z: -3.8877773}
   m_LocalScale: {x: 1.4, y: 1.4, z: 1.4}
@@ -32,7 +33,6 @@ Transform:
   - {fileID: 5221079583134184639}
   - {fileID: 7552704937774305574}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!205 &5221079581685405287
 LODGroup:
@@ -68,7 +68,7 @@ GameObject:
   - component: {fileID: 5221079583134184639}
   - component: {fileID: 5221079583134184636}
   - component: {fileID: 5221079583134184637}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Billboard_LOD3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -82,13 +82,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5221079583134184610}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 0, y: -0.023, z: 0}
   m_LocalScale: {x: 125.00001, y: 125.00001, z: 125.00001}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 5221079581685405286}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!33 &5221079583134184636
 MeshFilter:
@@ -115,6 +115,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 0
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -154,7 +157,7 @@ GameObject:
   - component: {fileID: 7552704937774305571}
   - component: {fileID: 7552704937774305572}
   - component: {fileID: 7552704937774305573}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cactus_1
   m_TagString: Environment
   m_Icon: {fileID: 0}
@@ -168,13 +171,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7552704937774305575}
+  serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071067}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 10, y: 10, z: 10}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 5221079581685405286}
-  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &7552704937774305569
 MeshFilter:
@@ -201,6 +204,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -234,9 +240,17 @@ MeshCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7552704937774305575}
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
   m_IsTrigger: 0
+  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 4
+  serializedVersion: 5
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 1021539851580222105, guid: dd0a6328842b52e46b8f1cbda8bfb832, type: 3}
@@ -252,16 +266,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ba03ca8ca501484a8161af02f58d503, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UpdateTime: 0.5
-  EasingUpdateTime: 3
-  EasingUpdateDistance: 100
-  ColliderCullingDistance: 20
-  FracturedPrefab: {fileID: 8035006324292170641, guid: 8f800dc7c1e1bb644ad2d431440313ee, type: 3}
+  updateTime: 0.5
+  easingUpdateTime: 3
+  easingUpdateDistance: 100
+  colliderCullingDistance: 20
+  fracturedPrefab: {fileID: 8035006324292170641, guid: 8f800dc7c1e1bb644ad2d431440313ee,
+    type: 3}
   billboard: {fileID: 5221079583134184639}
-  Tiling: {x: 16, y: 8}
-  Vertical: 7
-  SpriteOffset: 8
+  tiling: {x: 16, y: 8}
+  vertical: 7
+  spriteOffset: 8
   inverseOffcet: 1
+  audioSourcePrefab: {fileID: 4376158771152645506, guid: e4624a8e3e13fb24b9dcc7083e63b6ec,
+    type: 3}
+  fracturingSound: {fileID: 8300000, guid: d7bcb83e2df07d94eb55f0b623ca5485, type: 3}
 --- !u!54 &7552704937774305573
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -269,12 +287,23 @@ Rigidbody:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7552704937774305575}
-  serializedVersion: 2
+  serializedVersion: 5
   m_Mass: 100
-  m_Drag: 2
-  m_AngularDrag: 1000
+  m_LinearDamping: 2
+  m_AngularDamping: 1000
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
   m_UseGravity: 0
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0

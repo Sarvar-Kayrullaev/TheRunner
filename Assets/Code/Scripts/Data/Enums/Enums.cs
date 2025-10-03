@@ -32,24 +32,29 @@ public enum WeaponType
     Signatured
 }
 
-public enum SuppressorType
+public enum SuppressorName
 {
     None,
-    Pistol,
-    Shotgun,
-    SMG,
-    Rifle,
-    Sniper,
-    Machinegun,
+    PistolSuppressor1,
+    PistolSuppressor2,
+    PistolSuppressor3,
+    MidSuppressor1,
+    MidSuppressor2,
+    MidSuppressor3,
+    SniperSuppressor1,
+    SniperSuppressor2,
+    SniperSuppressor3
 }
-public enum SightType
+public enum SightName
 {
     IronSights,
+    PistolReflexSight,
+    PistolRedDotSight,
+    RedDotSight,
     ReflexHolographicSight,
     ReflexRedDotSight,
     TelescopeSight2X,
     TelescopeSight3X,
-    TelescopeSight4X,
     TelescopeSight6X,
     TelescopeSight8X,
 }

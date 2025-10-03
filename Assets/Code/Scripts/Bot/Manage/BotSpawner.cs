@@ -21,9 +21,10 @@ namespace BotRoot
             if (bot.TryGetComponent(out BotSetup setupComponent))
             {
                 setup = setupComponent;
+                overall.botGlobal.bots.Add(setupComponent.bot);
                 InstantiateIndicators();
 
-                setup.global = FindFirstObjectByType<BotGlobal>();
+                setup.global = overall.botGlobal;
                 setup.botAudio = setup.global.Audio;
                 setup.objects.guardingPoints = GuardingPoints;
                 setup.overall = overall;

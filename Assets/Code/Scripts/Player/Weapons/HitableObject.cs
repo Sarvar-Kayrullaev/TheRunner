@@ -43,7 +43,7 @@ public class HitableObject : MonoBehaviour
     {
         if (hole)
         {
-            GameObject _hole = Instantiate(hole, hitPosition + (hitNormal * 0.025f), Quaternion.identity, transform).gameObject;
+            var _hole = Instantiate(hole, hitPosition + (hitNormal * 0.025f), Quaternion.identity, transform).gameObject;
             _hole.transform.rotation = Quaternion.FromToRotation(Vector3.forward, hitNormal);
             Destroy(_hole, 5);
         }

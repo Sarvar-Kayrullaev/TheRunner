@@ -344,6 +344,6 @@ MonoBehaviour:
     m_Bits: 256
   obstaclesMask:
     serializedVersion: 2
-    m_Bits: 144
+    m_Bits: 196752
   Particle: {fileID: 5988795761706348893, guid: 3b24bff3e677b7a41afa4a0a41ca761f,
     type: 3}

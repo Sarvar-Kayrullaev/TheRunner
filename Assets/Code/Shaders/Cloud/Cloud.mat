@@ -30,7 +30,7 @@ Material:
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
+  m_CustomRenderQueue: 2950
   stringTagMap: {}
   disabledShaderPasses:
   - MOTIONVECTORS
@@ -106,27 +106,31 @@ Material:
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _QueueControl: 0
-    - _QueueOffset: 0
+    - _QueueOffset: -50
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
+    - _SunDirectionBlend: 0
     - _UVSec: 0
     - _XRMotionVectorsPass: 1
     - _ZWrite: 1
-    - _darknessThreshold: -0.5
-    - _densityScale: 0.73
+    - _darknessThreshold: -0.05953777
+    - _densityScale: 0.11020619
     - _lightAbsorb: 0.55
     - _lightStepSize: 0.19
     - _numLightSteps: 1
     - _numSteps: 30
     - _stepSize: 0.05
-    - _transmittance: 0.58
+    - _sunDirectionBlend: 0
+    - _transmittance: 0.2
     m_Colors:
-    - _Color: {r: 1, g: 0.92427295, b: 0.8160377, a: 1}
+    - _Color: {r: 0.01950195, g: 0.38137054, b: 0.74323916, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _LightDirection: {r: 3.09, g: -4.32, b: 6.1, a: 0}
     - _ShadowColor: {r: 1, g: 1, b: 1, a: 1}
+    - _color: {r: 0.59516895, g: 0.7823148, b: 0.9459953, a: 1}
     - _offset: {r: 0.5, g: 0.5, b: 0.5, a: 0}
+    - _shadowColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &2448579991636119692

@@ -1,7 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering;
 using UnityEditor;
 
 namespace Environment
@@ -9,97 +7,74 @@ namespace Environment
     [ExecuteInEditMode]
     public class Painter : MonoBehaviour
     {
-        public bool Edit = false;
+        public bool edit;
         
         [Space][Header("Pen")]
         public float radius = 1;
 
         [Space][Header("Density")]
-        public int Density = 1;
-        public bool RandomDensity = false;
+        public int density = 1;
+        public bool randomDensity;
 
         [Space][Header("TerrainMask")]
-        public LayerMask DrawMask;
+        public LayerMask drawMask;
 
         [Space][Header("Setup")]
-        public Transform ChunksParent;
+        public Transform parent;
         public List<GameObject> props;
 
-        //Readonly
-
-        private readonly List<GameObject> cacheProp = new();
+        private readonly List<GameObject> _cacheProp = new();
 
         public void OnMouseDown()
         {
-            cacheProp.Clear();
-            Vector2 mousePos = Event.current.mousePosition;
+            _cacheProp.Clear();
+            var mousePos = Event.current.mousePosition;
             mousePos *= EditorGUIUtility.pixelsPerPoint;
-            var camera = SceneView.lastActiveSceneView.camera;
-            Vector3 vec = new(mousePos.x, camera.pixelHeight - mousePos.y, 1);
-            Ray ray = camera.ScreenPointToRay(vec);
-            if (Physics.Raycast(ray, out RaycastHit hit, 1000, DrawMask))
+            var sceneCamera = SceneView.lastActiveSceneView.camera;
+            Vector3 vec = new(mousePos.x, sceneCamera.pixelHeight - mousePos.y, 1);
+            var ray = sceneCamera.ScreenPointToRay(vec);
+            
+            if (!Physics.Raycast(ray, out var hit, 1000, drawMask)) return;
+            if (!randomDensity) return;
+            
+            var point = hit.point;
+            var random = Mathf.Clamp(Random.Range(density - density / 2, density + density / 2), 1, 10000);
+            for (var i = 0; i < random; i++)
             {
-                Vector3 point = hit.point;
-                if (RandomDensity)
+                /*--- PLANE POSITION ---*/
+                var randomProp = Random.Range(0, props.Count);
+                Vector3 propPosition = new(Random.Range(point.x - radius, point.x + radius), point.y, Random.Range(point.z - radius, point.z + radius));
+                Vector3 upPosition = new(propPosition.x, propPosition.y + 10, propPosition.z);
+
+                if (Physics.Raycast(new Ray(upPosition, Vector3.down * 10), out var hit2, 10000, drawMask))
                 {
-                    int random = Mathf.Clamp(Random.Range(Density - Density / 2, Density + Density / 2), 1, 10000);
-
-                    for (int i = 0; i < random; i++)
-                    {
-                        /*--- PLANE POSITION ---*/
-                        int randomProp = Random.Range(0, props.Count);
-                        Vector3 propPosition = new(Random.Range(point.x - radius, point.x + radius), point.y, Random.Range(point.z - radius, point.z + radius));
-                        Vector3 upPosition = new(propPosition.x, propPosition.y + 10, propPosition.z);
-
-                        if (Physics.Raycast(new Ray(upPosition, Vector3.down * 10), out RaycastHit hit2, 10000, DrawMask))
-                        {
-                            Vector3 signedPosition = new(propPosition.x, hit2.point.y, propPosition.z);
-                            Vector3 eulerAngles = props[randomProp].transform.eulerAngles;
-                            eulerAngles.y = Random.Range(0, 360);
-                            Quaternion propRotation = Quaternion.Euler(eulerAngles);
-                            Transform chunk = NearChunk(MouseHitPoisiton());
-                            GameObject prop = Instantiate(props[randomProp], signedPosition, propRotation, chunk);
-                            cacheProp.Add(prop);
-                        }
-                        /*-------- END ---------*/
-                    }
+                    Vector3 signedPosition = new(propPosition.x, hit2.point.y, propPosition.z);
+                    var eulerAngles = props[randomProp].transform.eulerAngles;
+                    eulerAngles.y = Random.Range(0, 360);
+                    var propRotation = Quaternion.Euler(eulerAngles);
+                    var prop = Instantiate(props[randomProp], signedPosition, propRotation, parent);
+                    _cacheProp.Add(prop);
                 }
+                /*-------- END ---------*/
             }
         }
 
         public void Undo()
         {
-            foreach (GameObject cache in cacheProp)
+            foreach (var cache in _cacheProp)
                 DestroyImmediate(cache);
-            cacheProp.Clear();
-        }
-
-        Transform NearChunk(Vector3 position)
-        {
-            Transform closestChunk = null;
-            float minimumDistance = Mathf.Infinity;
-
-            foreach (Transform chunk in ChunksParent)
-            {
-                float distance = Vector3.Distance(chunk.transform.position, position);
-                if (distance < minimumDistance)
-                {
-                    minimumDistance = distance;
-                    closestChunk = chunk;
-                }
-            }
-            return closestChunk;
+            _cacheProp.Clear();
         }
 
         public Vector3 MouseHitPoisiton()
         {
-            Vector2 mousePos = Event.current.mousePosition;
+            var mousePos = Event.current.mousePosition;
             mousePos *= EditorGUIUtility.pixelsPerPoint;
-            var camera = SceneView.lastActiveSceneView.camera;
-            Vector3 vec = new(mousePos.x, camera.pixelHeight - mousePos.y, 1);
-            Ray ray = camera.ScreenPointToRay(vec);
+            var sceneCamera = SceneView.lastActiveSceneView.camera;
+            Vector3 vec = new(mousePos.x, sceneCamera.pixelHeight - mousePos.y, 1);
+            var ray = sceneCamera.ScreenPointToRay(vec);
 
-            if (Physics.Raycast(ray, out RaycastHit hit, 1000, DrawMask))
+            if (Physics.Raycast(ray, out var hit, 1000, drawMask))
             {
                 return hit.point;
             }
@@ -110,15 +85,15 @@ namespace Environment
         }
 
 #if UNITY_EDITOR
-        void OnDrawGizmos()
+        private void OnDrawGizmos()
         {
-            if (!Edit) return;
-            Vector2 mousePos = Event.current.mousePosition;
+            if (!edit) return;
+            var mousePos = Event.current.mousePosition;
             mousePos *= EditorGUIUtility.pixelsPerPoint;
             var camera = SceneView.lastActiveSceneView.camera;
             Vector3 vec = new(mousePos.x, camera.pixelHeight - mousePos.y, 1);
-            Ray ray = camera.ScreenPointToRay(vec);
-            if (Physics.Raycast(ray, out RaycastHit hit, 1000, DrawMask))
+            var ray = camera.ScreenPointToRay(vec);
+            if (Physics.Raycast(ray, out var hit, 1000, drawMask))
             {
                 Gizmos.color = Color.blue;
                 Gizmos.DrawRay(hit.point, Vector3.up);

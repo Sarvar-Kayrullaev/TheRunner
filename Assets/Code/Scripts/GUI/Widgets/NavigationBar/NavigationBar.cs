@@ -8,33 +8,39 @@ namespace Widget
     public class NavigationBar : MonoBehaviour
     {
         [Header("Item Roots")]
-        [SerializeField] RectTransform barRoot;
-        [SerializeField] RectTransform fragmentRoot;
+        [SerializeField] private RectTransform barRoot;
+        [SerializeField] private RectTransform fragmentRoot;
 
         [Header("Selection Color")]
-        [SerializeField] Color selectedColor;
-        [SerializeField] Color unselectedColor;
+        [SerializeField] private Color selectedColor;
+        [SerializeField] private Color unselectedColor;
+        [HideInInspector] public int currentIndex = 0;
+        [HideInInspector] public List<ItemButton> barButtons = new List<ItemButton>();
 
-        public void Start()
+        public void Awake()
         {
             Initialize();
             Select(0);
         }
 
-        private void Initialize()
+        public void Initialize()
         {
+            barButtons.Clear();
             foreach (Transform item in barRoot)
             {
                 if (item.TryGetComponent(out ItemButton button))
                 {
+                    barButtons.Add(button);
+                    button.OnClick.RemoveAllListeners();
                     button.OnClick.AddListener(() => Select(item.GetSiblingIndex()));
                 }
             }
         }
 
-        void Select(int selectedIndex)
+        private void Select(int selectedIndex)
         {
-            int index = 0;
+            var index = 0;
+            currentIndex =  selectedIndex;
             foreach (Transform item in barRoot)
             {
                 if (item.GetChild(0).TryGetComponent(out TMP_Text text) && item.TryGetComponent(out ItemButton button))
@@ -57,7 +63,7 @@ namespace Widget
 
         public void SelectFragment(int index)
         {
-            int i = 0;
+            var i = 0;
             foreach (Transform window in fragmentRoot)
             {
                 if (index == i)

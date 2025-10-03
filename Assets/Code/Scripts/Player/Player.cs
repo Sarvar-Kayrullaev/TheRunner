@@ -73,6 +73,7 @@ namespace PlayerRoot
         [Space]
         [Header("Movement Sounds")]
         public new AudioSource audio = default;
+        public AudioSource skiddingAudioSource;
         public AudioClip[] walkSounds;
         public AudioClip[] runSounds;
         public AudioClip[] woodWalkSounds;
@@ -86,6 +87,7 @@ namespace PlayerRoot
         public AudioClip[] damageSound;
         public AudioClip takeDamageSound;
         public AudioClip SwooshSound;
+        public AudioClip skiddingSound;
 
         [Space]
         [Header("Scripts")]
@@ -106,13 +108,13 @@ namespace PlayerRoot
         [Space]
         public Vector2 vectorMovement;
         public Vector3 moveDirection = Vector3.zero;
-        Vector2 move;
-        Vector2 mouse;
+        private Vector2 move;
+        private Vector2 mouse;
 
         [HideInInspector] public Dragable PendingDragableWeapon;
 
         [System.Obsolete]
-        void Start()
+        private void Start()
         {
             if (TryGetComponent(out HeadBob headBob)) this.headBob = headBob;
             if (TryGetComponent(out LiveAction liveAction)) this.liveAction = liveAction;
@@ -137,7 +139,8 @@ namespace PlayerRoot
             }
 
         }
-        void Update()
+
+        private void Update()
         {
             if(!isContollable) return;
             if (Mobile)
@@ -157,7 +160,7 @@ namespace PlayerRoot
 
             movement.Update(move, mouse);
 
-            if (holster.currentWeapon) holster.currentWeapon.sway.Sway(Mobile, holster.currentWeapon.aim, mouse, move.x, holster.currentWeapon.ReduceSwayOnAim);
+            if (holster.currentWeapon) holster.currentWeapon.sway.Sway(Mobile, holster.currentWeapon.aim, mouse, move.x, holster.currentWeapon.reduceSwayOnAim);
         }
 
         public void TakeDamage(int damage, Transform owner)
@@ -183,71 +186,79 @@ namespace PlayerRoot
             _ = Wait();
         }
 
-        void ButtonListener.OnClickDown(ControllerCases name)
+        void ButtonListener.OnClickDown(ControllerCases controllerCase)
         {
-            if (name == ControllerCases.Shoot)
+            switch (controllerCase)
             {
-                if (!holster.currentWeapon) return;
-                holster.currentWeapon.shootOnce = true;
-                holster.currentWeapon.shootPressing = true;
-            }
-            else if (name == ControllerCases.Aim)
-            {
-                if (!holster.currentWeapon) return;
-                holster.currentWeapon.Aim(!holster.currentWeapon.aim);
-            }
-            else if (name == ControllerCases.Reload)
-            {
-                if (!holster.currentWeapon) return;
-                holster.currentWeapon.Reload();
-            }
-            else if (name == ControllerCases.Jump)
-            {
-                movement.MobileJump();
-            }
-            else if (name == ControllerCases.Throw)
-            {
-                holster.RockThrow();
-            }
-            else if (name == ControllerCases.SwitchWeapon)
-            {
-                //holster.SwitchWeapon();
-            }
-            else if (name == ControllerCases.Crouch)
-            {
-                movement.Crouch();
+                case ControllerCases.Shoot when !holster.currentWeapon:
+                    return;
+                case ControllerCases.Shoot:
+                    holster.currentWeapon.shootOnce = true;
+                    holster.currentWeapon.shootPressing = true;
+                    break;
+                case ControllerCases.Aim when !holster.currentWeapon:
+                    return;
+                case ControllerCases.Aim:
+                    holster.currentWeapon.Aim(!holster.currentWeapon.aim);
+                    break;
+                case ControllerCases.Reload when !holster.currentWeapon:
+                    return;
+                case ControllerCases.Reload:
+                    holster.currentWeapon.Reload();
+                    break;
+                case ControllerCases.Jump:
+                    movement.MobileJump();
+                    break;
+                case ControllerCases.Throw:
+                    holster.RockThrow();
+                    break;
+                case ControllerCases.SwitchWeapon:
+                    //holster.SwitchWeapon();
+                    break;
+                case ControllerCases.Crouch:
+                    movement.Crouch();
+                    break;
             }
         }
 
-        void ButtonListener.OnClickUp(ControllerCases name)
+        void ButtonListener.OnClickUp(ControllerCases controllerCase)
         {
-            if (name == ControllerCases.Shoot)
+            switch (controllerCase)
             {
-                if (holster.currentWeapon)
-                    holster.currentWeapon.shootPressing = false;
+                case ControllerCases.Shoot:
+                {
+                    if (holster.currentWeapon)
+                        holster.currentWeapon.shootPressing = false;
+                    break;
+                }
             }
         }
 
-        void ButtonListener.OnDragChange(PointerEventData eventData, ControllerCases name)
+        void ButtonListener.OnDragChange(PointerEventData eventData, ControllerCases controllerCase)
         {
-            if (name == ControllerCases.Shoot)
+            switch (controllerCase)
             {
-                movement.Rotate(eventData.delta);
-                if (holster.currentWeapon)
-                    holster.currentWeapon.sway.Sway(Mobile, holster.currentWeapon.aim, eventData.delta * 2, 0, holster.currentWeapon.ReduceSwayOnAim);
+                case ControllerCases.Shoot:
+                {
+                    movement.Rotate(eventData.delta);
+                    if (holster.currentWeapon)
+                        holster.currentWeapon.sway.Sway(Mobile, holster.currentWeapon.aim, eventData.delta * 2, 0, holster.currentWeapon.reduceSwayOnAim);
+                    break;
+                }
             }
         }
 
-        void OnTriggerEnter(Collider collider)
+        private void OnTriggerEnter(Collider otherCollider)
         {
-            movement.TriggerEnter(collider);
-        }
-        void OnTriggerExit(Collider collider)
-        {
-            movement.TriggerExit(collider);
+            movement.TriggerEnter(otherCollider);
         }
 
-        void OnDrawGizmos()
+        private void OnTriggerExit(Collider otherCollider)
+        {
+            movement.TriggerExit(otherCollider);
+        }
+
+        private void OnDrawGizmos()
         {
             // Draw a yellow sphere at the transform's position
             Gizmos.color = Color.blue;

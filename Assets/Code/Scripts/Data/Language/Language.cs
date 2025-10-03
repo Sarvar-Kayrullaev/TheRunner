@@ -1922,6 +1922,32 @@ namespace Code.Scripts.Data.Language
                     "Qoʻshimcha", // Uzbek
                 }
             };
+            data[67] = new DataModel()
+            {
+                Key = "Attach",
+                Translated = new[]
+                {
+                    "Attach", // English
+                    "Colocar", // Spanish
+                    "Fixer", // French
+                    "Прикрепить", // Russian
+                    "Anbringen", // German
+                    "Allega", // Italian
+                    "Anexar", // Portuguese
+                    "安装", // Chinese
+                    "取り付ける", // Japanese
+                    "부착", // Korean
+                    "إرفاق", // Arabic
+                    "जोड़ें", // Hindi
+                    "Ikabit", // Filipino
+                    "Ekle", // Turkish
+                    "Gắn", // Vietnamese
+                    "แนบ", // Thai
+                    "Pasang", // Indonesian
+                    "Pasang", // Malay
+                    "Biriktirish", // Uzbek
+                }
+            };
 
             return data;
         }

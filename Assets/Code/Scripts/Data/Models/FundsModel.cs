@@ -1,10 +1,12 @@
 using System;
+using UnityEngine.Serialization;
+
 namespace Data
 {
     [Serializable]
     public class FundsModel
     {
-        public int Money;
-        public int Gold;
+        public int money;
+        public int gold;
     }
 }

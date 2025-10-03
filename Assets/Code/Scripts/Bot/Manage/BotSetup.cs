@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -55,6 +56,8 @@ namespace BotRoot
 
         public void DisableAllComponents()
         {
+            if(global.bots.Contains(bot)) global.bots.Remove(bot);
+            if(global.markedBots.Contains(bot)) global.markedBots.Remove(bot);
             botAudio.Play(PanicTalking.DYING, this);
             author.RemoveMarker();
             action.CancelInvoke("CallStaticEnemy");
@@ -72,8 +75,14 @@ namespace BotRoot
             sourceOfAction.enabled = false;
             if (enemyIndicator) Destroy(enemyIndicator.gameObject);
             if (enemyDamageNavigator) Destroy(enemyDamageNavigator.gameObject);
-            GetComponent<Outline>().enabled = false;
+            if(TryGetComponent(out Outline outline)) outline.enabled = false;
             sensor.gameObject.SetActive(false);
+        }
+
+        public void OnDestroy()
+        {
+            if(global.bots.Contains(bot)) global.bots.Remove(bot);
+            if(global.markedBots.Contains(bot)) global.markedBots.Remove(bot);
         }
     }
 

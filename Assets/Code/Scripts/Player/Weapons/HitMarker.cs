@@ -6,69 +6,89 @@ using UnityEngine.UI;
 [RequireComponent(typeof(AudioSource))]
 public class HitMarker : MonoBehaviour
 {
-    [SerializeField] float speed;
-    [SerializeField] float minSize;
-    [SerializeField] float maxSize;
-    [SerializeField] float lifeTime;
-    [SerializeField] Color hitColor;
-    [SerializeField] Color diedColor;
-    [SerializeField] AudioClip[] hitSound;
-    [SerializeField] AudioClip[] diedSound;
-    [SerializeField] float soundVolume;
+    [SerializeField] private float speed;
+    [SerializeField] private float minSize;
+    [SerializeField] private float maxSize;
+    [SerializeField] private float lifeTime;
+    [SerializeField] private Color hitColor;
+    [SerializeField] private Color diedColor;
+    [SerializeField] private AudioClip[] hitSound;
+    [SerializeField] private AudioClip[] diedSound;
+    [SerializeField] private float soundVolume;
 
-    private AudioSource audio;
-    private RectTransform rectTransform;
-    private float currentSize;
-    private bool died;
-    private float getSizeDelta;
+    private AudioSource _audio;
+    private RectTransform _rectTransform;
+    private float _currentSize;
+    private bool _died;
+    private float _getSizeDelta;
+    private readonly List<Image> _childrenImages = new List<Image>();
+    private IEnumerator _coroutine;
 
-    void Awake()
+    private void Awake()
     {
         SetActive(false);
-        rectTransform = GetComponent<RectTransform>();
-        audio = GetComponent<AudioSource>();
-    }
-    void Update()
-    {
-        if (died)
+        _rectTransform = GetComponent<RectTransform>();
+        _audio = GetComponent<AudioSource>();
+        _coroutine = Disable();
+        foreach (var componentsInChild in transform.GetComponentsInChildren<Image>())
         {
-            currentSize = Mathf.Lerp(currentSize, minSize * 1.5f, Time.deltaTime * speed);
+            _childrenImages.Add(componentsInChild);
+        }
+    }
+
+    private void Update()
+    {
+        if (_died)
+        {
+            _currentSize = Mathf.Lerp(_currentSize, minSize * 1.5f, Time.deltaTime * speed);
         }
         else
         {
-            currentSize = Mathf.Lerp(currentSize, minSize, Time.deltaTime * speed);
+            _currentSize = Mathf.Lerp(_currentSize, minSize, Time.deltaTime * speed);
         }
 
-        rectTransform.sizeDelta = new Vector2(currentSize, currentSize);
+        _rectTransform.sizeDelta = new Vector2(_currentSize, _currentSize);
     }
 
     public void Hit()
     {
-        CancelInvoke("Disable");
-        int selectHitSound = Random.Range(0, hitSound.Length);
-        audio.PlayOneShot(hitSound[selectHitSound],soundVolume);
-        currentSize = maxSize;
+        if (_coroutine != null)
+        {
+            StopCoroutine(_coroutine);
+        }
+        var selectHitSound = Random.Range(0, hitSound.Length);
+        _audio.PlayOneShot(hitSound[selectHitSound],soundVolume);
+        _currentSize = maxSize;
         ChangeColor(hitColor);
         SetActive(true);
-        Invoke("Disable", lifeTime);
-        died = false;
+        StartCoroutine(_coroutine);
+        _died = false;
     }
     public void Died()
     {
-        CancelInvoke("Disable");
-        int selectDiedSound = Random.Range(0, diedSound.Length);
-        audio.PlayOneShot(diedSound[selectDiedSound],soundVolume);
+        if (_coroutine != null)
+        {
+            StopCoroutine(_coroutine);
+        }
+        var selectDiedSound = Random.Range(0, diedSound.Length);
+        _audio.PlayOneShot(diedSound[selectDiedSound],soundVolume);
         ChangeColor(diedColor);
-        currentSize = maxSize;
+        _currentSize = maxSize;
         SetActive(true);
-        Invoke("Disable", lifeTime);
-        died = true;
+        StartCoroutine(_coroutine);
+        _died = true;
     }
-    void Disable()
+
+    private IEnumerator Disable()
     {
-        SetActive(false);
+        while (true)
+        {
+            yield return new WaitForSeconds(lifeTime);
+            SetActive(false);
+        }
     }
-    void SetActive(bool enabled)
+
+    private void SetActive(bool enabled)
     {
         foreach (Transform child in transform)
         {
@@ -76,11 +96,11 @@ public class HitMarker : MonoBehaviour
         }
     }
 
-    void ChangeColor(Color color)
+    private void ChangeColor(Color color)
     {
-        foreach(Transform child in transform)
+        foreach(var image in _childrenImages)
         {
-            child.GetComponent<Image>().color = color;
+            image.color = color;
         }
     }
 }

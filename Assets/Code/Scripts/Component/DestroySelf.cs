@@ -4,9 +4,20 @@ using UnityEngine;
 
 public class DestroySelf : MonoBehaviour
 {
-    [SerializeField] float lifeTime;
-    void Start()
+    public float lifeTime;
+
+    private void Start()
     {
         Destroy(gameObject, lifeTime);
+        StartCoroutine(Destroy());
+    }
+
+    private IEnumerator Destroy()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(lifeTime);
+            Destroy(gameObject);
+        }
     }
 }

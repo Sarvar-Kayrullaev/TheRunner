@@ -40,11 +40,11 @@ public class InvertorySlot : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
 
     public void Rebuild(HolsterModel holster, WeaponBasicModel weaponBasicModel, HolsterManager manager, Color SelectionColor)
     {
-        SlotIndex = holster.Index;
-        if(holster.EquipedWeapon.weaponName != WeaponName.NONE) this.Image.sprite = weaponBasicModel.SpriteReference;
-        if(holster.EquipedWeapon.weaponName != WeaponName.NONE) this.Name.text = weaponBasicModel.Name;
-        this.IsOccupied = holster.IsOccupied;
-        this.IsLocked = holster.IsLocked;
+        SlotIndex = holster.index;
+        if(holster.equipedWeapon.weaponName != WeaponName.NONE) this.Image.sprite = weaponBasicModel.spriteReference;
+        if(holster.equipedWeapon.weaponName != WeaponName.NONE) this.Name.text = weaponBasicModel.name;
+        this.IsOccupied = holster.isOccupied;
+        this.IsLocked = holster.isLocked;
         this.Manager = manager;
         this.holsterModel = holster;
         this.weaponBasic = weaponBasicModel;
@@ -112,7 +112,7 @@ public class InvertorySlot : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
             if (Manager.draggingObject) Destroy(Manager.draggingObject);
 
             if (data.PlayerData.SelectedWeaponIndex == SlotIndex) Manager.WeaponThrow(holsterModel, weaponHolster.currentWeapon.currentAmmo);
-            else Manager.WeaponThrow(holsterModel, holsterModel.EquipedWeapon.MagazineBulletCount);
+            else Manager.WeaponThrow(holsterModel, holsterModel.equipedWeapon.magazineBulletCount);
             Manager.RebuildFastHolster(data.PlayerData.Holster);
             Manager.RebuildWheelHolster(data.PlayerData.Holster);
             return;
@@ -128,66 +128,66 @@ public class InvertorySlot : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
                 {
                     ///change
                     HolsterModel otherClone = new();
-                    otherClone.Index = otherInventory.holsterModel.Index;
-                    otherClone.IsOccupied = otherInventory.holsterModel.IsOccupied;
-                    otherClone.IsLocked = otherInventory.holsterModel.IsLocked;
+                    otherClone.index = otherInventory.holsterModel.index;
+                    otherClone.isOccupied = otherInventory.holsterModel.isOccupied;
+                    otherClone.isLocked = otherInventory.holsterModel.isLocked;
 
-                    otherClone.EquipedWeapon = new();
-                    otherClone.EquipedWeapon.ID = otherInventory.holsterModel.EquipedWeapon.ID;
-                    otherClone.EquipedWeapon.weaponName = otherInventory.holsterModel.EquipedWeapon.weaponName;
-                    otherClone.EquipedWeapon.MagazineBulletCount = otherInventory.holsterModel.EquipedWeapon.MagazineBulletCount;
-                    otherClone.EquipedWeapon.Suppressor = otherInventory.holsterModel.EquipedWeapon.Suppressor;
-                    otherClone.EquipedWeapon.Sight = otherInventory.holsterModel.EquipedWeapon.Sight;
+                    otherClone.equipedWeapon = new();
+                    otherClone.equipedWeapon.id = otherInventory.holsterModel.equipedWeapon.id;
+                    otherClone.equipedWeapon.weaponName = otherInventory.holsterModel.equipedWeapon.weaponName;
+                    otherClone.equipedWeapon.magazineBulletCount = otherInventory.holsterModel.equipedWeapon.magazineBulletCount;
+                    otherClone.equipedWeapon.suppressor = otherInventory.holsterModel.equipedWeapon.suppressor;
+                    otherClone.equipedWeapon.sight = otherInventory.holsterModel.equipedWeapon.sight;
 
-                    otherInventory.holsterModel.Index = otherInventory.holsterModel.Index;
-                    otherInventory.holsterModel.IsOccupied = holsterModel.IsOccupied;
-                    otherInventory.holsterModel.IsLocked = holsterModel.IsLocked;
-                    otherInventory.holsterModel.EquipedWeapon.ID = holsterModel.EquipedWeapon.ID;
-                    otherInventory.holsterModel.EquipedWeapon.weaponName = holsterModel.EquipedWeapon.weaponName;
-                    otherInventory.holsterModel.EquipedWeapon.MagazineBulletCount = holsterModel.EquipedWeapon.MagazineBulletCount;
-                    otherInventory.holsterModel.EquipedWeapon.Suppressor = holsterModel.EquipedWeapon.Suppressor;
-                    otherInventory.holsterModel.EquipedWeapon.Sight = holsterModel.EquipedWeapon.Sight;
+                    otherInventory.holsterModel.index = otherInventory.holsterModel.index;
+                    otherInventory.holsterModel.isOccupied = holsterModel.isOccupied;
+                    otherInventory.holsterModel.isLocked = holsterModel.isLocked;
+                    otherInventory.holsterModel.equipedWeapon.id = holsterModel.equipedWeapon.id;
+                    otherInventory.holsterModel.equipedWeapon.weaponName = holsterModel.equipedWeapon.weaponName;
+                    otherInventory.holsterModel.equipedWeapon.magazineBulletCount = holsterModel.equipedWeapon.magazineBulletCount;
+                    otherInventory.holsterModel.equipedWeapon.suppressor = holsterModel.equipedWeapon.suppressor;
+                    otherInventory.holsterModel.equipedWeapon.sight = holsterModel.equipedWeapon.sight;
                     
-                    holsterModel.Index = holsterModel.Index;
-                    holsterModel.IsOccupied = false;
-                    holsterModel.IsLocked = holsterModel.IsLocked;
-                    holsterModel.EquipedWeapon.ID = 0;
-                    holsterModel.EquipedWeapon.weaponName = WeaponName.NONE;
-                    holsterModel.EquipedWeapon.MagazineBulletCount = 0;
-                    holsterModel.EquipedWeapon.Suppressor = new SuppressorModel();
-                    holsterModel.EquipedWeapon.Sight = new SightModel();
+                    holsterModel.index = holsterModel.index;
+                    holsterModel.isOccupied = false;
+                    holsterModel.isLocked = holsterModel.isLocked;
+                    holsterModel.equipedWeapon.id = 0;
+                    holsterModel.equipedWeapon.weaponName = WeaponName.NONE;
+                    holsterModel.equipedWeapon.magazineBulletCount = 0;
+                    holsterModel.equipedWeapon.suppressor = new SuppressorModel();
+                    holsterModel.equipedWeapon.sight = new SightModel();
                 }
                 else
                 {
                     ///change 2
                     HolsterModel otherClone = new();
-                    otherClone.Index = otherInventory.holsterModel.Index;
-                    otherClone.IsOccupied = otherInventory.holsterModel.IsOccupied;
-                    otherClone.IsLocked = otherInventory.holsterModel.IsLocked;
-                    otherClone.EquipedWeapon = new();
-                    otherClone.EquipedWeapon.ID = otherInventory.holsterModel.EquipedWeapon.ID;
-                    otherClone.EquipedWeapon.weaponName = otherInventory.holsterModel.EquipedWeapon.weaponName;
-                    otherClone.EquipedWeapon.MagazineBulletCount = otherInventory.holsterModel.EquipedWeapon.MagazineBulletCount;
-                    otherClone.EquipedWeapon.Suppressor = otherInventory.holsterModel.EquipedWeapon.Suppressor;
-                    otherClone.EquipedWeapon.Sight = otherInventory.holsterModel.EquipedWeapon.Sight;
+                    otherClone.index = otherInventory.holsterModel.index;
+                    otherClone.isOccupied = otherInventory.holsterModel.isOccupied;
+                    otherClone.isLocked = otherInventory.holsterModel.isLocked;
+                    otherClone.equipedWeapon = new();
+                    otherClone.equipedWeapon.id = otherInventory.holsterModel.equipedWeapon.id;
+                    otherClone.equipedWeapon.weaponName = otherInventory.holsterModel.equipedWeapon.weaponName;
+                    otherClone.equipedWeapon.magazineBulletCount = otherInventory.holsterModel.equipedWeapon.magazineBulletCount;
+                    otherClone.equipedWeapon.suppressor = otherInventory.holsterModel.equipedWeapon.suppressor;
+                    otherClone.equipedWeapon.sight = otherInventory.holsterModel.equipedWeapon.sight;
 
-                    otherInventory.holsterModel.Index = otherInventory.holsterModel.Index;
-                    otherInventory.holsterModel.IsOccupied = holsterModel.IsOccupied;
-                    otherInventory.holsterModel.IsLocked = holsterModel.IsLocked;
-                    otherInventory.holsterModel.EquipedWeapon.ID = holsterModel.EquipedWeapon.ID;
-                    otherInventory.holsterModel.EquipedWeapon.weaponName = holsterModel.EquipedWeapon.weaponName;
-                    otherInventory.holsterModel.EquipedWeapon.MagazineBulletCount = holsterModel.EquipedWeapon.MagazineBulletCount;
-                    otherInventory.holsterModel.EquipedWeapon.Suppressor = holsterModel.EquipedWeapon.Suppressor;
-                    otherInventory.holsterModel.EquipedWeapon.Sight = holsterModel.EquipedWeapon.Sight;
+                    otherInventory.holsterModel.index = otherInventory.holsterModel.index;
+                    otherInventory.holsterModel.isOccupied = holsterModel.isOccupied;
+                    otherInventory.holsterModel.isLocked = holsterModel.isLocked;
+                    otherInventory.holsterModel.equipedWeapon.id = holsterModel.equipedWeapon.id;
+                    otherInventory.holsterModel.equipedWeapon.weaponName = holsterModel.equipedWeapon.weaponName;
+                    otherInventory.holsterModel.equipedWeapon.magazineBulletCount = holsterModel.equipedWeapon.magazineBulletCount;
+                    otherInventory.holsterModel.equipedWeapon.suppressor = holsterModel.equipedWeapon.suppressor;
+                    otherInventory.holsterModel.equipedWeapon.sight = holsterModel.equipedWeapon.sight;
                     
-                    holsterModel.Index = holsterModel.Index;
-                    holsterModel.IsOccupied = true;
-                    holsterModel.IsLocked = holsterModel.IsLocked;
-                    holsterModel.EquipedWeapon.ID = otherClone.EquipedWeapon.ID;
-                    holsterModel.EquipedWeapon.weaponName = otherClone.EquipedWeapon.weaponName;
-                    holsterModel.EquipedWeapon.MagazineBulletCount = otherClone.EquipedWeapon.MagazineBulletCount;
-                    holsterModel.EquipedWeapon.Suppressor = otherClone.EquipedWeapon.Suppressor;
-                    holsterModel.EquipedWeapon.Sight = otherClone.EquipedWeapon.Sight;
+                    holsterModel.index = holsterModel.index;
+                    holsterModel.isOccupied = true;
+                    holsterModel.isLocked = holsterModel.isLocked;
+                    holsterModel.equipedWeapon.id = otherClone.equipedWeapon.id;
+                    holsterModel.equipedWeapon.weaponName = otherClone.equipedWeapon.weaponName;
+                    holsterModel.equipedWeapon.magazineBulletCount = otherClone.equipedWeapon.magazineBulletCount;
+                    holsterModel.equipedWeapon.suppressor = otherClone.equipedWeapon.suppressor;
+                    holsterModel.equipedWeapon.sight = otherClone.equipedWeapon.sight;
                 }
                 Manager.RebuildFastHolster(data.PlayerData.Holster);
                 Manager.RebuildWheelHolster(data.PlayerData.Holster);
@@ -208,7 +208,7 @@ public class InvertorySlot : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
             if (Manager.draggingObject) Destroy(Manager.draggingObject);
 
             if (data.PlayerData.SelectedWeaponIndex == SlotIndex) Manager.WeaponThrow(holsterModel, weaponHolster.currentWeapon.currentAmmo);
-            else Manager.WeaponThrow(holsterModel, holsterModel.EquipedWeapon.MagazineBulletCount);
+            else Manager.WeaponThrow(holsterModel, holsterModel.equipedWeapon.magazineBulletCount);
             Manager.RebuildFastHolster(data.PlayerData.Holster);
             Manager.RebuildWheelHolster(data.PlayerData.Holster);
             return;

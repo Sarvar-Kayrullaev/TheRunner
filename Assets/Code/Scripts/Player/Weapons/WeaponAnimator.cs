@@ -33,17 +33,19 @@ public class WeaponAnimator : StateMachineBehaviour
     {
         if (stateInfo.IsName("ReloadEmpty") || stateInfo.IsName("Reload"))
         {
-            Weapon weapon = animator.gameObject.GetComponent<Weapon>();
-            for (int i = 0; i < weapon.magazineSize; i++)
+            var weapon = animator.gameObject.GetComponent<Weapon>();
+            
+            for (var i = 0; i < weapon.magazineSize; i++)
             {
                 if (weapon.GetAllAmmo() <= 0) break;
                 if (weapon.currentAmmo >= weapon.magazineSize) break;
                 weapon.currentAmmo++;
-                weapon.SetAllAmmo(weapon.GetAllAmmo()-1);
-
-                weapon.holster.ammoBagText.text = "" + weapon.GetAllAmmo();
-                weapon.holster.ResetBullets(weapon.currentAmmo, weapon.magazineSize);
+                weapon.SetAllAmmo(weapon.GetAllAmmo() - 1, false);
             }
+            
+            weapon.holster.ammoBagText.text = "" + weapon.GetAllAmmo();
+            weapon.holster.ResetBullets(weapon.currentAmmo, weapon.magazineSize);
+            weapon.dataManager.UpdatePlayerModel(weapon.dataManager.playerModel);
             weapon.isReloading = false;
         }
     }

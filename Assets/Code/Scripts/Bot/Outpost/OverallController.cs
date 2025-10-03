@@ -7,6 +7,7 @@ namespace BotRoot
 {
     public class OverallController : MonoBehaviour
     {
+        public BotGlobal botGlobal;
         public float EffectRadius = 200;
         public LayerMask botMask;
         public LayerMask patrollPointMask;
@@ -39,7 +40,7 @@ namespace BotRoot
         public void Initialize()
         {
             if(initialized) return;
-
+            botGlobal = FindFirstObjectByType<BotGlobal>();
             initialized = true;
             if (IsSpawnable) Spawn();
             else return;
@@ -60,7 +61,7 @@ namespace BotRoot
                 else
                     pathFinder.agent = transform;
             }
-
+            
             player = FindFirstObjectByType<Player>();
             if (missionManager) missionManager.Initialize();
             //InvokeRepeating(nameof(ChangePatrollingStrategy), 3, 5);

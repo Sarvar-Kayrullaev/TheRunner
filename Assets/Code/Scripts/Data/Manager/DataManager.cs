@@ -1,12 +1,13 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Data;
-
+[Serializable]
 public class DataManager : MonoBehaviour
 {
     [HideInInspector] public SettingsModel settingsModel;
-    [HideInInspector] public PlayerModel playerModel;
+     public PlayerModel playerModel;
     [HideInInspector] public OpenWorldModel openWorldModel;
     
     [HideInInspector] public bool LoadingCompleted = false;

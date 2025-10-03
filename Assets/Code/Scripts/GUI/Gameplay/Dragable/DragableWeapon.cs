@@ -45,7 +45,7 @@ public class DragableWeapon : MonoBehaviour
     public void Register(Dragable dragable)
     {
         if(SecondDragableWeaponGUI.TryGetComponent(out DilerSlot diler)) this.diler = diler;
-        if (dragable.Prefab.TryGetComponent(out Weapon _weaponComponent)) weaponComponent = _weaponComponent;
+        if (dragable.prefab.TryGetComponent(out Weapon _weaponComponent)) weaponComponent = _weaponComponent;
         
         _weaponName = weaponComponent.weaponName;
         enabled = true;
@@ -55,42 +55,42 @@ public class DragableWeapon : MonoBehaviour
         CancelInvoke(nameof(Close));
         Invoke(nameof(Close), 0.4f);
         WeaponBasicModel weaponModel = WeaponModel(sealedData.WeaponBasics);
-        image.sprite = weaponModel.SpriteReference;
-        name.text = weaponModel.Name;
+        image.sprite = weaponModel.spriteReference;
+        name.text = weaponModel.name;
 
         HolsterModel newHolster = new();
-        newHolster.EquipedWeapon = new();
-        newHolster.EquipedWeapon.ID = dragable.ID;
-        newHolster.EquipedWeapon.weaponName = _weaponName;
-        newHolster.EquipedWeapon.MagazineBulletCount = dragable.CurrentAmmoSize;
-        newHolster.EquipedWeapon.Suppressor = dragable.SuppressorModel;
-        newHolster.EquipedWeapon.Sight = dragable.SightModel;
+        newHolster.equipedWeapon = new();
+        newHolster.equipedWeapon.id = dragable.id;
+        newHolster.equipedWeapon.weaponName = _weaponName;
+        newHolster.equipedWeapon.magazineBulletCount = dragable.currentAmmoSize;
+        newHolster.equipedWeapon.suppressor = dragable.suppressorModel;
+        newHolster.equipedWeapon.sight = dragable.sightModel;
         diler.Rebuild(newHolster, weaponModel, holsterManager,this, dragable);
     }
 
     public void Pick(int slotIndex)
     {
         HolsterModel slot = dataManager.playerModel.Holster[slotIndex];
-        if (slot.IsLocked) return;
+        if (slot.isLocked) return;
 
         Debug.Log("Pick");
 
-        if (slot.IsOccupied)
+        if (slot.isOccupied)
         {
             if (dataManager.playerModel.SelectedWeaponIndex == slotIndex) holsterManager.WeaponThrow(slot, weaponHolster.currentWeapon.currentAmmo);
-            else holsterManager.WeaponThrow(slot, slot.EquipedWeapon.MagazineBulletCount);
+            else holsterManager.WeaponThrow(slot, slot.equipedWeapon.magazineBulletCount);
         }
         PickSoundEffect();
-        Weapon weapon = dragable.Prefab.GetComponent<Weapon>();
-        slot.EquipedWeapon.weaponName = weapon.weaponName;
-        slot.EquipedWeapon.Suppressor = dragable.SuppressorModel;
-        slot.EquipedWeapon.Sight = dragable.SightModel;
-        slot.EquipedWeapon.MagazineBulletCount = dragable.CurrentAmmoSize;
-        slot.EquipedWeapon.ID = dragable.ID;
-        slot.IsOccupied = true;
+        Weapon weapon = dragable.prefab.GetComponent<Weapon>();
+        slot.equipedWeapon.weaponName = weapon.weaponName;
+        slot.equipedWeapon.suppressor = dragable.suppressorModel;
+        slot.equipedWeapon.sight = dragable.sightModel;
+        slot.equipedWeapon.magazineBulletCount = dragable.currentAmmoSize;
+        slot.equipedWeapon.id = dragable.id;
+        slot.isOccupied = true;
 
-        weapon.SetSight(slot.EquipedWeapon.Sight);
-        weapon.SetSuppressor(slot.EquipedWeapon.Suppressor);
+        weapon.SetSight(slot.equipedWeapon.sight);
+        weapon.SetSuppressor(slot.equipedWeapon.suppressor);
 
         holsterManager.RebuildFastHolster(dataManager.playerModel.Holster);
         holsterManager.RebuildWheelHolster(dataManager.playerModel.Holster);
@@ -109,23 +109,23 @@ public class DragableWeapon : MonoBehaviour
         foreach (HolsterModel slot in dataManager.playerModel.Holster)
         {
             index++;
-            if(!slot.IsLocked && !slot.IsOccupied)
+            if(!slot.isLocked && !slot.isOccupied)
             {
                 Debug.Log("Pick");
                 playerAudio.audio.PlayOneShot(playerAudio.CLIP_PICK_WEAPON, playerAudio.Volume);
-                Weapon weapon = dragable.Prefab.GetComponent<Weapon>();
-                slot.EquipedWeapon.weaponName = weapon.weaponName;
-                slot.EquipedWeapon.Suppressor = dragable.SuppressorModel;
-                slot.EquipedWeapon.Sight = dragable.SightModel;
-                slot.EquipedWeapon.MagazineBulletCount = dragable.CurrentAmmoSize;
-                slot.EquipedWeapon.ID = dragable.ID;
-                slot.IsOccupied = true;
+                Weapon weapon = dragable.prefab.GetComponent<Weapon>();
+                slot.equipedWeapon.weaponName = weapon.weaponName;
+                slot.equipedWeapon.suppressor = dragable.suppressorModel;
+                slot.equipedWeapon.sight = dragable.sightModel;
+                slot.equipedWeapon.magazineBulletCount = dragable.currentAmmoSize;
+                slot.equipedWeapon.id = dragable.id;
+                slot.isOccupied = true;
                 dataManager.playerModel.Holster[index-1] = slot;
                 
                 dataManager.UpdatePlayerModel(dataManager.playerModel); // Data Saved
                 
-                weapon.SetSight(slot.EquipedWeapon.Sight);
-                weapon.SetSuppressor(slot.EquipedWeapon.Suppressor);
+                weapon.SetSight(slot.equipedWeapon.sight);
+                weapon.SetSuppressor(slot.equipedWeapon.suppressor);
 
                 holsterManager.RebuildFastHolster(dataManager.playerModel.Holster);
                 holsterManager.RebuildWheelHolster(dataManager.playerModel.Holster);

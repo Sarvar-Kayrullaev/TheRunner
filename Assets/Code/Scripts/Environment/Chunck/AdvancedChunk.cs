@@ -104,17 +104,19 @@ public class AdvancedChunk : MonoBehaviour
 
     public void Collect()
     {
-        List<GameObject> elements = GetGameObjectsInLayer("Environments");
-        foreach (GameObject element in elements)
+        var elements = GetGameObjectsInLayer("Environments");
+        foreach (var element in elements)
         {
-            Transform leafChunk = GetClosestChunk(element.transform, transform);
-            if (leafChunk)
+            if (element.transform.parent)
             {
-                element.transform.parent = leafChunk;
+                if(element.transform.parent.gameObject.layer == LayerMask.NameToLayer("Environments")) continue;
+                var leafChunk = GetClosestChunk(element.transform, transform);
+                if (leafChunk) element.transform.parent = leafChunk;
             }
             else
             {
-                
+                var leafChunk = GetClosestChunk(element.transform, transform);
+                if (leafChunk) element.transform.parent = leafChunk;
             }
         }
     }

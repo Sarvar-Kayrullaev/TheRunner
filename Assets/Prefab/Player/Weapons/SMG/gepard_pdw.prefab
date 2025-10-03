@@ -106,6 +106,11 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: -8786022416150539020, guid: 006cc0fc9b4ded440846c477b6fa612e,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 7c8abf96e9017ca4ebbd76d8bc4d86b0, type: 2}
     - target: {fileID: -8776884114994398772, guid: 006cc0fc9b4ded440846c477b6fa612e,
         type: 3}
       propertyPath: m_Layer
@@ -291,6 +296,11 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: -2057502715553823006, guid: 006cc0fc9b4ded440846c477b6fa612e,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 7c8abf96e9017ca4ebbd76d8bc4d86b0, type: 2}
     - target: {fileID: -1758193011573883374, guid: 006cc0fc9b4ded440846c477b6fa612e,
         type: 3}
       propertyPath: m_Layer
@@ -301,6 +311,11 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: -1158076725663828965, guid: 006cc0fc9b4ded440846c477b6fa612e,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 7c8abf96e9017ca4ebbd76d8bc4d86b0, type: 2}
     - target: {fileID: -940742656923916835, guid: 006cc0fc9b4ded440846c477b6fa612e,
         type: 3}
       propertyPath: m_Layer
@@ -640,17 +655,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c6583d5551f01747a0d351284723792, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SuppressorParentTransform: {fileID: 3681115579136488294}
-  SightParentTransform: {fileID: 7074721103342024304}
+  suppressorParentTransform: {fileID: 3681115579136488294}
+  sightParentTransform: {fileID: 7074721103342024304}
   suppressorModel:
-    Type: 3
-    Equipped: 1
+    name: 0
+    equipped: 0
   sightModel:
-    Type: 0
-    Equipped: 0
+    name: 0
+    equipped: 0
+  equipedModel:
+    id: 0
+    weaponName: 0
+    magazineBulletCount: 0
+    suppressor:
+      name: 0
+      equipped: 0
+    sight:
+      name: 0
+      equipped: 0
+  equipedSlotIndex: 0
   animator: {fileID: 1345532895208937482}
   weaponName: 11
-  WeaponType: 0
+  weaponType: 0
   muzzleFlashPrefab: {fileID: 1677726478405220394, guid: 1037da0d52baac74aba8233bbb08d75c,
     type: 3}
   firePoint: {fileID: 21254367765655451}
@@ -659,7 +685,7 @@ MonoBehaviour:
   ironSightPrefab: {fileID: 0}
   damage: 7
   autoReload: 1
-  FOV: 60
+  fov: 60
   defaultAimFOV: 55
   aimFOV: 50
   stackFOV: 50
@@ -680,7 +706,7 @@ MonoBehaviour:
   defaultAimPosition: {x: 0, y: -1.907, z: -0.33}
   aimPosition: {x: 0, y: -1.943, z: -0.5}
   positioningSpeed: 15
-  ReduceSwayOnAim: 0.3
+  reduceSwayOnAim: 0.1
   markLayer:
     serializedVersion: 2
     m_Bits: 4096
@@ -693,10 +719,11 @@ MonoBehaviour:
   markSound: {fileID: 8300000, guid: 5bdfa1b108975ee4d941ae02da02f313, type: 3}
   hitableLayer:
     serializedVersion: 2
-    m_Bits: 400
+    m_Bits: 197008
   forward: {fileID: 0}
   stackCamera: {fileID: 0}
   sniperFocus: {fileID: 0}
+  botGlobal: {fileID: 0}
   aim: 0
   magazineSize: 40
   currentAmmo: 0
@@ -720,6 +747,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 0aae738da70875f4797798f9443604ca, type: 3}
   - {fileID: 8300000, guid: 5c8b30cededd4b6478d3ede7d1c0f23f, type: 3}
   - {fileID: 8300000, guid: 6cbc7140b39978e4d9afcae641f7c9dc, type: 3}
+  dataManager: {fileID: 0}
 --- !u!114 &-3623201763711631139
 MonoBehaviour:
   m_ObjectHideFlags: 0

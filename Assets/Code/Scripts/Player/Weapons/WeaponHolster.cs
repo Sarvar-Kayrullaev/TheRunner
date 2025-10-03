@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using BotRoot;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -31,12 +32,14 @@ public class WeaponHolster : MonoBehaviour
     private SealedData sealedData;
     private HolsterManager holsterManager;
     private DataManager dataManager;
+    private BotGlobal botGlobal;
 
     private void Awake()
     {
         sealedData = FindFirstObjectByType<SealedData>();
         holsterManager = FindFirstObjectByType<HolsterManager>();
         dataManager = FindFirstObjectByType<DataManager>();
+        botGlobal = FindFirstObjectByType<BotGlobal>();
         //sniperFocus = FindFirstObjectByType<SniperFocus>();
         //ResetHolster();
     }
@@ -108,28 +111,31 @@ public class WeaponHolster : MonoBehaviour
     public void DrawWeapon(GameObject Prefab)
     {
         int selectedWeapon = dataManager.playerModel.SelectedWeaponIndex;
-        EquipedWeaponModel equipedWeapon = dataManager.playerModel.Holster[selectedWeapon].EquipedWeapon;
-        if (CurrentWeaponID == equipedWeapon.ID) return;
+        EquipedWeaponModel equipedWeapon = dataManager.playerModel.Holster[selectedWeapon].equipedWeapon;
+        if (CurrentWeaponID == equipedWeapon.id) return;
 
         if (transform.childCount > 0) Destroy(transform.GetChild(0).gameObject);
         
         GameObject insWeapon = Instantiate(Prefab, transform);
         if (insWeapon.TryGetComponent(out Weapon weapon))
         {
-            weapon.released = CurrentWeaponID == equipedWeapon.ID;
-            CurrentWeaponID = equipedWeapon.ID;
+            weapon.released = CurrentWeaponID == equipedWeapon.id;
+            CurrentWeaponID = equipedWeapon.id;
             currentWeapon = weapon;
             weapon.holster = this;
             weapon.crosshair = crosshair;
             TryGetComponent(out WeaponSway weaponSwayComponent);
             weapon.sway = weaponSwayComponent;
             weapon.stackCamera = stackCamera;
+            weapon.botGlobal = botGlobal;
             weapon.forward = forward;
-            weapon.currentAmmo = equipedWeapon.MagazineBulletCount;
+            weapon.currentAmmo = equipedWeapon.magazineBulletCount;
+            weapon.equipedModel = equipedWeapon;
+            weapon.equipedSlotIndex = selectedWeapon;
             //weapon.sniperFocus = sniperFocus;
-            weapon.WeaponType = WeaponTypeConverter(equipedWeapon.weaponName);
-            weapon.SetSight(equipedWeapon.Sight);
-            weapon.SetSuppressor(equipedWeapon.Suppressor);
+            weapon.weaponType = WeaponTypeConverter(equipedWeapon.weaponName);
+            weapon.SetSight(equipedWeapon.sight);
+            weapon.SetSuppressor(equipedWeapon.suppressor);
             crosshair.weapon = weapon;
             crosshair.restingSize = weapon.restingAccuracy;
             crosshair.shootSize = weapon.shootAccuracy;
@@ -151,28 +157,29 @@ public class WeaponHolster : MonoBehaviour
     public void RedrawWeapon()
     {
         int selectedWeapon = dataManager.playerModel.SelectedWeaponIndex;
-        EquipedWeaponModel equipedWeapon = dataManager.playerModel.Holster[selectedWeapon].EquipedWeapon;
+        EquipedWeaponModel equipedWeapon = dataManager.playerModel.Holster[selectedWeapon].equipedWeapon;
         
         if(equipedWeapon.weaponName == WeaponName.NONE) return;
         if (transform.childCount > 0) Destroy(transform.GetChild(0).gameObject);
-        GameObject insWeapon = Instantiate(sealedData.GetWeaponBasicModelByName(equipedWeapon.weaponName).WeaponPrefab, transform);
+        GameObject insWeapon = Instantiate(sealedData.GetWeaponBasicModelByName(equipedWeapon.weaponName).weaponPrefab, transform);
         Weapon weapon = insWeapon.GetComponent<Weapon>();
         Animator insWeaponAnimator = insWeapon.GetComponent<Animator>();
         insWeaponAnimator.Play("ForceDraw");
 
-        weapon.released = CurrentWeaponID == equipedWeapon.ID;
-        CurrentWeaponID = equipedWeapon.ID;
+        weapon.released = CurrentWeaponID == equipedWeapon.id;
+        CurrentWeaponID = equipedWeapon.id;
         currentWeapon = weapon;
         weapon.holster = this;
         weapon.crosshair = crosshair;
         weapon.sway = GetComponent<WeaponSway>();
         weapon.stackCamera = stackCamera;
+        weapon.botGlobal = botGlobal;
         weapon.forward = forward;
-        weapon.currentAmmo = equipedWeapon.MagazineBulletCount;
+        weapon.currentAmmo = equipedWeapon.magazineBulletCount;
         //weapon.sniperFocus = sniperFocus;
-        weapon.WeaponType = WeaponTypeConverter(equipedWeapon.weaponName);
-        weapon.SetSight(equipedWeapon.Sight);
-        weapon.SetSuppressor(equipedWeapon.Suppressor);
+        weapon.weaponType = WeaponTypeConverter(equipedWeapon.weaponName);
+        weapon.SetSight(equipedWeapon.sight);
+        weapon.SetSuppressor(equipedWeapon.suppressor);
         crosshair.weapon = weapon;
         crosshair.restingSize = weapon.restingAccuracy;
         crosshair.shootSize = weapon.shootAccuracy;
@@ -235,7 +242,7 @@ public class WeaponHolster : MonoBehaviour
         {
             if (weaponModel.weaponName == weaponName)
             {
-                return weaponModel.WeaponType;
+                return weaponModel.weaponType;
             }
         }
         return WeaponType.Special;

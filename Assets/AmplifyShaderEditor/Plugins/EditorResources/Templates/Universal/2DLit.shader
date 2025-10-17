@@ -161,7 +161,7 @@ Shader /*ase_name*/ "Hidden/Universal/Experimental/2D Lit" /*end*/
 				
 				Color *= IN.color;
 
-				return CombinedShapeLightShared( Color, Mask, IN.screenPosition.xy / IN.screenPosition.w );
+				//return CombinedShapeLightShared( Color, Mask, IN.screenPosition.xy / IN.screenPosition.w );
 			}
 
 			ENDHLSL

@@ -138,7 +138,7 @@ public class HolsterManager : MonoBehaviour
 
             if (index == 1)
             {
-                if (Slot_1.TryGetComponent(out SetBlurUI setBlur)) setBlur.SetColor(isSelected & !noWeapon ? Slot_SelectedColor : Slot_UnselectedColor);
+                if (Slot_1.TryGetComponent(out Image background)) background.color = (isSelected & !noWeapon ? Slot_SelectedColor : Slot_UnselectedColor);
                 if (noWeapon)
                 {
                     Slot_1_Image.gameObject.SetActive(false);
@@ -155,7 +155,7 @@ public class HolsterManager : MonoBehaviour
             }
             else if (index == 2)
             {
-                if (Slot_2.TryGetComponent(out SetBlurUI setBlur)) setBlur.SetColor(isSelected & !noWeapon ? Slot_SelectedColor : Slot_UnselectedColor);
+                if (Slot_2.TryGetComponent(out Image background)) background.color = (isSelected & !noWeapon ? Slot_SelectedColor : Slot_UnselectedColor);
                 if (noWeapon)
                 {
                     Slot_2_Image.gameObject.SetActive(false);

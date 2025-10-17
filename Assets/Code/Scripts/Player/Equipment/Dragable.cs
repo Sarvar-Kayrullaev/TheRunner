@@ -1,8 +1,12 @@
+using System;
+using System.Collections.Generic;
 using Data;
 using PlayerRoot;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Random = UnityEngine.Random;
 
+[Serializable]
 public class Dragable : MonoBehaviour
 {
     public DragableType dragableType;
@@ -12,8 +16,12 @@ public class Dragable : MonoBehaviour
     public int currentAmmoSize;
     public SuppressorModel suppressorModel;
     public SightModel sightModel;
+    public List<CollectibleItem> items;
+    public Material collectedMaterial;
+    public SkinnedMeshRenderer meshRenderer;
 
     public bool isRefillable = false;
+    public bool isCollected = false;
     public int bullets;
 
     public float listenerDistance;
@@ -22,10 +30,10 @@ public class Dragable : MonoBehaviour
     private SealedData _sealedData;
     private WeaponHolster _weaponHolster;
     private PlayerAudio _playerAudio;
+    private ToastManager _toastManager;
     private Animator _animator;
 
-    [FormerlySerializedAs("IsThrowed")] [HideInInspector]
-    public bool isThrowed = false;
+    [HideInInspector] public bool isThrowed = false;
 
     public void Start()
     {
@@ -34,7 +42,9 @@ public class Dragable : MonoBehaviour
         _sealedData = FindFirstObjectByType<SealedData>();
         _weaponHolster = FindFirstObjectByType<WeaponHolster>();
         _playerAudio = FindFirstObjectByType<PlayerAudio>();
-        if(TryGetComponent(out Animator animator)) _animator = animator;
+        _toastManager = FindFirstObjectByType<ToastManager>();
+
+        if (TryGetComponent(out Animator animator)) _animator = animator;
 
         InvokeRepeating(nameof(UpdateListener), 0, 0.4f);
         if (!isThrowed)
@@ -52,7 +62,6 @@ public class Dragable : MonoBehaviour
 
         if (dragableType == DragableType.Item)
         {
-            
         }
         else if (dragableType == DragableType.Weapon)
         {
@@ -81,14 +90,45 @@ public class Dragable : MonoBehaviour
                 _player.dragableWeapon.Register(this);
             }
         }
-        else if(dragableType == DragableType.Bullet)
+        else if (dragableType == DragableType.Bullet)
         {
             DragBullet();
         }
-        else if(dragableType == DragableType.Box)
+        else if (dragableType == DragableType.Box)
         {
-            
         }
+    }
+
+    public void DragItems()
+    {
+        var toasts = new List<PickupToast>();
+        foreach (var collectibleItem in items)
+        {
+            if (collectibleItem.itemType == ItemType.Money)
+            {
+                _dataManager.playerModel.Funds.money += collectibleItem.amount;
+                var toastObject = Instantiate(_toastManager.pickupToastPrefab, _toastManager.pickupToastParent);
+                if (!toastObject.TryGetComponent(out PickupToast toast)) continue;
+                toast.Initialize($"Money: +{collectibleItem.amount}", _toastManager.moneySprite);
+                toasts.Add(toast);
+            }
+            else if (collectibleItem.itemType == ItemType.Gold)
+            {
+                _dataManager.playerModel.Funds.gold += collectibleItem.amount;
+                var toastObject = Instantiate(_toastManager.pickupToastPrefab, _toastManager.pickupToastParent);
+                if (!toastObject.TryGetComponent(out PickupToast toast)) continue;
+                toast.Initialize($"Gold: +{collectibleItem.amount}", _toastManager.goldSprite);
+                toasts.Add(toast);
+            }
+        }
+
+        _toastManager.PlayPickupToasts(toasts, 3);
+        _animator.CrossFade("Open", 0);
+        _playerAudio.audio.PlayOneShot(_playerAudio.CLIP_PICK_AMMO, _playerAudio.Volume);
+        _dataManager.UpdatePlayerModel(_dataManager.playerModel);
+        transform.tag = "Untagged";
+        meshRenderer.material = collectedMaterial;
+        isCollected = true;
     }
 
     private void InitializeBulletAmout(WeaponType bulletWeaponType)
@@ -150,149 +190,109 @@ public class Dragable : MonoBehaviour
     {
         if (bullets <= 0) return;
         var bulletBagLevel = _dataManager.playerModel.PlayerAbility.bulletBagLevel;
-        if (weaponType == WeaponType.Handgun)
-        {
-            var maxBulletLevel = _sealedData.BulletBag[bulletBagLevel].PistolSize;
-            var currentBulletBag = _dataManager.playerModel.BulletBag.PistolSize;
-            if (currentBulletBag >= maxBulletLevel) return;
-            int result;
-            var outage = currentBulletBag + bullets > maxBulletLevel;
-            if (outage)
-            {
-                result = maxBulletLevel;
-                bullets = currentBulletBag + bullets - maxBulletLevel;
-            }
-            else
-            {
-                result = currentBulletBag + bullets;
-                bullets = 0;
-            }
+        
+        AddAmmo(weaponType, bulletBagLevel);
+        
 
-            _dataManager.playerModel.BulletBag.PistolSize = result;
-            _dataManager.UpdatePlayerModel(_dataManager.playerModel);
-            _playerAudio.audio.PlayOneShot(_playerAudio.CLIP_PICK_AMMO, _playerAudio.Volume);
-        }
-
-        if (weaponType == WeaponType.Shotgun)
-        {
-            var maxBulletLevel = _sealedData.BulletBag[bulletBagLevel].ShotgunSize;
-            var currentBulletBag = _dataManager.playerModel.BulletBag.ShotgunSize;
-            if (currentBulletBag >= maxBulletLevel) return;
-            int result;
-            var outage = currentBulletBag + bullets > maxBulletLevel;
-            if (outage)
-            {
-                result = maxBulletLevel;
-                bullets = currentBulletBag + bullets - maxBulletLevel;
-            }
-            else
-            {
-                result = currentBulletBag + bullets;
-                bullets = 0;
-            }
-
-            _dataManager.playerModel.BulletBag.ShotgunSize = result;
-            _dataManager.UpdatePlayerModel(_dataManager.playerModel);
-            _playerAudio.audio.PlayOneShot(_playerAudio.CLIP_PICK_AMMO, _playerAudio.Volume);
-        }
-
-        if (weaponType == WeaponType.SMG)
-        {
-            var maxBulletLevel = _sealedData.BulletBag[bulletBagLevel].SMGSize;
-            var currentBulletBag = _dataManager.playerModel.BulletBag.SMGSize;
-            if (currentBulletBag >= maxBulletLevel) return;
-            int result;
-            var outage = currentBulletBag + bullets > maxBulletLevel;
-            if (outage)
-            {
-                result = maxBulletLevel;
-                bullets = currentBulletBag + bullets - maxBulletLevel;
-            }
-            else
-            {
-                result = currentBulletBag + bullets;
-                bullets = 0;
-            }
-
-            _dataManager.playerModel.BulletBag.SMGSize = result;
-            _dataManager.UpdatePlayerModel(_dataManager.playerModel);
-            _playerAudio.audio.PlayOneShot(_playerAudio.CLIP_PICK_AMMO, _playerAudio.Volume);
-        }
-
-        if (weaponType == WeaponType.Rifle)
-        {
-            var maxBulletLevel = _sealedData.BulletBag[bulletBagLevel].RifleSize;
-            var currentBulletBag = _dataManager.playerModel.BulletBag.RifleSize;
-            if (currentBulletBag >= maxBulletLevel) return;
-            int result;
-            var outage = currentBulletBag + bullets > maxBulletLevel;
-            if (outage)
-            {
-                result = maxBulletLevel;
-                bullets = currentBulletBag + bullets - maxBulletLevel;
-            }
-            else
-            {
-                result = currentBulletBag + bullets;
-                bullets = 0;
-            }
-
-            _dataManager.playerModel.BulletBag.RifleSize = result;
-            _dataManager.UpdatePlayerModel(_dataManager.playerModel);
-            _playerAudio.audio.PlayOneShot(_playerAudio.CLIP_PICK_AMMO, _playerAudio.Volume);
-        }
-
-        if (weaponType == WeaponType.Sniper)
-        {
-            var maxBulletLevel = _sealedData.BulletBag[bulletBagLevel].SniperSize;
-            var currentBulletBag = _dataManager.playerModel.BulletBag.SniperSize;
-            if (currentBulletBag >= maxBulletLevel) return;
-            int result;
-            var outage = currentBulletBag + bullets > maxBulletLevel;
-            if (outage)
-            {
-                result = maxBulletLevel;
-                bullets = currentBulletBag + bullets - maxBulletLevel;
-            }
-            else
-            {
-                result = currentBulletBag + bullets;
-                bullets = 0;
-            }
-
-            _dataManager.playerModel.BulletBag.SniperSize = result;
-            _dataManager.UpdatePlayerModel(_dataManager.playerModel);
-            _playerAudio.audio.PlayOneShot(_playerAudio.CLIP_PICK_AMMO, _playerAudio.Volume);
-        }
-
-        if (weaponType == WeaponType.Machinegun)
-        {
-            var maxBulletLevel = _sealedData.BulletBag[bulletBagLevel].MashineGunSize;
-            var currentBulletBag = _dataManager.playerModel.BulletBag.MashineGunSize;
-            if (currentBulletBag >= maxBulletLevel) return;
-            int result;
-            var outage = currentBulletBag + bullets > maxBulletLevel;
-            if (outage)
-            {
-                result = maxBulletLevel;
-                bullets = currentBulletBag + bullets - maxBulletLevel;
-            }
-            else
-            {
-                result = currentBulletBag + bullets;
-                bullets = 0;
-            }
-
-            _dataManager.playerModel.BulletBag.MashineGunSize = result;
-            _dataManager.UpdatePlayerModel(_dataManager.playerModel);
-            _playerAudio.audio.PlayOneShot(_playerAudio.CLIP_PICK_AMMO, _playerAudio.Volume);
-        }
         if (_weaponHolster.currentWeapon) _weaponHolster.RebuildBulletText(_weaponHolster.currentWeapon.weaponName);
         if (dragableType == DragableType.Bullet)
         {
-            if(bullets <= 0) Destroy(gameObject);
+            if (bullets <= 0) Destroy(gameObject);
         }
     }
+
+    public void AddAmmo(WeaponType type, int bulletBagLevel)
+    {
+        // Get player and sealed data references for convenience
+        var model = _dataManager.playerModel;
+        var bagData = _sealedData.BulletBag[bulletBagLevel];
+
+        // Determine current and max ammo based on weapon type
+        int current = 0;
+        int maxCapacity = 0;
+        string weaponLabel = "";
+
+        switch (type)
+        {
+            case WeaponType.Handgun:
+                current = model.BulletBag.PistolSize;
+                maxCapacity = bagData.PistolSize;
+                weaponLabel = "Handgun";
+                break;
+            case WeaponType.Shotgun:
+                current = model.BulletBag.ShotgunSize;
+                maxCapacity = bagData.ShotgunSize;
+                weaponLabel = "Shotgun";
+                break;
+
+            case WeaponType.SMG:
+                current = model.BulletBag.SMGSize;
+                maxCapacity = bagData.SMGSize;
+                weaponLabel = "SMG";
+                break;
+
+            case WeaponType.Rifle:
+                current = model.BulletBag.RifleSize;
+                maxCapacity = bagData.RifleSize;
+                weaponLabel = "Rifle";
+                break;
+            case WeaponType.Sniper:
+                current = model.BulletBag.SniperSize;
+                maxCapacity = bagData.SniperSize;
+                weaponLabel = "Shotgun";
+                break;
+            case WeaponType.Machinegun:
+                current = model.BulletBag.MashineGunSize;
+                maxCapacity = bagData.MashineGunSize;
+                weaponLabel = "Machinegun";
+                break;
+
+            case WeaponType.Launcher:
+            case WeaponType.Special:
+            case WeaponType.Signatured:
+            default:
+                Debug.LogWarning($"Unsupported weapon type: {type}");
+                return;
+        }
+
+        // If already full, skip
+        if (current >= maxCapacity) return;
+
+        // Calculate how many bullets we can actually add
+        int spaceLeft = maxCapacity - current;
+        int takenBulletSize = Mathf.Min(bullets, spaceLeft);
+
+        // Update current ammo and leftover bullets
+        current += takenBulletSize;
+        bullets = Mathf.Max(bullets - takenBulletSize, 0);
+
+        // Write updated ammo back to the correct weapon type
+        switch (type)
+        {
+            case WeaponType.Handgun: model.BulletBag.PistolSize = current; break;
+            case WeaponType.SMG: model.BulletBag.SMGSize = current; break;
+            case WeaponType.Rifle: model.BulletBag.RifleSize = current; break;
+            case WeaponType.Shotgun: model.BulletBag.ShotgunSize = current; break;
+        }
+
+        // Save player data
+        _dataManager.UpdatePlayerModel(model);
+
+        // Play pickup sound
+        _playerAudio.audio.PlayOneShot(_playerAudio.CLIP_PICK_AMMO, _playerAudio.Volume);
+
+        // --- Toast Notification ---
+        var pickupToasts = new List<PickupToast>();
+        var toastObject = Instantiate(_toastManager.pickupToastPrefab, _toastManager.pickupToastParent);
+
+        if (toastObject.TryGetComponent(out PickupToast toast))
+        {
+            toast.Initialize($"{weaponLabel} Ammo: +{takenBulletSize}", _toastManager.bulletSprite);
+            pickupToasts.Add(toast);
+            _toastManager.PlayPickupToasts(pickupToasts, 3);
+        }
+    }
+
 
     private WeaponType WeaponTypeConverter(WeaponName weaponName)
     {
@@ -306,6 +306,25 @@ public class Dragable : MonoBehaviour
 
         return WeaponType.Special;
     }
+}
+
+[Serializable]
+public class CollectibleItem
+{
+    public ItemType itemType;
+    public int amount;
+    [Range(0, 1)] public float yieldPercent;
+}
+
+public enum ItemType
+{
+    Money,
+    Gold,
+    Bullet,
+    Grenade,
+    SprintBoost,
+    HealingBoost,
+    Tier
 }
 
 public enum DragableType

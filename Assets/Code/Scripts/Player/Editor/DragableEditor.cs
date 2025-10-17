@@ -86,9 +86,11 @@ namespace PlayerRoot
         private void BoxField()
         {
             EditorGUILayout.Space();
-
             EditorGUILayout.LabelField("Dragable Params", EditorStyles.boldLabel);
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("items"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("listenerDistance"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("collectedMaterial"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("meshRenderer"));
             serializedObject.ApplyModifiedProperties();
         }
     }

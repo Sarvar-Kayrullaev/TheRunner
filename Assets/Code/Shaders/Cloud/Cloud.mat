@@ -114,8 +114,8 @@ Material:
     - _UVSec: 0
     - _XRMotionVectorsPass: 1
     - _ZWrite: 1
-    - _darknessThreshold: -0.05953777
-    - _densityScale: 0.11020619
+    - _darknessThreshold: -1
+    - _densityScale: 0.75
     - _lightAbsorb: 0.55
     - _lightStepSize: 0.19
     - _numLightSteps: 1
@@ -128,7 +128,7 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _LightDirection: {r: 3.09, g: -4.32, b: 6.1, a: 0}
     - _ShadowColor: {r: 1, g: 1, b: 1, a: 1}
-    - _color: {r: 0.59516895, g: 0.7823148, b: 0.9459953, a: 1}
+    - _color: {r: 0.7764706, g: 0.8980392, b: 1, a: 1}
     - _offset: {r: 0.5, g: 0.5, b: 0.5, a: 0}
     - _shadowColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
@@ -145,4 +145,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  version: 9
+  version: 10

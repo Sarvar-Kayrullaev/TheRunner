@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8798566280199070570}
   - component: {fileID: 3993491505266634682}
   - component: {fileID: 3785544143395468319}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: clay_rock_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}

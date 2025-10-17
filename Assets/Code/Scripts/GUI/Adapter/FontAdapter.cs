@@ -1,12 +1,6 @@
-using System;
-using System.Collections;
-using System.Threading.Tasks;
 using Code.Scripts.Data.Language;
-using Data;
-using Mono.Cecil;
 using TMPro;
 using UnityEngine;
-using UnityEngine.TextCore.Text;
 
 namespace Code.Scripts.GUI.Adapter
 {

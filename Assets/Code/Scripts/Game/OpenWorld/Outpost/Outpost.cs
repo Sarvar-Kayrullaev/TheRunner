@@ -24,7 +24,6 @@ public class Outpost : MonoBehaviour
     private Player player;
     private bool initialized = false;
 
-    [Obsolete]
     public void Initialize(OutpostManager manager, OutpostModel outpostModel)
     {
         this.manager = manager;

@@ -69,6 +69,7 @@ namespace PlayerRoot
         public WeaponHolster holster;
         public VirtualJoystick joystick;
         public LookController look;
+        public Transform controllerButtonsParent;
 
         [Space]
         [Header("Movement Sounds")]
@@ -104,6 +105,7 @@ namespace PlayerRoot
         public DragableWeapon dragableWeapon;
         public DragableVehicle dragableVehicle;
         public PlayerAudio playerAudio;
+        public ControllerManager controllerManager;
 
         [Space]
         public Vector2 vectorMovement;
@@ -112,6 +114,7 @@ namespace PlayerRoot
         private Vector2 mouse;
 
         [HideInInspector] public Dragable PendingDragableWeapon;
+        private Transform pendingDragObject;
 
         [System.Obsolete]
         private void Start()
@@ -121,6 +124,8 @@ namespace PlayerRoot
             if (TryGetComponent(out CharacterController character)) this.character = character;
             if (TryGetComponent(out CapsuleCollider collider)) this.collider = collider;
             if (TryGetComponent(out TargetStatus status)) this.status = status;
+
+            controllerManager = FindFirstObjectByType<ControllerManager>();
 
             dragableVehicle.player = this;
 
@@ -161,6 +166,33 @@ namespace PlayerRoot
             movement.Update(move, mouse);
 
             if (holster.currentWeapon) holster.currentWeapon.sway.Sway(Mobile, holster.currentWeapon.aim, mouse, move.x, holster.currentWeapon.reduceSwayOnAim);
+            
+            CheckPickableObject();
+        }
+        
+        private void CheckPickableObject()
+        {
+            var ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+            if (Physics.Raycast(ray, out var hit, 3, LayerMask.GetMask("Environments")))
+            {
+                if (hit.collider.CompareTag("Pickable"))
+                {
+                    controllerManager.ChangeAssistButtonListener(AssistButtonType.Pickable);
+                    pendingDragObject =  hit.collider.transform;
+                    
+                    if(Input.GetKey(KeyCode.E)) PickUp();
+                }
+                else
+                {
+                    controllerManager.ChangeAssistButtonListener(AssistButtonType.Shootable);
+                    pendingDragObject = null;
+                }
+            }
+            else
+            {
+                controllerManager.ChangeAssistButtonListener(AssistButtonType.Shootable);
+                pendingDragObject = null;
+            }
         }
 
         public void TakeDamage(int damage, Transform owner)
@@ -218,7 +250,17 @@ namespace PlayerRoot
                 case ControllerCases.Crouch:
                     movement.Crouch();
                     break;
+                case ControllerCases.PickUp:
+                    PickUp();
+                    break;
             }
+        }
+
+        private void PickUp()
+        {
+            if (!pendingDragObject) return;
+            pendingDragObject.TryGetComponent(out Dragable dragable);
+            dragable.DragItems();
         }
 
         void ButtonListener.OnClickUp(ControllerCases controllerCase)

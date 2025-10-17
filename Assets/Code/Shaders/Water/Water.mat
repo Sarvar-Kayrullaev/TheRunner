@@ -1,5 +1,18 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8124937933461067096
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Editor::UnityEditor.Rendering.Universal.AssetVersion
+  version: 10
 --- !u!114 &-2496203487120264386
 MonoBehaviour:
   m_ObjectHideFlags: 11
@@ -21,21 +34,31 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Water
-  m_Shader: {fileID: -6465566751694194690, guid: 4f84c4cfbe2a0584490cb9ae47b7fb18, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 78d60be20f11f2b469dd9a738eaf4760,
+    type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords: []
+  m_ValidKeywords:
+  - _SURFACE_TYPE_TRANSPARENT
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
+  stringTagMap:
+    RenderType: Transparent
+  disabledShaderPasses:
+  - DepthOnly
+  - SHADOWCASTER
+  - MOTIONVECTORS
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _Blend_Map:
+        m_Texture: {fileID: 2800000, guid: e4f01e2b6cc76fc418d5e60ed4f3fc56, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _BumpMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -68,6 +91,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: 23d5ecd1b166c0343bac8349a8fbc4d9, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Normal_Map:
+        m_Texture: {fileID: 2800000, guid: 69a2d41a74afcb744aa810505853fec5, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -80,35 +107,77 @@ Material:
         m_Texture: {fileID: 2800000, guid: b188ada05158c1f45b7b72f9065a2005, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - unity_Lightmaps:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_LightmapsInd:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_ShadowMasks:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _AlphaClip: 0
+    - _AlphaToMask: 0
     - _BUILTIN_QueueControl: 0
     - _BUILTIN_QueueOffset: 0
+    - _Blend: 0
+    - _BlendModePreserveSpecular: 0
+    - _BlendTiling: 0.06
     - _BumpScale: 1
+    - _CastShadows: 0
+    - _ColorAlpha: 0.488
+    - _Cull: 2
     - _Cutoff: 0.5
     - _Depth: 20
     - _Depth_Fallof: 10
     - _DetailNormalMapScale: 1
-    - _DstBlend: 0
+    - _DstBlend: 10
+    - _DstBlendAlpha: 10
+    - _EdgeFade: 0.317
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _Metallic: 0
+    - _Metallic: 0.21
     - _Mode: 0
+    - _NormalMapStrength: 0.107
+    - _NormalTiling1: 0.0025
+    - _NormalTiling2: 0.01
     - _OcclusionStrength: 1
+    - _OffsetSpeed: 0.01
     - _Parallax: 0.02
+    - _QueueControl: 0
+    - _QueueOffset: 0
+    - _ReceiveShadows: 1
+    - _RefractionIntensity: 0.13
     - _Smooth: 0.8
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
-    - _SrcBlend: 1
+    - _SrcBlend: 5
+    - _SrcBlendAlpha: 1
+    - _Surface: 1
     - _Tiling: 50
     - _UVSec: 0
     - _WaveSpeed: 0.1
-    - _ZWrite: 1
+    - _WorkflowMode: 1
+    - _XRMotionVectorsPass: 1
+    - _ZTest: 4
+    - _ZWrite: 0
+    - _ZWriteControl: 0
     m_Colors:
     - _BeachColor: {r: 0, g: 1, b: 0.51855683, a: 1}
+    - _BlendOffsetSpeed: {r: 0.03, g: 0.27, b: 0, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _ColorBright: {r: 0, g: 0, b: 0, a: 0}
+    - _ColorDeep: {r: 0, g: 0, b: 0, a: 0}
+    - _EdgeColor: {r: 0.019579919, g: 0.7718782, b: 0.8301887, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _RefractionFade: {r: 2.3, g: 17.78, b: 0, a: 0}
     - _WaterColor: {r: 0, g: 0.8784314, b: 0.64581263, a: 1}
+    - _WaterDepthRange: {r: 0, g: 0.19, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

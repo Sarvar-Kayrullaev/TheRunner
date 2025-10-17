@@ -17,5 +17,6 @@ public enum ControllerCases
     Swipe,
     Aim,
     Throw,
-    SwitchWeapon
+    SwitchWeapon,
+    PickUp,
 }

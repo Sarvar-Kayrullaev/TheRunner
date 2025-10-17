@@ -371,33 +371,36 @@ public class AgentPathFinder : MonoBehaviour
         //         break;
         //     }
         // }
-        if (UnityEditor.Selection.activeGameObject == gameObject)
-        {
-            NavMeshPath navMeshPath = GetPathOnInvalid();
-            if (navMeshPath != null)
-            {
-                if (navMeshPath.status == NavMeshPathStatus.PathComplete)
-                {
-                    Vector3 previousCorner = Vector3.zero;
-                    int index = 0;
-                    foreach (Vector3 corner in navMeshPath.corners)
-                    {
-                        //UnityEditor.Handles.color = Color.black;
-                        //UnityEditor.Handles.DrawSolidDisc(corner, Vector3.up, 0.15f);
-                        if (index == 0)
-                        {
-                            previousCorner = corner;
-                            index++;
-                            continue;
-                        }
-                        Vector3 start = previousCorner;
-                        Vector3 end = corner;
-                        previousCorner = corner;
-                        //UnityEditor.Handles.DrawLine(start, end, 5);
-                    }
-                }
-            }
-        }
+        
+        
+        
+        // if (UnityEditor.Selection.activeGameObject == gameObject)
+        // {
+        //     NavMeshPath navMeshPath = GetPathOnInvalid();
+        //     if (navMeshPath != null)
+        //     {
+        //         if (navMeshPath.status == NavMeshPathStatus.PathComplete)
+        //         {
+        //             Vector3 previousCorner = Vector3.zero;
+        //             int index = 0;
+        //             foreach (Vector3 corner in navMeshPath.corners)
+        //             {
+        //                 //UnityEditor.Handles.color = Color.black;
+        //                 //UnityEditor.Handles.DrawSolidDisc(corner, Vector3.up, 0.15f);
+        //                 if (index == 0)
+        //                 {
+        //                     previousCorner = corner;
+        //                     index++;
+        //                     continue;
+        //                 }
+        //                 Vector3 start = previousCorner;
+        //                 Vector3 end = corner;
+        //                 previousCorner = corner;
+        //                 //UnityEditor.Handles.DrawLine(start, end, 5);
+        //             }
+        //         }
+        //     }
+        // }
 
     }
 
